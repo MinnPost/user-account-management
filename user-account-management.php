@@ -252,7 +252,7 @@ class User_Account_Management {
 			}
 
 			// The rest are redirected to the login page
-			$login_url = home_url( 'user/login' );
+			$login_url = site_url( 'user/login' );
 			if ( ! empty( $redirect_to ) ) {
 				$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
 			}
@@ -296,7 +296,7 @@ class User_Account_Management {
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_wp_error( $user ) ) {
 				$error_codes = join( ',', $user->get_error_codes() );
-				$login_url = home_url( 'user/login' );
+				$login_url = site_url( 'user/login' );
 				$login_url = add_query_arg( 'login', $error_codes, $login_url );
 				wp_redirect( $login_url );
 				exit;
@@ -345,7 +345,7 @@ class User_Account_Management {
 	 * Redirect to custom login page after the user has been logged out.
 	 */
 	public function redirect_after_logout() {
-		$redirect_url = home_url( 'user/login?logged_out=true' );
+		$redirect_url = site_url( 'user/login/?logged_out=true' );
 		wp_safe_redirect( $redirect_url );
 		exit;
 	}
@@ -360,7 +360,7 @@ class User_Account_Management {
 	 * @return string Redirect URL
 	 */
 	public function redirect_after_login( $redirect_to, $requested_redirect_to, $user ) {
-		$redirect_url = home_url();
+		$redirect_url = site_url();
 
 		if ( ! isset( $user->ID ) ) {
 			return $redirect_url;
@@ -378,7 +378,7 @@ class User_Account_Management {
 			$redirect_url = home_url( 'user' );
 		}
 
-		return wp_validate_redirect( $redirect_url, home_url() );
+		return wp_validate_redirect( $redirect_url, site_url() );
 	}
 
 	/**
@@ -435,7 +435,7 @@ class User_Account_Management {
 			if ( is_user_logged_in() ) {
 				$this->redirect_logged_in_user();
 			} else {
-				wp_redirect( home_url( 'user/register' ) );
+				wp_redirect( site_url( 'user/register' ) );
 			}
 			exit;
 		}
