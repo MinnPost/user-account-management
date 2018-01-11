@@ -277,7 +277,11 @@ class User_Account_Management {
 				wp_redirect( admin_url() );
 			}
 		} else {
-			wp_redirect( home_url( 'user' ) );
+			if ( $redirect_to ) {
+				wp_safe_redirect( $redirect_to );
+			} else {
+				wp_redirect( site_url( 'user' ) );
+			}
 		}
 	}
 
@@ -374,8 +378,12 @@ class User_Account_Management {
 				$redirect_url = $requested_redirect_to;
 			}
 		} else {
-			// Non-admin users always go to their account page after login
-			$redirect_url = home_url( 'user' );
+			// Non-admin users go to their account page after login, unless another url is supplied
+			if ( '' === $requested_redirect_to ) {
+				$redirect_url = site_url( 'user' );
+			} else {
+				$redirect_url = $requested_redirect_to;
+			}
 		}
 
 		return wp_validate_redirect( $redirect_url, site_url() );
@@ -504,7 +512,6 @@ class User_Account_Management {
 	 */
 	public function do_register_user() {
 		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
-			$redirect_url = home_url( 'user/register' );
 
 			if ( ! get_option( 'users_can_register' ) ) {
 				// Registration closed, display error
@@ -540,12 +547,8 @@ class User_Account_Management {
 					if ( ! is_wp_error( $result ) ) {
 						global $current_user;
 						$current_user = $result;
-						if ( wp_get_referer() ) {
-							wp_safe_redirect( wp_get_referer() );
-						} else {
-							$default_url = get_option( 'user_account_management_default_login_redirect', home_url( 'user' ) );
-							wp_safe_redirect( $default_url );
-						}
+						$default_url = get_option( 'user_account_management_default_login_redirect', site_url( 'user' ) );
+						wp_safe_redirect( $default_url );
 						exit();
 					}
 				}

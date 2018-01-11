@@ -27,6 +27,10 @@
 <div class="login-form-container">
     <form method="post" action="<?php echo $attributes['action']; ?>">
 
+        <?php if ( isset( $_GET['redirect_to'] ) ) : ?>
+        <input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
+        <?php endif; ?>
+
         <p class="login-username">
             <label for="user_login"><?php _e( 'Email', 'personalize-login' ); ?></label>
             <input type="text" name="log" id="user_login">
