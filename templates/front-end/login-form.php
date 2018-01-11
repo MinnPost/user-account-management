@@ -23,17 +23,16 @@
 
 	<fieldset>
 		<div class="m-form-item m-form-email m-form-login-email">
-			<label for="user_login"><?php _e( 'Email Address:', 'user-account-management' ); ?> <span class="form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="user_login"><?php _e( 'Email Address:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="email" name="log" id="user_login" required>
 		</div>
 		<div class="m-form-item m-form-password m-form-login-password">
-			<label for="user_pass"><?php _e( 'Password:', 'user-account-management' ); ?> <span class="form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="user_pass"><?php _e( 'Password:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="password" name="pwd" id="user_pass" required>
 		</div>
-		<p class="a-form-instructions"><a href="">Need help or forgot password?</a>
 		<div class="m-form-actions">
 			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>">
 		</div>
-		<p class="a-form-instructions"><small>By proceeding, you agree to MinnPost's <a href="">Terms of Use</a> and <a href="">Privacy Policy</a>.</small></p>
+		<p class="a-form-instructions a-form-caption"><a href="">Need help or forgot your password?</a></p>
 	</fieldset>
 </form>
