@@ -13,23 +13,27 @@
 		</p>
 	<?php endforeach; ?>
 <?php endif; ?>
-<div class="login-form-container">
-	<form method="post" action="<?php echo $attributes['action']; ?>">
+<form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-login">
 
-		<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
-		<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
-		<?php endif; ?>
+	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
+	<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
+	<?php endif; ?>
 
-		<p class="login-username">
-			<label for="user_login"><?php _e( 'Email', 'user-account-management' ); ?></label>
-			<input type="text" name="log" id="user_login">
-		</p>
-		<p class="login-password">
-			<label for="user_pass"><?php _e( 'Password', 'user-account-management' ); ?></label>
-			<input type="password" name="pwd" id="user_pass">
-		</p>
-		<p class="login-submit">
+	<p class="a-form-instructions">No account yet? <a href="">Register now</a>.</p>
+
+	<fieldset>
+		<div class="m-form-item m-form-email m-form-login-email">
+			<label for="user_login"><?php _e( 'Email Address:', 'user-account-management' ); ?> <span class="form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<input type="email" name="log" id="user_login" required>
+		</div>
+		<div class="m-form-item m-form-password m-form-login-password">
+			<label for="user_pass"><?php _e( 'Password:', 'user-account-management' ); ?> <span class="form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<input type="password" name="pwd" id="user_pass" required>
+		</div>
+		<p class="a-form-instructions"><a href="">Need help or forgot password?</a>
+		<div class="m-form-actions">
 			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>">
-		</p>
-	</form>
-</div>
+		</div>
+		<p class="a-form-instructions"><small>By proceeding, you agree to MinnPost's <a href="">Terms of Use</a> and <a href="">Privacy Policy</a>.</small></p>
+	</fieldset>
+</form>
