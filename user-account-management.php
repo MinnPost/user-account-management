@@ -319,24 +319,25 @@ class User_Account_Management {
 	private function get_error_message( $error_code ) {
 		switch ( $error_code ) {
 			case 'empty_username':
-				return __( 'You do have an email address, right?', 'user-account-management' );
+				return __( 'You did not enter an email address.', 'user-account-management' );
 			case 'empty_password':
-				return __( 'You need to enter a password to login.', 'user-account-management' );
+				return __( 'You did not enter a password.', 'user-account-management' );
 			case 'invalid_username':
+			case 'invalid_email':
 				return __(
-					"We don't have any users with that email address. Maybe you used a different one when signing up?",
+					"We couldn't find an account with that email address. Maybe you used a different one when signing up?",
 					'user-account-management'
 				);
 			case 'incorrect_password':
 				$err = __(
-					"The password you entered wasn't quite right. <a href='%s'>Did you forget your password</a>?",
+					"The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>.",
 					'user-account-management'
 				);
 				return sprintf( $err, wp_lostpassword_url() );
 			case 'email':
 				return __( 'The email address you entered is not valid.', 'user-account-management' );
 			case 'email_exists':
-				return __( 'An account exists with this email address.', 'user-account-management' );
+				return __( 'An account already exists with this email address. Is it yours?', 'user-account-management' );
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
 			default:
