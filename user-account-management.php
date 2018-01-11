@@ -88,6 +88,16 @@ class User_Account_Management {
 				'content' => '[custom-register-form]',
 				'parent' => 'user',
 			),
+			'password-lost' => array(
+				'title' => __( 'Forgot Your Password?', 'user-account-management' ),
+				'content' => '[custom-password-lost-form]',
+				'parent' => 'user',
+			),
+			'password-reset' => array(
+				'title' => __( 'Pick a New Password', 'user-account-management' ),
+				'content' => '[custom-password-reset-form]',
+				'parent' => 'user',
+			),
 		);
 
 		foreach ( $page_definitions as $slug => $page ) {
@@ -449,7 +459,7 @@ class User_Account_Management {
 		}
 		*/
 
-		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) password/help link, 4) password/help link text
+		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
 			wp_login_url(),
 			esc_html__( 'Log in now', 'user-account-management' ),
