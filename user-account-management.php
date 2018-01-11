@@ -270,7 +270,7 @@ class User_Account_Management {
 	 */
 	private function redirect_logged_in_user( $redirect_to = null ) {
 		$user = wp_get_current_user();
-		if ( user_can( $user, 'manage_options' ) ) {
+		if ( in_array( $user->roles[0], array( 'administrator' ) ) ) {
 			if ( $redirect_to ) {
 				wp_safe_redirect( $redirect_to );
 			} else {
@@ -366,7 +366,7 @@ class User_Account_Management {
 			return $redirect_url;
 		}
 
-		if ( user_can( $user, 'manage_options' ) ) {
+		if ( in_array( $user->roles[0], array( 'administrator' ) ) ) {
 			// Use the redirect_to parameter if one is set, otherwise redirect to admin dashboard.
 			if ( '' === $requested_redirect_to ) {
 				$redirect_url = admin_url();
