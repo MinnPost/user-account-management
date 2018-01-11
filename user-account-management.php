@@ -49,14 +49,6 @@ class User_Account_Management {
 	 * @param string $name
 	 */
 	public function set_default_display_name( $name ) {
-		/*$user = get_userdata( $user_id );
-		$name = sprintf( '%s %s', $user->first_name, $user->last_name );
-		$args = array(
-			'ID'           => $user_id,
-			'display_name' => $name,
-			'nickname'     => $name,
-		);
-		wp_update_user( $args );*/
 		$first_name = isset( $_POST['first_name'] ) ? sanitize_text_field( $_POST['first_name'] ) : '';
 		$last_name = isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : '';
 		if ( '' !== $first_name && '' !== $last_name ) {
@@ -194,6 +186,17 @@ class User_Account_Management {
 		// Check if the user just registered
 		$attributes['registered'] = isset( $_REQUEST['registered'] );
 
+		// form action for submission
+		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', wp_login_url() );
+
+		// example to change the form action
+		/*
+		add_filter( 'user_account_management_login_form_action', 'login_form_action', 10, 1 );
+		function login_form_action( $login_form_action ) {
+			return $login_form_action;
+		}
+		*/
+
 		// Render the login form using an external template
 		return $this->get_template_html( 'login-form', 'front-end', $attributes );
 	}
@@ -220,7 +223,14 @@ class User_Account_Management {
 
 		do_action( 'user_account_management_before_' . $template_name );
 
-		require( 'templates/' . $location . $template_name . '.php' );
+		// allow users to put templates into their theme
+		if ( file_exists( get_theme_file_path() . '/' . $this->slug . '-templates/' . $template_name . '.php' ) ) {
+			$file = get_theme_file_path() . '/' . $this->slug . '-templates/' . $template_name . '.php';
+		} else {
+			$file = plugin_dir_path( __FILE__ ) . 'templates/' . $location . $template_name . '.php';
+		}
+
+		require( $file );
 
 		do_action( 'user_account_management_after_' . $template_name );
 
@@ -236,7 +246,6 @@ class User_Account_Management {
 	function redirect_to_custom_login() {
 		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
 			$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : null;
-
 			if ( is_user_logged_in() ) {
 				$this->redirect_logged_in_user( $redirect_to );
 				exit;
@@ -396,6 +405,17 @@ class User_Account_Management {
 				$attributes['errors'][] = $this->get_error_message( $error_code );
 			}
 		}
+
+		// form action for submission
+		$attributes['action'] = apply_filters( 'user_account_management_register_form_action', wp_registration_url() );
+
+		// example to change the form action
+		/*
+		add_filter( 'user_account_management_register_form_action', 'register_form_action', 10, 1 );
+		function register_form_action( $register_form_action ) {
+			return $register_form_action;
+		}
+		*/
 
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );

@@ -25,7 +25,8 @@
     <?php endforeach; ?>
 <?php endif; ?>
 <div class="login-form-container">
-    <form method="post" action="<?php echo wp_login_url(); ?>">
+    <form method="post" action="<?php echo $attributes['action']; ?>">
+
         <p class="login-username">
             <label for="user_login"><?php _e( 'Email', 'personalize-login' ); ?></label>
             <input type="text" name="log" id="user_login">

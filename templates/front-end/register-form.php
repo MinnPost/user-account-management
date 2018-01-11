@@ -12,7 +12,8 @@
         <h3><?php _e( 'Register', 'personalize-login' ); ?></h3>
     <?php endif; ?>
  
-    <form id="signupform" action="<?php echo wp_registration_url(); ?>" method="post">
+    <form id="signupform" action="<?php echo $attributes['action']; ?>" method="post">
+
         <p class="form-row">
             <label for="email"><?php _e( 'Email', 'personalize-login' ); ?> <strong>*</strong></label>
             <input type="email" name="email" id="email">
