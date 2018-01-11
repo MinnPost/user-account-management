@@ -26,20 +26,22 @@ class User_Account_Management {
 
 	private function add_actions() {
 		// shortcodes for pages
-		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) );
-		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) );
+		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) ); // login
+		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) ); // register
+		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // forgot password
 
 		// actions
-		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) );
-		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) );
-		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) );
-		add_action( 'login_form_register', array( $this, 'do_register_user' ) );
+		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
+		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
+		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
+		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
+		add_action( 'login_form_lostpassword', array( $this, 'redirect_to_custom_lostpassword' ) ); // forgot password
 
 		// filters
-		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 );
-		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 );
-		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 );
-		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) );
+		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
+		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
+		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
+		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
 	}
 
 	/**
@@ -204,7 +206,7 @@ class User_Account_Management {
 
 		// translators: password help at bottom of the form. placeholders are 1) reset password link; 2) reset password link text
 		$attributes['password_help'] = sprintf( '<p class="a-form-instructions a-form-caption"><a href="%1$s">%2$s</a>.</p>',
-			wp_registration_url(),
+			wp_lostpassword_url(),
 			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
 		);
 		$attributes['password_help'] = apply_filters( 'user_account_management_login_form_password_help', $attributes['password_help'] );
@@ -259,7 +261,7 @@ class User_Account_Management {
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
 			wp_login_url(),
 			esc_html__( 'Log in now', 'user-account-management' ),
-			wp_login_url(),
+			wp_lostpassword_url(),
 			esc_html__( 'account help', 'user-account-management' )
 		);
 		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'] );
@@ -294,6 +296,38 @@ class User_Account_Management {
 			return __( 'Registering new users is currently not allowed.', 'user-account-management' );
 		} else {
 			return $this->get_template_html( 'register-form', 'front-end', $attributes );
+		}
+	}
+
+	/**
+	 * A shortcode for rendering the form used to initiate the password reset.
+	 *
+	 * @param  array   $attributes  Shortcode attributes.
+	 * @param  string  $content     The text content for shortcode. Not used.
+	 *
+	 * @return string  The shortcode output
+	 */
+	public function render_password_lost_form( $attributes, $content = null ) {
+		// Parse shortcode attributes
+		$default_attributes = array(
+			'show_title' => false,
+		);
+		$attributes = shortcode_atts( $default_attributes, $attributes );
+
+		// form action for submission
+		$attributes['action'] = apply_filters( 'user_account_management_lost_password_form_action', wp_lostpassword_url() );
+		// example to change the form action
+		/*
+		add_filter( 'user_account_management_lost_password_form_action', 'lost_password_form_action', 10, 1 );
+		function lost_password_form_action( $lost_password_form_action ) {
+			return $lost_password_form_action;
+		}
+		*/
+
+		if ( is_user_logged_in() ) {
+			return __( 'You are already signed in.', 'user-account-management' );
+		} else {
+			return $this->get_template_html( 'password-lost-form', 'front-end', $attributes );
 		}
 	}
 
@@ -397,6 +431,21 @@ class User_Account_Management {
 			}
 
 			wp_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	/**
+	 * Redirects the user to the custom "Forgot your password?" page instead of
+	 * wp-login.php?action=lostpassword.
+	 */
+	public function redirect_to_custom_lostpassword() {
+		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
+			if ( is_user_logged_in() ) {
+				$this->redirect_logged_in_user();
+				exit;
+			}
+			wp_redirect( site_url( 'user/password-lost' ) );
 			exit;
 		}
 	}
