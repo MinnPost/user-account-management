@@ -185,12 +185,39 @@ class User_Account_Management {
 
 		// form action for submission
 		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', wp_login_url() );
-
 		// example to change the form action
 		/*
 		add_filter( 'user_account_management_login_form_action', 'login_form_action', 10, 1 );
 		function login_form_action( $login_form_action ) {
 			return $login_form_action;
+		}
+		*/
+
+		// translators: instructions on top of the form. placeholders are 1) registration link; 2) registration link text
+		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
+			wp_registration_url(),
+			esc_html__( 'Register now', 'user-account-management' )
+		);
+		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'] );
+		// example to change the form action
+		/*
+		add_filter( 'user_account_management_login_form_instructions', 'login_form_instructions', 10, 1 );
+		function login_form_instructions( $login_form_instructions ) {
+			return $login_form_instructions;
+		}
+		*/
+
+		// translators: password help at bottom of the form. placeholders are 1) reset password link; 2) reset password link text
+		$attributes['password_help'] = sprintf( '<p class="a-form-instructions a-form-caption"><a href="%1$s">%2$s</a>.</p>',
+			wp_registration_url(),
+			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
+		);
+		$attributes['password_help'] = apply_filters( 'user_account_management_login_form_password_help', $attributes['password_help'] );
+		// example to change the form action
+		/*
+		add_filter( 'user_account_management_login_form_password_help', 'login_form_password_help', 10, 1 );
+		function login_form_password_help( $login_form_password_help ) {
+			return $login_form_password_help;
 		}
 		*/
 

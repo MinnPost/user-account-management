@@ -19,7 +19,9 @@
 	<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
 	<?php endif; ?>
 
-	<p class="a-form-instructions">No account yet? <a href="">Register now</a>.</p>
+	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
+	<?php echo $attributes['instructions']; ?>
+	<?php endif; ?>
 
 	<fieldset>
 		<div class="m-form-item m-form-email m-form-login-email">
@@ -33,6 +35,8 @@
 		<div class="m-form-actions">
 			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>">
 		</div>
-		<p class="a-form-instructions a-form-caption"><a href="">Need help or forgot your password?</a></p>
+		<?php if ( ! empty( $attributes['password_help'] ) ) : ?>
+		<?php echo $attributes['password_help']; ?>
+		<?php endif; ?>
 	</fieldset>
 </form>
