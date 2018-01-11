@@ -199,7 +199,7 @@ class User_Account_Management {
 			esc_html__( 'Register now', 'user-account-management' )
 		);
 		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'] );
-		// example to change the form action
+		// example to change the login form instructions
 		/*
 		add_filter( 'user_account_management_login_form_instructions', 'login_form_instructions', 10, 1 );
 		function login_form_instructions( $login_form_instructions ) {
@@ -213,7 +213,7 @@ class User_Account_Management {
 			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
 		);
 		$attributes['password_help'] = apply_filters( 'user_account_management_login_form_password_help', $attributes['password_help'] );
-		// example to change the form action
+		// example to change the password help
 		/*
 		add_filter( 'user_account_management_login_form_password_help', 'login_form_password_help', 10, 1 );
 		function login_form_password_help( $login_form_password_help ) {
@@ -441,12 +441,44 @@ class User_Account_Management {
 
 		// form action for submission
 		$attributes['action'] = apply_filters( 'user_account_management_register_form_action', wp_registration_url() );
-
 		// example to change the form action
 		/*
 		add_filter( 'user_account_management_register_form_action', 'register_form_action', 10, 1 );
 		function register_form_action( $register_form_action ) {
 			return $register_form_action;
+		}
+		*/
+
+		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) password/help link, 4) password/help link text
+		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
+			wp_login_url(),
+			esc_html__( 'Log in now', 'user-account-management' ),
+			wp_login_url(),
+			esc_html__( 'account help', 'user-account-management' )
+		);
+		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'] );
+		// example to change the register form instructions
+		/*
+		add_filter( 'user_account_management_register_form_instructions', 'register_form_instructions', 10, 1 );
+		function register_form_instructions( $register_form_instructions ) {
+			return $register_form_instructions;
+		}
+		*/
+
+		// translators: terms & conditions at bottom of the form. placeholders are 1) name of site, 2) terms of use link, 3) terms link text, 4) privacy link, 5) privacy link text
+		$attributes['privacy_terms'] = sprintf( '<p class="a-form-instructions"><small>' . esc_html__( 'By proceeding, you agree to ', 'user-account-management' ) . ' %1$s' . esc_html__( "'s", 'user-account-management' ) . ' <a href="%2$s">%3$s</a> ' . esc_html__( ' and ', 'user-account-management' ) . '<a href="%4$s">%5$s</a>.</small></p>',
+			get_bloginfo( 'name' ),
+			site_url( 'privacy' ),
+			esc_html__( 'Privacy Policy', 'user-account-management' ),
+			site_url( 'terms-of-use' ),
+			esc_html__( 'Terms of Use', 'user-account-management' )
+		);
+		$attributes['privacy_terms'] = apply_filters( 'user_account_management_register_form_privacy_terms', $attributes['privacy_terms'] );
+		// example to change the register form terms
+		/*
+		add_filter( 'user_account_management_register_form_privacy_terms', 'register_form_privacy_terms', 10, 1 );
+		function register_form_privacy_terms( $register_form_privacy_terms ) {
+			return $register_form_privacy_terms;
 		}
 		*/
 
