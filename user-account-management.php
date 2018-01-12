@@ -88,7 +88,7 @@ class User_Account_Management {
 				'parent' => 'user',
 			),
 			'password-reset' => array(
-				'title' => __( 'Pick a New Password', 'user-account-management' ),
+				'title' => __( 'Set a New Password', 'user-account-management' ),
 				'content' => '[custom-password-reset-form]',
 				'parent' => 'user',
 			),
@@ -162,6 +162,7 @@ class User_Account_Management {
 		$attributes = shortcode_atts( $default_attributes, $attributes );
 		$show_title = $attributes['show_title'];
 
+		// if the user is already signed in, this lets us not leave them stranded
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
 		}
@@ -885,8 +886,6 @@ class User_Account_Management {
 			case 'expiredkey':
 			case 'invalidkey':
 				return __( 'The password reset link you used is not valid anymore.', 'user-account-management' );
-			case 'password_reset_mismatch':
-				return __( "The two passwords you entered don't match.", 'user-account-management' );
 			case 'password_reset_empty':
 				return __( "Sorry, we don't accept empty passwords.", 'user-account-management' );
 			default:
