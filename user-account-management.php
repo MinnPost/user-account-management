@@ -29,6 +29,7 @@ class User_Account_Management {
 		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) ); // login
 		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) ); // register
 		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // lost password
+		add_shortcode( 'custom-password-reset-form', array( $this, 'render_password_reset_form' ) ); // reset password
 
 		// actions
 		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
@@ -341,6 +342,46 @@ class User_Account_Management {
 			return __( 'You are already signed in.', 'user-account-management' );
 		} else {
 			return $this->get_template_html( 'password-lost-form', 'front-end', $attributes );
+		}
+	}
+
+	/**
+	 * A shortcode for rendering the form used to reset a user's password.
+	 *
+	 * @param  array   $attributes  Shortcode attributes.
+	 * @param  string  $content     The text content for shortcode. Not used.
+	 *
+	 * @return string  The shortcode output
+	 */
+	public function render_password_reset_form( $attributes, $content = null ) {
+		// Parse shortcode attributes
+		$default_attributes = array(
+			'show_title' => false,
+		);
+		$attributes = shortcode_atts( $default_attributes, $attributes );
+
+		if ( is_user_logged_in() ) {
+			return __( 'You are already signed in.', 'user-account-management' );
+		} else {
+			if ( isset( $_REQUEST['login'] ) && isset( $_REQUEST['key'] ) ) {
+				$attributes['login'] = $_REQUEST['login'];
+				$attributes['key'] = $_REQUEST['key'];
+
+				// Error messages
+				$errors = array();
+				if ( isset( $_REQUEST['error'] ) ) {
+					$error_codes = explode( ',', $_REQUEST['error'] );
+
+					foreach ( $error_codes as $code ) {
+						$errors []= $this->get_error_message( $code );
+					}
+				}
+				$attributes['errors'] = $errors;
+
+				return $this->get_template_html( 'password-reset-form', 'front-end', $attributes );
+			} else {
+				return __( 'Invalid password reset link.', 'user-account-management' );
+			}
 		}
 	}
 
