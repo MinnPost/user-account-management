@@ -11,12 +11,6 @@
 	</p>
 <?php endif; ?>
 
-<?php if ( $attributes['password_updated'] ) : ?>
-	<p class="login-info">
-		<?php _e( 'Your password has been changed. You can sign in now.', 'user-account-management' ); ?>
-	</p>
-<?php endif; ?>
-
 <!-- Show errors if there are any -->
 <?php if ( count( $attributes['errors'] ) > 0 ) : ?>
 	<?php foreach ( $attributes['errors'] as $error ) : ?>

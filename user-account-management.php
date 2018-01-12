@@ -177,9 +177,6 @@ class User_Account_Management {
 		// Check if the user just requested a new password
 		$attributes['lost_password_sent'] = isset( $_REQUEST['checkemail'] ) && 'confirm' === $_REQUEST['checkemail'];
 
-		// Check if user just updated password
-		$attributes['password_updated'] = isset( $_REQUEST['password'] ) && 'changed' === $_REQUEST['password'];
-
 		// Error messages
 		$errors = array();
 		if ( isset( $_REQUEST['login'] ) ) {
@@ -596,7 +593,24 @@ class User_Account_Management {
 
 				// Parameter checks OK, reset password
 				reset_password( $user, $_POST['new_password'] );
-				wp_redirect( site_url( '/user/login?password=changed' ) );
+
+				// user has a new password; log them in now
+				$user_data = array(
+					'user_login' => $rp_login,
+					'user_password' => $_POST['new_password'],
+					'remember' => false,
+				);
+
+				$result = wp_signon( $user_data );
+
+				if ( ! is_wp_error( $result ) ) {
+					global $current_user;
+					$current_user = $result;
+					$default_url = get_option( 'user_account_management_default_login_redirect', site_url( 'user' ) );
+					wp_safe_redirect( $default_url );
+					exit();
+				}
+
 			} else {
 				echo 'Invalid request.';
 			}

@@ -1,9 +1,6 @@
 <div id="password-reset-form" class="widecolumn">
-	<?php if ( $attributes['show_title'] ) : ?>
-		<h3><?php _e( 'Pick a New Password', 'user-account-management' ); ?></h3>
-	<?php endif; ?>
 
-	<form name="resetpassform" id="resetpassform" action="<?php echo site_url( 'wp-login.php?action=resetpass' ); ?>" method="post" autocomplete="off">
+	<form id="reset-password-form" action="<?php echo site_url( 'wp-login.php?action=resetpass' ); ?>" method="post" class="m-form m-form-standalone m-form-reset-password" autocomplete="off">
 
 		<input type="hidden" id="user_login" name="rp_login" value="<?php echo rawurlencode( $attributes['login'] ); ?>" autocomplete="off" />
 		<input type="hidden" name="rp_key" value="<?php echo rawurlencode( $attributes['key'] ); ?>" />
