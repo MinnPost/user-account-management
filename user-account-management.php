@@ -167,6 +167,9 @@ class User_Account_Management {
 			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
 		}
 
+		// Check if the user just requested a new password
+		$attributes['lost_password_sent'] = isset( $_REQUEST['checkemail'] ) && 'confirm' === $_REQUEST['checkemail'];
+
 		// Error messages
 		$errors = array();
 		if ( isset( $_REQUEST['login'] ) ) {

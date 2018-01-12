@@ -5,6 +5,12 @@
 	</p>
 <?php endif; ?>
 
+<?php if ( $attributes['lost_password_sent'] ) : ?>
+	<p class="login-info">
+		<?php _e( 'Check your email for a link to reset your password.', 'user-account-management' ); ?>
+	</p>
+<?php endif; ?>
+
 <!-- Show errors if there are any -->
 <?php if ( count( $attributes['errors'] ) > 0 ) : ?>
 	<?php foreach ( $attributes['errors'] as $error ) : ?>
