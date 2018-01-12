@@ -175,6 +175,9 @@ class User_Account_Management {
 		// Check if the user just requested a new password
 		$attributes['lost_password_sent'] = isset( $_REQUEST['checkemail'] ) && 'confirm' === $_REQUEST['checkemail'];
 
+		// Check if user just updated password
+		$attributes['password_updated'] = isset( $_REQUEST['password'] ) && 'changed' === $_REQUEST['password'];
+
 		// Error messages
 		$errors = array();
 		if ( isset( $_REQUEST['login'] ) ) {
