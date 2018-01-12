@@ -5,7 +5,7 @@
 	</p>
 <?php endif; ?>
 
-<form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-login">
+<form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-user m-form-login">
 
 	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
 	<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
@@ -53,7 +53,7 @@
 			<input type="password" name="pwd" id="user_pass" required>
 		</div>
 		<div class="m-form-actions">
-			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>">
+			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-login">
 		</div>
 		<?php if ( ! empty( $attributes['password_help'] ) ) : ?>
 		<?php echo $attributes['password_help']; ?>

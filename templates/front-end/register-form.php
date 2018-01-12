@@ -6,7 +6,7 @@
 	<?php endforeach; ?>
 <?php endif; ?>
 
-<form id="register-form" action="<?php echo $attributes['action']; ?>" method="post" class="m-form m-form-standalone m-form-register">
+<form id="register-form" action="<?php echo $attributes['action']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-register">
 
 	<input type="hidden" name="city" value="">
 	<input type="hidden" name="state" value="">
@@ -48,8 +48,7 @@
 		</div>
 
 		<div class="m-form-actions">
-			<input type="submit" name="submit" class="register-button"
-				   value="<?php _e( 'Create new account', 'user-account-management' ); ?>"/>
+			<input type="submit" name="submit" class="register-button" value="<?php _e( 'Create new account', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-register">
 		</div>
 	</fieldset>
 

@@ -1,6 +1,6 @@
 <div id="password-reset-form" class="widecolumn">
+<form id="reset-password-form" action="<?php echo site_url( 'wp-login.php?action=resetpass' ); ?>" method="post" class="m-form m-form-standalone m-form-user m-form-reset-password">
 
-	<form id="reset-password-form" action="<?php echo site_url( 'wp-login.php?action=resetpass' ); ?>" method="post" class="m-form m-form-standalone m-form-reset-password" autocomplete="off">
 
 		<input type="hidden" id="user_login" name="rp_login" value="<?php echo rawurlencode( $attributes['login'] ); ?>" autocomplete="off" />
 		<input type="hidden" name="rp_key" value="<?php echo rawurlencode( $attributes['key'] ); ?>" />
@@ -22,9 +22,8 @@
 			<p class="description"><?php echo wp_get_password_hint(); ?></p>
 
 			<div class="m-form-actions">
-				<input type="submit" name="submit" id="resetpass-button"
-					   class="button" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" />
 			</div>
 		</fieldset>
 	</form>
 </div>
+			<input type="submit" name="submit" id="resetpass-button" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" class="btn btn-submit btn-reset-password">
