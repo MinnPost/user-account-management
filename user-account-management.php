@@ -28,14 +28,14 @@ class User_Account_Management {
 		// shortcodes for pages
 		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) ); // login
 		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) ); // register
-		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // forgot password
+		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // lost password
 
 		// actions
 		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
 		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
 		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
 		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
-		add_action( 'login_form_lostpassword', array( $this, 'redirect_to_custom_lostpassword' ) ); // forgot password
+		add_action( 'login_form_lostpassword', array( $this, 'redirect_to_custom_lostpassword' ) ); // lost password
 
 		// filters
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
