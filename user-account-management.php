@@ -37,12 +37,16 @@ class User_Account_Management {
 		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
 		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
 		add_action( 'login_form_lostpassword', array( $this, 'redirect_to_custom_lostpassword' ) ); // lost password
+		add_action( 'login_form_lostpassword', array( $this, 'do_password_lost' ) ); // lost password
+		add_action( 'login_form_rp', array( $this, 'redirect_to_custom_password_reset' ) ); // reset password
+		add_action( 'login_form_resetpass', array( $this, 'redirect_to_custom_password_reset' ) ); // reset password
 
 		// filters
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
 		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
 		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
+		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
 	}
 
 	/**
@@ -505,6 +509,53 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Initiates password reset.
+	 */
+	public function do_password_lost() {
+		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+			$errors = retrieve_password();
+			if ( is_wp_error( $errors ) ) {
+				// Errors found
+				$redirect_url = site_url( 'user/password-lost' );
+				$redirect_url = add_query_arg( 'errors', join( ',', $errors->get_error_codes() ), $redirect_url );
+			} else {
+				// Email sent
+				$redirect_url = site_url( 'user/login' );
+				$redirect_url = add_query_arg( 'checkemail', 'confirm', $redirect_url );
+			}
+
+			wp_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	/**
+	 * Redirects to the custom password reset page, or the login page
+	 * if there are errors.
+	 */
+	public function redirect_to_custom_password_reset() {
+		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
+			// Verify key / login combo
+			$user = check_password_reset_key( $_REQUEST['key'], $_REQUEST['login'] );
+			if ( ! $user || is_wp_error( $user ) ) {
+				if ( $user && $user->get_error_code() === 'expired_key' ) {
+					wp_redirect( site_url( 'user/login?login=expiredkey' ) );
+				} else {
+					wp_redirect( site_url( 'user/login?login=invalidkey' ) );
+				}
+				exit;
+			}
+
+			$redirect_url = site_url( 'user/password-reset' );
+			$redirect_url = add_query_arg( 'login', esc_attr( $_REQUEST['login'] ), $redirect_url );
+			$redirect_url = add_query_arg( 'key', esc_attr( $_REQUEST['key'] ), $redirect_url );
+
+			wp_redirect( $redirect_url );
+			exit;
+		}
+	}
+
+	/**
 	 * Redirect the user after authentication if there were any errors.
 	 *
 	 * @param Wp_User|Wp_Error  $user       The signed in user, or the errors that have occurred during login.
@@ -597,6 +648,29 @@ class User_Account_Management {
 			$name = $first_name . ' ' . $last_name;
 		}
 		return $name;
+	}
+
+	/**
+	 * Returns the message body for the password reset mail.
+	 * Called through the retrieve_password_message filter.
+	 *
+	 * @param string  $message    Default mail message.
+	 * @param string  $key        The activation key.
+	 * @param string  $user_login The username for the user.
+	 * @param WP_User $user_data  WP_User object.
+	 *
+	 * @return string   The mail message to send.
+	 */
+	public function replace_retrieve_password_message( $message, $key, $user_login, $user_data ) {
+		// Create new message
+		$msg  = __( 'Hello!', 'personalize-login' ) . "\r\n\r\n";
+		$msg .= sprintf( __( 'You asked us to reset your password for your account using the email address %s.', 'personalize-login' ), $user_login ) . "\r\n\r\n";
+		$msg .= __( "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen.", 'personalize-login' ) . "\r\n\r\n";
+		$msg .= __( 'To reset your password, visit the following address:', 'personalize-login' ) . "\r\n\r\n";
+		$msg .= site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . "\r\n\r\n";
+		$msg .= __( 'Thanks!', 'personalize-login' ) . "\r\n";
+
+		return $msg;
 	}
 
 	/**
@@ -726,6 +800,7 @@ class User_Account_Management {
 				return __( 'You did not enter a password.', 'user-account-management' );
 			case 'invalid_username':
 			case 'invalid_email':
+			case 'invalidcombo':
 				return __(
 					"We couldn't find an account with that email address. Maybe you used a different one when signing up?",
 					'user-account-management'
