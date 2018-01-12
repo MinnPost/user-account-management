@@ -11,14 +11,6 @@
 	</p>
 <?php endif; ?>
 
-<!-- Show errors if there are any -->
-<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
-	<?php foreach ( $attributes['errors'] as $error ) : ?>
-		<p class="login-error">
-			<?php echo $error; ?>
-		</p>
-	<?php endforeach; ?>
-<?php endif; ?>
 <form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-login">
 
 	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
@@ -27,6 +19,20 @@
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 	<?php echo $attributes['instructions']; ?>
+	<?php endif; ?>
+
+	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
+		<div class="m-form-message m-form-message-error">
+			<?php if ( count( $attributes['errors'] ) > 1 ) : ?>
+				<ul>
+					<?php foreach ( $attributes['errors'] as $error ) : ?>
+						<li><?php echo $error; ?></li>
+					<?php endforeach; ?>
+				</ul>
+			<?php else : ?>
+				<p><?php echo $attributes['errors'][0]; ?></p>
+			<?php endif; ?>
+		</div>
 	<?php endif; ?>
 
 	<fieldset>
