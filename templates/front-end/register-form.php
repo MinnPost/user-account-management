@@ -30,7 +30,7 @@
 
 		<div class="m-form-item m-form-password m-form-register-password">
 			<label for="password"><?php _e( 'Password:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="password" name="password" id="password" class="password-show password-not-shown password-help password-help-not-shown" required>
+			<input type="password" name="password" id="password" class="password-show password-help password-help-not-shown password-strength-check" required>
 		</div>
 
 		<div class="m-form-item m-form-first-name m-form-register-first-name">

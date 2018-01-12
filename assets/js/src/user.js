@@ -64,18 +64,23 @@ function checkPasswordStrength( $password, $strengthResult, $submitButton, black
 }
 
 $(document).ready(function() {
-	showPassword();
+	// show password if user clicks
+	if ($('.password-show').length > 0 ) {
+		showPassword();
+	}
 	// checkPasswordStrength
-	var $before = $('.a-form-show-password');
-	$before.after( $('<span id="password-strength"></span>'));
-    $( 'body' ).on( 'keyup', 'input[name=password], input[name=new_password]',
-        function( event ) {
-            checkPasswordStrength(
-                $('input[name=password], input[name=new_password]'),         // First password field
-                $('#password-strength'),           // Strength meter
-                $('input[type=submit]'),           // Submit button
-                ['black', 'listed', 'word']        // Blacklisted words
-            );
-        }
-    );
+	if ($('.password-strength-check').length > 0 ) {
+		var $before = $('.a-form-show-password');
+		$before.after( $('<span id="password-strength"></span>'));
+	    $( 'body' ).on( 'keyup', 'input[name=password], input[name=new_password]',
+	        function( event ) {
+	            checkPasswordStrength(
+	                $('input[name=password], input[name=new_password]'),         // First password field
+	                $('#password-strength'),           // Strength meter
+	                $('input[type=submit]'),           // Submit button
+	                ['black', 'listed', 'word']        // Blacklisted words
+	            );
+	        }
+	    );
+	}
 });
