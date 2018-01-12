@@ -32,6 +32,7 @@ class User_Account_Management {
 		add_shortcode( 'custom-password-reset-form', array( $this, 'render_password_reset_form' ) ); // reset password
 
 		// actions
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
 		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
 		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
 		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
@@ -389,6 +390,48 @@ class User_Account_Management {
 			} else {
 				return __( 'Invalid password reset link.', 'user-account-management' );
 			}
+		}
+	}
+
+	/**
+	 * Add plugin JavaScript
+	 *
+	 */
+	public function add_scripts_styles() {
+		$user_page = get_page_by_path( 'user' );
+		global $post;
+		if ( is_page( $user_page->ID ) || $user_page->ID === $post->post_parent ) {
+			if ( ! wp_script_is( 'jquery', 'done' ) ) {
+				wp_enqueue_script( 'jquery' );
+			}
+			wp_add_inline_script(
+				'jquery-migrate',
+				'var $ = window.jQuery;
+				$(document).ready(function() {
+					// Cache our jquery elements
+					var $form = $(".m-form-user");
+					var $submit = $(".btn-submit");
+					var $field = $(".password-show");
+					var _template = "<div class=\"a-form-show-password a-form-caption\"><label><input type=\"checkbox\" name=\"show_password\" id=\"show-password-checkbox\" value=\"1\"> Show password</label></div>";
+					// Inject the toggle button into the page
+					$field.after( _template );
+					// Cache the toggle button
+					var $toggle = $("#show-password-checkbox");
+					// Toggle the field type
+					$toggle.on("click", function(e) {
+						var checkbox = $(this);
+						if (checkbox.is(\':checked\')) {
+							$field.attr("type","text");
+						} else {
+							$field.attr("type","password");
+						}
+					});
+					// Set the form field back to a regular password element
+					$submit.on( "click", function(e) {
+						$field.attr("type","password");
+					});
+				})'
+			);
 		}
 	}
 

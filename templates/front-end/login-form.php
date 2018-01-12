@@ -50,7 +50,7 @@
 		</div>
 		<div class="m-form-item m-form-password m-form-login-password">
 			<label for="user_pass"><?php _e( 'Password:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="password" name="pwd" id="user_pass" required>
+			<input type="password" name="pwd" id="user_pass" class="password-show password-not-shown password-help password-help-not-shown" required>
 		</div>
 		<div class="m-form-actions">
 			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-login">

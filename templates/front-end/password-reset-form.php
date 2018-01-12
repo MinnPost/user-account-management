@@ -17,11 +17,11 @@
 		</div>
 	<?php endif; ?>
 
-			<div class="m-form-item m-form-password m-form-reset-password">
-				<label for="pass1"><?php _e( 'New password', 'user-account-management' ); ?></label>
-				<input type="password" name="new_password" id="new_password" value="" autocomplete="off" />
-			</div>
 	<fieldset>
+		<div class="m-form-item m-form-password m-form-reset-password">
+			<label for="new_password"><?php _e( 'New password:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<input type="password" name="new_password" id="new_password" value="" class="password-show password-not-shown password-help password-help-not-shown" required>
+		</div>
 
 		<p class="description"><?php echo wp_get_password_hint(); ?></p>
 
