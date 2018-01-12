@@ -346,6 +346,17 @@ class User_Account_Management {
 		}
 		*/
 
+		// translators: instructions on top of the form. so far no placeholders are necessary
+		$attributes['instructions'] = '<p class="a-form-instructions">' . esc_html__( 'Enter your email address and we\'ll send you a link you can use to pick a new password.' ) . '</p>';
+		$attributes['instructions'] = apply_filters( 'user_account_management_lost_password_form_instructions', $attributes['instructions'] );
+		// example to change the lost password form instructions
+		/*
+		add_filter( 'user_account_management_lost_password_form_instructions', 'lost_password_form_instructions', 10, 1 );
+		function lost_password_form_instructions( $lost_password_form_instructions ) {
+			return $lost_password_form_instructions;
+		}
+		*/
+
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
 		} else {
