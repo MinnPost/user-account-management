@@ -24,6 +24,11 @@ class User_Account_Management {
 
 	}
 
+	/**
+	 * Add plugin shortcodes, actions, and filters
+	 *
+	 * @return void
+	 */
 	private function add_actions() {
 		// shortcodes for pages
 		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) ); // login
@@ -412,37 +417,8 @@ class User_Account_Management {
 		$user_page = get_page_by_path( 'user' );
 		global $post;
 		if ( is_page( $user_page->ID ) || $user_page->ID === $post->post_parent ) {
-			if ( ! wp_script_is( 'jquery', 'done' ) ) {
-				wp_enqueue_script( 'jquery' );
-			}
-			wp_add_inline_script(
-				'jquery-migrate',
-				'var $ = window.jQuery;
-				$(document).ready(function() {
-					// Cache our jquery elements
-					var $form = $(".m-form-user");
-					var $submit = $(".btn-submit");
-					var $field = $(".password-show");
-					var _template = "<div class=\"a-form-show-password a-form-caption\"><label><input type=\"checkbox\" name=\"show_password\" id=\"show-password-checkbox\" value=\"1\"> Show password</label></div>";
-					// Inject the toggle button into the page
-					$field.after( _template );
-					// Cache the toggle button
-					var $toggle = $("#show-password-checkbox");
-					// Toggle the field type
-					$toggle.on("click", function(e) {
-						var checkbox = $(this);
-						if (checkbox.is(\':checked\')) {
-							$field.attr("type","text");
-						} else {
-							$field.attr("type","password");
-						}
-					});
-					// Set the form field back to a regular password element
-					$submit.on( "click", function(e) {
-						$field.attr("type","password");
-					});
-				})'
-			);
+			wp_enqueue_script( 'password-strength-meter' );
+			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), $this->version, true );
 		}
 	}
 
