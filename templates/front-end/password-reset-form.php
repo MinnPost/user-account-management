@@ -15,20 +15,22 @@
 			<?php endforeach; ?>
 		<?php endif; ?>
 
-		<p>
-			<label for="pass1"><?php _e( 'New password', 'user-account-management' ) ?></label>
-			<input type="password" name="pass1" id="pass1" class="input" size="20" value="" autocomplete="off" />
-		</p>
-		<p>
-			<label for="pass2"><?php _e( 'Repeat new password', 'user-account-management' ) ?></label>
-			<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off" />
-		</p>
+		<fieldset>
+			<div class="m-form-item m-form-password m-form-reset-password">
+				<label for="pass1"><?php _e( 'New password', 'user-account-management' ) ?></label>
+				<input type="password" name="pass1" id="pass1" class="input" size="20" value="" autocomplete="off" />
+			</div>
+			<p>
+				<label for="pass2"><?php _e( 'Repeat new password', 'user-account-management' ) ?></label>
+				<input type="password" name="pass2" id="pass2" class="input" size="20" value="" autocomplete="off" />
+			</p>
 
-		<p class="description"><?php echo wp_get_password_hint(); ?></p>
+			<p class="description"><?php echo wp_get_password_hint(); ?></p>
 
-		<p class="resetpass-submit">
-			<input type="submit" name="submit" id="resetpass-button"
-				   class="button" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" />
-		</p>
+			<div class="m-form-actions">
+				<input type="submit" name="submit" id="resetpass-button"
+					   class="button" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" />
+			</div>
+		</fieldset>
 	</form>
 </div>
