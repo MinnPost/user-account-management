@@ -5,12 +5,6 @@
 	</p>
 <?php endif; ?>
 
-<?php if ( $attributes['lost_password_sent'] ) : ?>
-	<p class="login-info">
-		<?php _e( 'Check your email for a link to reset your password.', 'user-account-management' ); ?>
-	</p>
-<?php endif; ?>
-
 <form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-login">
 
 	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
@@ -19,6 +13,20 @@
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 	<?php echo $attributes['instructions']; ?>
+	<?php endif; ?>
+
+	<?php if ( $attributes['lost_password_sent'] ) : ?>
+		<div class="m-form-message m-form-message-info">
+			<p>
+				<?php
+					echo sprintf(
+						esc_html__( 'Check your email for a link to reset your password. You will only be able to use this link one time (you can ', 'user-account-management' ) . '<a href="%1$s">%2$s</a>' . esc_html__( ' if you need to).', 'user-account-management' ),
+						wp_lostpassword_url(),
+						'request another one'
+					);
+				?>
+			</p>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
