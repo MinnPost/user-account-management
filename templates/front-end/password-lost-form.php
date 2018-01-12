@@ -1,3 +1,11 @@
+<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
+	<?php foreach ( $attributes['errors'] as $error ) : ?>
+		<p>
+			<?php echo $error; ?>
+		</p>
+	<?php endforeach; ?>
+<?php endif; ?>
+
 <div id="password-lost-form" class="widecolumn">
 	<p>
 		<?php

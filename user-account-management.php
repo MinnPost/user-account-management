@@ -317,6 +317,16 @@ class User_Account_Management {
 		);
 		$attributes = shortcode_atts( $default_attributes, $attributes );
 
+		// Retrieve possible errors from request parameters
+		$attributes['errors'] = array();
+		if ( isset( $_REQUEST['errors'] ) ) {
+			$error_codes = explode( ',', $_REQUEST['errors'] );
+
+			foreach ( $error_codes as $error_code ) {
+				$attributes['errors'][] = $this->get_error_message( $error_code );
+			}
+		}
+
 		// form action for submission
 		$attributes['action'] = apply_filters( 'user_account_management_lost_password_form_action', wp_lostpassword_url() );
 		// example to change the form action
