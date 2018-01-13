@@ -57,9 +57,10 @@ function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submi
     $strengthMeter.val(strength);
 
     // Only enable the submit button if the password is strong
+    /*
     if ( 4 === strength ) {
-        //$submitButton.removeAttr( 'disabled' );
-    }
+        $submitButton.removeAttr( 'disabled' );
+    }*/
 
     return strength;
 }
