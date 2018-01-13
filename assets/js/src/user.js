@@ -24,12 +24,12 @@ function showPassword() {
 	});
 }
 
-function checkPasswordStrength( $password, $strengthResult, $submitButton, blacklistArray ) {
+function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submitButton, blacklistArray ) {
     var password = $password.val();
 
     // Reset the form & meter
     $submitButton.attr( 'disabled', 'disabled' );
-    $strengthResult.removeClass( 'short bad good strong' );
+    $strengthText.removeClass( 'short bad good strong' );
 
     // Extend our blacklist array with those from the inputs & site data
     blacklistArray = blacklistArray.concat( wp.passwordStrength.userInputBlacklist() )
@@ -40,24 +40,25 @@ function checkPasswordStrength( $password, $strengthResult, $submitButton, black
     // Add the strength meter results
     switch ( strength ) {
         case 2:
-            $strengthResult.addClass( 'bad' ).html( pwsL10n.bad );
+            $strengthText.addClass( 'bad' ).html( 'Strength: ' + pwsL10n.bad );
             break;
         case 3:
-            $strengthResult.addClass( 'good' ).html( pwsL10n.good );
+            $strengthText.addClass( 'good' ).html( 'Strength: ' + pwsL10n.good );
             break;
         case 4:
-            $strengthResult.addClass( 'strong' ).html( pwsL10n.strong );
+            $strengthText.addClass( 'strong' ).html( 'Strength: ' + pwsL10n.strong );
             break;
         case 5:
-            $strengthResult.addClass( 'short' ).html( pwsL10n.mismatch );
+            $strengthText.addClass( 'short' ).html( 'Strength: ' + pwsL10n.mismatch );
             break;
         default:
-            $strengthResult.addClass( 'short' ).html( pwsL10n.short );
+            $strengthText.addClass( 'short' ).html( 'Strength: ' + pwsL10n.short );
     }
+    $strengthMeter.val(strength);
 
     // Only enable the submit button if the password is strong
     if ( 4 === strength ) {
-        $submitButton.removeAttr( 'disabled' );
+        //$submitButton.removeAttr( 'disabled' );
     }
 
     return strength;
@@ -71,12 +72,13 @@ $(document).ready(function() {
 	// checkPasswordStrength
 	if ($('.password-strength-check').length > 0 ) {
 		var $before = $('.a-form-show-password');
-		$before.after( $('<span id="password-strength"></span>'));
+		$before.after( $('<meter max="4" id="password-strength"><div></div></meter><p id="password-strength-text"></p>'));
 	    $( 'body' ).on( 'keyup', 'input[name=password], input[name=new_password]',
 	        function( event ) {
 	            checkPasswordStrength(
-	                $('input[name=password], input[name=new_password]'),         // First password field
+	                $('input[name=password], input[name=new_password]'), // Password field
 	                $('#password-strength'),           // Strength meter
+	                $('#password-strength-text'),      // Strength text indicator
 	                $('input[type=submit]'),           // Submit button
 	                ['black', 'listed', 'word']        // Blacklisted words
 	            );

@@ -417,6 +417,20 @@ class User_Account_Management {
 		$user_page = get_page_by_path( 'user' );
 		global $post;
 		if ( is_page( $user_page->ID ) || $user_page->ID === $post->post_parent ) {
+
+			// stylesheet path
+			$stylesheet_path = apply_filters( 'user_account_management_front_end_stylesheet_path', plugins_url( 'assets/css/' . $this->slug . '.min.css' ) );
+			// example to change the stylesheet path
+			/*
+			add_filter( 'user_account_management_front_end_stylesheet_path', 'front_end_stylesheet_path', 10, 1 );
+			function front_end_stylesheet_path( $front_end_stylesheet_path ) {
+				return $front_end_stylesheet_path;
+			}
+			*/
+
+			if ( '' !== $stylesheet_path ) {
+				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.min.css', __FILE__ ), array(), $this->version, 'all' );
+			}
 			wp_enqueue_script( 'password-strength-meter' );
 			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), $this->version, true );
 		}
