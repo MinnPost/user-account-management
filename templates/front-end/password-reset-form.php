@@ -23,8 +23,6 @@
 			<input type="password" name="new_password" id="new_password" value="" class="password-show password-help password-help-not-shown password-strength-check" required>
 		</div>
 
-		<p class="description"><?php echo wp_get_password_hint(); ?></p>
-
 		<div class="m-form-actions">
 			<input type="submit" name="submit" id="resetpass-button" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" class="btn btn-submit btn-reset-password">
 		</div>
