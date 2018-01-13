@@ -85,7 +85,7 @@ msgstr ""
 msgid "Terms of Use"
 msgstr ""
 
-#: user-account-management.php:313, user-account-management.php:948
+#: user-account-management.php:313, user-account-management.php:929
 msgid "Registering new users is currently not allowed."
 msgstr ""
 
@@ -93,59 +93,59 @@ msgstr ""
 msgid "Invalid password reset link."
 msgstr ""
 
-#: user-account-management.php:795
+#: user-account-management.php:776
 msgid "Hello!"
 msgstr ""
 
-#: user-account-management.php:796
+#: user-account-management.php:777
 msgid "You asked us to reset your password for your account using the email address %s."
 msgstr ""
 
-#: user-account-management.php:797
+#: user-account-management.php:778
 msgid "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen."
 msgstr ""
 
-#: user-account-management.php:798
+#: user-account-management.php:779
 msgid "To reset your password, visit the following address:"
 msgstr ""
 
-#: user-account-management.php:800
+#: user-account-management.php:781
 msgid "Thanks!"
 msgstr ""
 
-#: user-account-management.php:927
+#: user-account-management.php:908
 msgid "You did not enter an email address."
 msgstr ""
 
-#: user-account-management.php:929
+#: user-account-management.php:910
 msgid "You did not enter a password."
 msgstr ""
 
-#: user-account-management.php:933
+#: user-account-management.php:914
 msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
 msgstr ""
 
-#: user-account-management.php:938
+#: user-account-management.php:919
 msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
 msgstr ""
 
-#: user-account-management.php:944
+#: user-account-management.php:925
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: user-account-management.php:946
+#: user-account-management.php:927
 msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
-#: user-account-management.php:951
+#: user-account-management.php:932
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: user-account-management.php:953
+#: user-account-management.php:934
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: user-account-management.php:958
+#: user-account-management.php:939
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
