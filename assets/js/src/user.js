@@ -40,19 +40,19 @@ function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submi
     // Add the strength meter results
     switch ( strength ) {
         case 2:
-            $strengthText.addClass( 'bad' ).html( 'Strength: ' + pwsL10n.bad );
+            $strengthText.addClass( 'bad' ).html( 'Strength: <strong>' + pwsL10n.bad + '</strong>' );
             break;
         case 3:
-            $strengthText.addClass( 'good' ).html( 'Strength: ' + pwsL10n.good );
+            $strengthText.addClass( 'good' ).html( 'Strength: <strong>' + pwsL10n.good + '</strong>' );
             break;
         case 4:
-            $strengthText.addClass( 'strong' ).html( 'Strength: ' + pwsL10n.strong );
+            $strengthText.addClass( 'strong' ).html( 'Strength: <strong>' + pwsL10n.strong + '</strong>' );
             break;
         case 5:
-            $strengthText.addClass( 'short' ).html( 'Strength: ' + pwsL10n.mismatch );
+            $strengthText.addClass( 'short' ).html( 'Strength: <strong>' + pwsL10n.mismatch + '</strong>' );
             break;
         default:
-            $strengthText.addClass( 'short' ).html( 'Strength: ' + pwsL10n.short );
+            $strengthText.addClass( 'short' ).html( 'Strength: <strong>' + pwsL10n.short + '</strong>' );
     }
     $strengthMeter.val(strength);
 
