@@ -195,7 +195,7 @@ class User_Account_Management {
 		$attributes['errors'] = $errors;
 
 		// Check if user just logged out
-		$attributes['logged_out'] = isset( $_REQUEST['logged_out'] ) && true === $_REQUEST['logged_out'];
+		$attributes['logged_out'] = isset( $_REQUEST['logged_out'] ) && 'true' === $_REQUEST['logged_out'];
 
 		// form action for submission
 		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', wp_login_url() );

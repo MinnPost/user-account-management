@@ -1,10 +1,3 @@
-<!-- Show logged out message if user just logged out -->
-<?php if ( $attributes['logged_out'] ) : ?>
-	<p class="login-info">
-		<?php _e( 'You have logged out. Would you like to log in again?', 'user-account-management' ); ?>
-	</p>
-<?php endif; ?>
-
 <form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-user m-form-login">
 
 	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
@@ -13,6 +6,14 @@
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 	<?php echo $attributes['instructions']; ?>
+	<?php endif; ?>
+
+	<?php if ( ! empty( $attributes['logged_out'] ) ) : ?>
+		<div class="m-form-message m-form-message-info">
+			<p class="login-info">
+				<?php _e( 'You have logged out. You can log in again if necessary.', 'user-account-management' ); ?>
+			</p>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( $attributes['lost_password_sent'] ) : ?>
