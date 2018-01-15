@@ -657,7 +657,6 @@ class User_Account_Management {
 					wp_safe_redirect( $default_url );
 					exit();
 				}
-
 			} else {
 				echo 'Invalid request.';
 			}
