@@ -773,14 +773,13 @@ class User_Account_Management {
 	 */
 	public function replace_retrieve_password_message( $message, $key, $user_login, $user_data ) {
 
-		// Create new message
-		$msg  = __( 'Hello!', 'user-account-management' ) . "\r\n\r\n";
-		$msg .= sprintf( __( 'You asked us to reset your password for your account using the email address %s.', 'user-account-management' ), $user_login ) . "\r\n\r\n";
-		$msg .= __( "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen.", 'user-account-management' ) . "\r\n\r\n";
-		$msg .= __( 'To reset your password, visit the following address:', 'user-account-management' ) . "\r\n\r\n";
-		$msg .= site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' ) . "\r\n\r\n";
-		$msg .= __( 'Thanks!', 'user-account-management' ) . "\r\n";
+		$attributes['message'] = $message; // default mail message
+		$attributes['key'] = $key; //activation key
+		$attributes['user_login'] = $user_login; // user's email address
+		$attributes['reset_url'] = site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' );
+		$attributes['user_data'] = $user_data; // WP_User object
 
+		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
 	}
 

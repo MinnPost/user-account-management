@@ -85,7 +85,7 @@ msgstr ""
 msgid "Terms of Use"
 msgstr ""
 
-#: user-account-management.php:313, user-account-management.php:939
+#: user-account-management.php:313, user-account-management.php:929
 msgid "Registering new users is currently not allowed."
 msgstr ""
 
@@ -93,68 +93,68 @@ msgstr ""
 msgid "Invalid password reset link."
 msgstr ""
 
-#: user-account-management.php:786
-msgid "Hello!"
-msgstr ""
-
-#: user-account-management.php:787
-msgid "You asked us to reset your password for your account using the email address %s."
-msgstr ""
-
-#: user-account-management.php:788
-msgid "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen."
-msgstr ""
-
-#: user-account-management.php:789
-msgid "To reset your password, visit the following address:"
-msgstr ""
-
-#: user-account-management.php:791
-msgid "Thanks!"
-msgstr ""
-
-#: user-account-management.php:918
+#: user-account-management.php:908
 msgid "You did not enter an email address."
 msgstr ""
 
-#: user-account-management.php:920
+#: user-account-management.php:910
 msgid "You did not enter a password."
 msgstr ""
 
-#: user-account-management.php:924
+#: user-account-management.php:914
 msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
 msgstr ""
 
-#: user-account-management.php:929
+#: user-account-management.php:919
 msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
 msgstr ""
 
-#: user-account-management.php:935
+#: user-account-management.php:925
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: user-account-management.php:937
+#: user-account-management.php:927
 msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
-#: user-account-management.php:941
+#: user-account-management.php:931
 msgid "You filled out a form field that was created to stop spammers. Please try again."
 msgstr ""
 
-#: user-account-management.php:944
+#: user-account-management.php:934
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: user-account-management.php:946
+#: user-account-management.php:936
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: user-account-management.php:951
+#: user-account-management.php:941
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
 #: templates/admin/settings.php:6
 msgid "Save settings"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:5
+msgid "Hello!"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:6
+msgid "You asked us to reset your password for your account using the email address %s."
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:7
+msgid "If this was a mistake, or you didn't ask for a password reset, just ignore this email and nothing will happen."
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:8
+msgid "To reset your password, visit the following address: %s"
+msgstr ""
+
+#: templates/email/retrieve-password-message.php:9
+msgid "Thanks!"
 msgstr ""
 
 #: templates/front-end/login-form.php:14
