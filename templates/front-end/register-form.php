@@ -53,6 +53,11 @@
 			<input type="text" name="country" id="country">
 		</div>
 
+		<div class="m-form-item m-form-item-rh-name">
+			<label for="rh_name"><?php _e( 'Only fill in if you are not human:', 'user-account-management' ); ?></label>
+			<input type="text" name="rh_name" id="rh-name" value="" autocomplete="off" /></label>
+		</div>
+
 		<div class="m-form-actions">
 			<input type="submit" name="submit" class="register-button" value="<?php _e( 'Create new account', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-register">
 		</div>

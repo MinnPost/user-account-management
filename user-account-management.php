@@ -497,6 +497,8 @@ class User_Account_Management {
 			if ( ! get_option( 'users_can_register' ) ) {
 				// Registration closed, display error
 				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
+			} elseif ( isset( $_POST['rh_name'] ) && ! empty( $_POST['rh_name'] ) ) {
+				$redirect_url = add_query_arg( 'register-errors', 'honeypot', $redirect_url );
 			} else {
 				$email = $_POST['email'];
 				$password = $_POST['password'];
@@ -927,6 +929,8 @@ class User_Account_Management {
 				return __( 'An account already exists with this email address. Is it yours?', 'user-account-management' );
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
+			case 'honeypot':
+				return __( 'You filled out a form field that was created to stop spammers. Please try again.', 'user-account-management' );
 			case 'expiredkey':
 			case 'invalidkey':
 				return __( 'The password reset link you used is not valid anymore.', 'user-account-management' );

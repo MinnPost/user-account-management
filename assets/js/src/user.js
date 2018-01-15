@@ -66,6 +66,12 @@ function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submi
 }
 
 $(document).ready(function() {
+
+	// start
+	if ($('#rh-name').length > 0 ) {
+		$( '#rh-name' ).val( '' );
+	}
+
 	// show password if user clicks
 	if ($('.password-show').length > 0 ) {
 		showPassword();
