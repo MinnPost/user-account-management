@@ -28,7 +28,7 @@ function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submi
     var password = $password.val();
 
     // Reset the form & meter
-    $submitButton.attr( 'disabled', 'disabled' );
+    //$submitButton.attr( 'disabled', 'disabled' );
     $strengthText.removeClass( 'short bad good strong' );
 
     // Extend our blacklist array with those from the inputs & site data
