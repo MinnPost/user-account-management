@@ -1059,6 +1059,40 @@ class User_Account_Management {
 		return $html;
 	}
 
+	private function get_countries() {
+
+		$countries_url = 'https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;';
+
+		if ( true === $this->cache ) {
+			// check the cache for country data
+			$cached = $this->cache_get(
+				array(
+					'url' => $countries_url,
+				)
+			);
+		}
+
+		if ( isset( $cached ) && is_array( $cached ) ) {
+			// load data from cache if it is available
+			$countries = $cached;
+		} else {
+			// call the server to get the list
+			$request = wp_remote_get( $countries_url );
+			$body = wp_remote_retrieve_body( $request );
+			$countries = json_decode( $body, true );
+
+			if ( true === $this->cache ) {
+				// cache the json response
+				$cached = $this->cache_set(
+					array(
+						'url' => $countries_url,
+					),
+					$countries
+				);
+			}
+		}
+		return $countries;
+	}
 
 	/**
 	 * Check to see if this API call exists in the cache
