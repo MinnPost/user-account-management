@@ -573,7 +573,10 @@ class User_Account_Management {
 					if ( ! is_wp_error( $result ) ) {
 						global $current_user;
 						$current_user = $result;
-						$default_url = get_option( 'user_account_management_default_login_redirect', site_url( '/user/' ) );
+						$default_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
+						if ( '' === $default_url ) {
+							$default_url = site_url( '/user/' );
+						}
 						wp_safe_redirect( $default_url );
 						exit();
 					}
@@ -696,7 +699,10 @@ class User_Account_Management {
 				if ( ! is_wp_error( $result ) ) {
 					global $current_user;
 					$current_user = $result;
-					$default_url = get_option( 'user_account_management_default_login_redirect', site_url( 'user' ) );
+					$default_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
+					if ( '' === $default_url ) {
+						$default_url = site_url( '/user/' );
+					}
 					wp_safe_redirect( $default_url );
 					exit();
 				}
