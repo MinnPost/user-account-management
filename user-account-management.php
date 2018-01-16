@@ -1041,8 +1041,8 @@ class User_Account_Management {
 		do_action( 'user_account_management_before_' . $template_name );
 
 		// allow users to put templates into their theme
-		if ( file_exists( get_theme_file_path() . '/' . $this->slug . '-templates/' . $template_name . '.php' ) ) {
-			$file = get_theme_file_path() . '/' . $this->slug . '-templates/' . $template_name . '.php';
+		if ( file_exists( get_theme_file_path() . '/' . $this->slug . '-templates/' . $location . $template_name . '.php' ) ) {
+			$file = get_theme_file_path() . '/' . $this->slug . '-templates/' . $location . $template_name . '.php';
 		} else {
 			$file = plugin_dir_path( __FILE__ ) . 'templates/' . $location . $template_name . '.php';
 		}
