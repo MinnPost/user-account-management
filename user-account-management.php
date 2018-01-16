@@ -29,11 +29,11 @@ class User_Account_Management {
 	}
 
 	/**
-	* load the admin stuff
-	* creates admin menu to save the config options
-	*
-	* @throws \Exception
-	*/
+	 * load the admin stuff
+	 * creates admin menu to save the config options
+	 *
+	 * @throws \Exception
+	 */
 	private function load_admin() {
 		require_once( plugin_dir_path( __FILE__ ) . 'classes/class-' . $this->slug . '-admin.php' );
 		$admin = new User_Account_Management_Admin( $this->option_prefix, $this->version, $this->slug );
@@ -42,13 +42,13 @@ class User_Account_Management {
 	}
 
 	/**
-	* Display a Settings link on the main Plugins page
-	*
-	* @param array $links
-	* @param string $file
-	* @return array $links
-	* These are the links that go with this plugin's entry
-	*/
+	 * Display a Settings link on the main Plugins page
+	 *
+	 * @param array $links
+	 * @param string $file
+	 * @return array $links
+	 * These are the links that go with this plugin's entry
+	 */
 	public function plugin_action_links( $links, $file ) {
 		if ( plugin_basename( __FILE__ ) === $file ) {
 			$settings = '<a href="' . get_admin_url() . 'options-general.php?page=' . $this->slug . '">' . __( 'Settings', 'user-account-management' ) . '</a>';
@@ -106,10 +106,10 @@ class User_Account_Management {
 	}
 
 	/**
-	 * Plugin activation hook.
-	 *
-	 * Creates all WordPress pages needed by the plugin.
-	 */
+	  * Plugin activation hook.
+	  *
+	  * Creates all WordPress pages needed by the plugin.
+	  */
 	public static function plugin_activated() {
 		// Information needed for creating the plugin's pages
 		$page_definitions = array(
@@ -1057,6 +1057,12 @@ class User_Account_Management {
 		return $html;
 	}
 
+	/**
+	 * Get name/ISO2 code for all available countries. This gets used to render the <select> but here is only an array
+	 *
+	 *
+	 * @return array               The countries
+	 */
 	private function get_countries() {
 
 		$countries_url = 'https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;';
