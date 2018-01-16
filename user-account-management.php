@@ -99,7 +99,8 @@ class User_Account_Management {
 			$this->cache = false;
 		}
 		if ( true === $this->cache ) {
-			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients' );
+			$cache_expiration = (int) get_option( $this->option_prefix . 'cache_time', 2592000 );
+			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients', $cache_expiration );
 		}
 
 	}
@@ -1169,7 +1170,6 @@ class User_Account_Management {
 class User_Account_Management_Transient {
 
 	protected $name;
-
 	public $cache_expiration;
 
 	/**
@@ -1177,9 +1177,9 @@ class User_Account_Management_Transient {
 	 *
 	 * @param string $name The name of the field that lists all cache keys.
 	 */
-	public function __construct( $name ) {
+	public function __construct( $name, $cache_expiration = 2592000 ) {
 		$this->name = $name;
-		$this->cache_expiration = 2592000; // cache it for a month
+		$this->cache_expiration = $cache_expiration; // cache expiration in seconds
 		$this->cache_prefix = esc_sql( 'acct_mgmt_' );
 	}
 

@@ -196,6 +196,17 @@ class User_Account_Management_Admin {
 					'default' => '1',
 				),
 			),
+			'cache_time' => array(
+				'title' => __( 'How long to cache data?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'text',
+					'desc' => 'How many seconds before the cache expires',
+					'default' => '2592000',
+				),
+			),
 			/*'server_path' => array(
 				'title' => __( 'Server Path', 'user-account-management' ),
 				'callback' => $callbacks['text'],
