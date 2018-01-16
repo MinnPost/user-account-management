@@ -55,6 +55,10 @@ class User_Account_Management {
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
 		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
 		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
+
+		// api endpoints that can be called by other stuff
+		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
+
 		$this->cache = true;
 		if ( true === $this->cache ) {
 			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients' );
@@ -279,6 +283,8 @@ class User_Account_Management {
 		}
 		*/
 
+		$attributes['countries'] = $this->get_countries();
+
 		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
 			wp_login_url(),
@@ -438,6 +444,15 @@ class User_Account_Management {
 			}
 			wp_enqueue_script( 'password-strength-meter' );
 			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), $this->version, true );
+			// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
+			wp_localize_script(
+				$this->slug,
+				'user_account_management_rest',
+				array(
+					'site_url' => site_url( '/' ),
+					'rest_namespace' => 'wp-json/' . $this->slug . '/v1',
+				)
+			);
 		}
 	}
 
@@ -535,7 +550,7 @@ class User_Account_Management {
 					if ( ! is_wp_error( $result ) ) {
 						global $current_user;
 						$current_user = $result;
-						$default_url = get_option( 'user_account_management_default_login_redirect', site_url( 'user' ) );
+						$default_url = get_option( 'user_account_management_default_login_redirect', site_url( '/user/' ) );
 						wp_safe_redirect( $default_url );
 						exit();
 					}
@@ -789,6 +804,104 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Register API endpoints for dealing with user accounts
+	 *
+	 */
+	public function register_api_endpoints() {
+		register_rest_route( $this->slug . '/v1', '/check-zip', array(
+			array(
+				'methods'         => WP_REST_Server::READABLE,
+				'callback'        => array( $this, 'check_zip' ),
+				'args'            => array(
+					'zip_code' => array(
+						'sanitize_callback' => 'esc_attr',
+					),
+					'country' => array(
+						'default' => 'US',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+				//'permission_callback' => array( $this, 'permissions_check' ),
+			),
+		) );
+	}
+
+	/**
+	 * API endpoint for checking zip/country for city/state
+	 *
+	 * @param object  $request    The REST request
+	 *
+	 * @return array   The REST response
+	 *
+	 */
+	public function check_zip( WP_REST_Request $request ) {
+		$params = $request->get_params();
+		$zip_code = $params['zip_code'];
+		$country = $params['country'];
+		$citystate = $this->get_city_state( $zip_code, $country );
+		return $citystate;
+	}
+
+	/**
+	 * Use the Geonames API to get the city/state from a postal code/country combination
+	 *
+	 * @param string  $zip_code    Zip/postal code
+	 * @param string  $country     Country
+	 * @param bool  $reset         Allows the cache to be skipped
+	 *
+	 * @return array               The city/state pair, as well as the status success/error
+	 *
+	 */
+	private function get_city_state( $zip_code, $country, $reset = false ) {
+		$citystate = '';
+
+		// countries where the space breaks the api
+		if ( 'GB' === $country ) {
+			$zip_code = explode( ' ', $zip_code );
+			$zip_code = $zip_code[0];
+		}
+		$cached = $this->cache_get(
+			array(
+				'url' => $url,
+			)
+		);
+
+		if ( isset( $cached ) && is_array( $cached ) && false === $reset ) {
+			// load data from cache if it is available
+			$citystate = $cached;
+		} else {
+			$request = wp_remote_get( $url );
+			$body = wp_remote_retrieve_body( $request );
+			$location = json_decode( $body, true );
+			$city = $location['postalcodes'][0]['placeName'];
+			$state = $location['postalcodes'][0]['adminName1'];
+			$citystate = array(
+				'city' => $city,
+				'state' => $state,
+			);
+
+			if ( true === $this->cache ) {
+				// cache the json response
+				$cached = $this->cache_set(
+					array(
+						'url' => $url,
+					),
+					$citystate
+				);
+			}
+		}
+
+		if ( '' !== $citystate ) {
+			$citystate['status'] = 'success';
+		} else {
+			$citystate['status'] = 'error';
+		}
+
+		return $citystate;
+
+	}
+
+	/**
 	 * Redirects the user to the correct page depending on whether he / she
 	 * is an admin or not.
 	 *
@@ -856,6 +969,20 @@ class User_Account_Management {
 
 		if ( '' !== $country ) {
 			update_user_meta( $user_id, '_country', $country );
+		}
+
+		// try to get the city/state from the zip code, if we can
+		if ( '' !== $zip_code ) {
+			if ( '' === $country ) {
+				$country = 'US';
+			}
+			$citystate = $this->get_city_state( $zip_code, $country );
+			if ( '' !== $citystate['city'] ) {
+				update_user_meta( $user_id, '_city', $citystate['city'] );
+			}
+			if ( '' !== $citystate['state'] ) {
+				update_user_meta( $user_id, '_state', $citystate['state'] );
+			}
 		}
 
 		return $user_id;

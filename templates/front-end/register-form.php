@@ -50,7 +50,12 @@
 
 		<div class="m-form-item m-form-country m-form-register-country">
 			<label for="country"><?php _e( 'Country:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="text" name="country" id="country">
+			<select name="country" id="country">
+				<option value="">Choose country</option>
+				<?php foreach ( $attributes['countries'] as $country ) : ?>
+					<option value="<?php echo $country['alpha2Code']; ?>"><?php echo $country['name']; ?></option>
+				<?php endforeach; ?>
+			</select>
 		</div>
 
 		<div class="m-form-item m-form-item-rh-name">

@@ -65,6 +65,48 @@ function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submi
     return strength;
 }
 
+function checkZipCountry(city_field, state_field, zip_field, country_field) {
+
+	var country = country_field.val();
+	if (country == '') {
+		country = 'US';
+		country_field.val(country);
+	}
+	var zip = zip_field.val();
+
+	if (zip !== '') {
+
+		var location = {
+			zip_code: zip,
+			country: country
+		}
+
+		jQuery.ajax({
+	        type: 'GET',
+	        url: user_account_management_rest.site_url + user_account_management_rest.rest_namespace + '/check-zip',
+	        data: location,
+	        dataType: 'json',
+	        success: function(response) {
+	        	if (response.status === 'success') {
+					var location = '';
+					location += response.city;
+					$(city_field).val(response.city);
+					if (response.city !== response.state) {
+						location += ', ' + response.state;
+						$(state_field).val(response.state);
+					}
+					if (country !== 'US') {
+						location += ', ' + country;
+					}
+					$('.location small').text(location);
+				} else {
+					$('.location small').text('');
+				}
+	        }
+	    });
+	}
+}
+
 $(document).ready(function() {
 
 	// start
@@ -92,4 +134,37 @@ $(document).ready(function() {
 	        }
 	    );
 	}
+
+	// zip/country thing
+	var country = $('.m-form-country #country').val();
+	if ($('.m-form-zip-code #zip-code').length) {
+		if (country == '' || country == 'US') {
+			$('.m-form-country').hide();
+			$('.m-form-zip-code #zip-code').prop('type', 'tel');
+			$('.m-form-zip-code').append('<div class="a-form-caption location"><small></small></div><div class="a-form-caption show-country"><a href="#" id="registration_show_country"><small>Not in the US?</small></a></div>');
+		} else {
+			$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
+			$('.m-form-zip-code #zip-code').prop('type', 'text');
+		}
+		if ($('select, input', '.m-form-country').hasClass('not-in-us')) {
+			$('.show-country', '.m-form-zip-code').remove();
+			$('.m-form-country').show();
+			$('.m-form-zip-code #zip-code').prop('type', 'text');
+			$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
+		}
+		$('.m-form-country #country, .m-form-zip-code #zip-code').blur(function() {
+			checkZipCountry($('input[name="city"]'), $('input[name="state"]'), $('.m-form-zip-code #zip-code'), $('.m-form-country #country'));
+		});
+		$('.m-form-country #country').change(function() {
+			checkZipCountry($('input[name="city"]'), $('input[name="state"]'), $('.m-form-zip-code #zip-code'), $('.m-form-country #country'));
+		});
+		$('#registration_show_country').click(function() {
+			$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
+			$('.m-form-country').slideDown();
+			$('.m-form-zip-code #zip-code').prop('type', 'text');
+			$(this).hide();
+			return false;
+		});
+	}
+
 });
