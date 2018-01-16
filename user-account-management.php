@@ -20,8 +20,41 @@ class User_Account_Management {
 		$this->option_prefix = 'user_account_management';
 		$this->version = '0.0.1';
 		$this->slug = 'user-account-management';
+
+		// load admin
+		$this->admin = $this->load_admin();
+
 		$this->add_actions();
 
+	}
+
+	/**
+	* load the admin stuff
+	* creates admin menu to save the config options
+	*
+	* @throws \Exception
+	*/
+	private function load_admin() {
+		require_once( plugin_dir_path( __FILE__ ) . 'classes/class-' . $this->slug . '-admin.php' );
+		$admin = new User_Account_Management_Admin( $this->option_prefix, $this->version, $this->slug );
+		add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
+		return $admin;
+	}
+
+	/**
+	* Display a Settings link on the main Plugins page
+	*
+	* @param array $links
+	* @param string $file
+	* @return array $links
+	* These are the links that go with this plugin's entry
+	*/
+	public function plugin_action_links( $links, $file ) {
+		if ( plugin_basename( __FILE__ ) === $file ) {
+			$settings = '<a href="' . get_admin_url() . 'options-general.php?page=' . $this->slug . '">' . __( 'Settings', 'user-account-management' ) . '</a>';
+			array_unshift( $links, $settings );
+		}
+		return $links;
 	}
 
 	/**
@@ -902,8 +935,7 @@ class User_Account_Management {
 	}
 
 	/**
-	 * Redirects the user to the correct page depending on whether he / she
-	 * is an admin or not.
+	 * Redirects the user to the correct page depending on whether they are an admin or not.
 	 *
 	 * @param string $redirect_to   An optional redirect_to URL for admin users
 	 */
