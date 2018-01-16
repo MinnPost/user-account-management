@@ -17,7 +17,7 @@ class User_Account_Management {
 	 */
 	public function __construct() {
 
-		$this->option_prefix = 'user_account_management';
+		$this->option_prefix = 'user_account_management_';
 		$this->version = '0.0.1';
 		$this->slug = 'user-account-management';
 
@@ -92,7 +92,12 @@ class User_Account_Management {
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
 
-		$this->cache = true;
+		$cache = get_option( $this->option_prefix . 'cache_data', false );
+		if ( '1' === $cache ) {
+			$this->cache = true;
+		} else {
+			$this->cache = false;
+		}
 		if ( true === $this->cache ) {
 			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients' );
 		}

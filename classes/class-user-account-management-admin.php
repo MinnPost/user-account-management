@@ -190,28 +190,18 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
-			'default_domain' => array(
-				'title' => __( 'Default Domain', 'user-account-management' ),
-				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'text',
-					'desc' => __( 'The ad server domain', 'user-account-management' ),
-				),
-			),
-			'use_https' => array(
-				'title' => __( 'Use HTTPS?', 'user-account-management' ),
+			'cache_data' => array(
+				'title' => __( 'Cache data?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
 				'page' => $page,
 				'section' => $section,
 				'args' => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to use HTTPS on the domain',
+					'desc' => 'Whether to cache data for this plugin (recommended)',
 					'default' => '1',
 				),
 			),
-			'server_path' => array(
+			/*'server_path' => array(
 				'title' => __( 'Server Path', 'user-account-management' ),
 				'callback' => $callbacks['text'],
 				'page' => $page,
@@ -261,33 +251,8 @@ class User_Account_Management_Admin {
 				'args' => array(
 					'desc' => 'Comma separated list of tags',
 				),
-			),
-			'show_ads_without_conditionals' => array(
-				'title' => __( 'Show ads without conditionals', 'user-account-management' ),
-				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'checkbox',
-					'desc' => 'If an ad has no conditionals, show it everywhere',
-					'default' => '1',
-				),
-			),
+			),*/
 		);
-
-		if ( class_exists( 'EasyLazyLoader' ) ) {
-			$settings['lazy_load_ads'] = array(
-				'title' => __( 'Lazy Load Ads?', 'user-account-management' ),
-				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'checkbox',
-					'desc' => 'Load each ad when the user scrolls near it',
-					'default' => '0',
-				),
-			);
-		}
 
 		foreach ( $settings as $key => $attributes ) {
 			$id = $this->option_prefix . $key;
@@ -521,7 +486,7 @@ class User_Account_Management_Admin {
 		}
 
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
-			$value  = esc_attr( get_option( $id, '' ) );
+			$value = esc_attr( get_option( $id, '' ) );
 			if ( 'checkbox' === $type ) {
 				if ( '1' === $value ) {
 					$checked = 'checked ';
