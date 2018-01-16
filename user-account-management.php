@@ -208,12 +208,6 @@ class User_Account_Management {
 	 * @return string  The shortcode output
 	 */
 	public function render_login_form( $attributes, $content = null ) {
-		// Parse shortcode attributes
-		$default_attributes = array(
-			'show_title' => false,
-		);
-		$attributes = shortcode_atts( $default_attributes, $attributes );
-		$show_title = $attributes['show_title'];
 
 		// if the user is already signed in, this lets us not leave them stranded
 		if ( is_user_logged_in() ) {
@@ -295,11 +289,6 @@ class User_Account_Management {
 	 * @return string  The shortcode output
 	 */
 	public function render_register_form( $attributes, $content = null ) {
-		// Parse shortcode attributes
-		$default_attributes = array(
-			'show_title' => false,
-		);
-		$attributes = shortcode_atts( $default_attributes, $attributes );
 
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
@@ -374,11 +363,6 @@ class User_Account_Management {
 	 * @return string  The shortcode output
 	 */
 	public function render_password_lost_form( $attributes, $content = null ) {
-		// Parse shortcode attributes
-		$default_attributes = array(
-			'show_title' => false,
-		);
-		$attributes = shortcode_atts( $default_attributes, $attributes );
 
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
@@ -427,11 +411,6 @@ class User_Account_Management {
 	 * @return string  The shortcode output
 	 */
 	public function render_password_reset_form( $attributes, $content = null ) {
-		// Parse shortcode attributes
-		$default_attributes = array(
-			'show_title' => false,
-		);
-		$attributes = shortcode_atts( $default_attributes, $attributes );
 
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
