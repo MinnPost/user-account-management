@@ -310,7 +310,12 @@ class User_Account_Management {
 		}
 		*/
 
-		$attributes['countries'] = $this->get_countries();
+		$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
+		$attributes['hidden_city_state'] = get_option( $this->option_prefix . 'hidden_city_state', false );
+		$include_countries = get_option( $this->option_prefix . 'include_countries', false );
+		if ( '1' === $include_countries ) {
+			$attributes['countries'] = $this->get_countries();
+		}
 
 		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
@@ -877,6 +882,14 @@ class User_Account_Management {
 			$zip_code = explode( ' ', $zip_code );
 			$zip_code = $zip_code[0];
 		}
+
+		$geonames_api_username = get_option( $this->option_prefix . 'geonames_api_username', '' );
+		if ( '' !== $geonames_api_username ) {
+			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&country=' . urlencode( $country ) . '&username=' . $geonames_api_username;
+		} else {
+			return $citystate;
+		}
+
 		$cached = $this->cache_get(
 			array(
 				'url' => $url,
@@ -992,7 +1005,7 @@ class User_Account_Management {
 			if ( '' === $country ) {
 				$country = 'US';
 			}
-			$citystate = $this->get_city_state( $zip_code, $country );
+			$citystate = $this->get_city_state( $zip_code, $country ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
 			if ( '' !== $citystate['city'] ) {
 				update_user_meta( $user_id, '_city', $citystate['city'] );
 			}

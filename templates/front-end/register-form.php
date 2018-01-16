@@ -1,7 +1,9 @@
 <form id="register-form" action="<?php echo $attributes['action']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-register">
 
-	<input type="hidden" name="city" value="">
-	<input type="hidden" name="state" value="">
+	<?php if ( '1' === $attributes['include_city_state'] && '1' === $attributes['hidden_city_state'] ) : ?>
+		<input type="hidden" name="city" value="">
+		<input type="hidden" name="state" value="">
+	<?php endif; ?>
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 	<?php echo $attributes['instructions']; ?>
@@ -43,20 +45,33 @@
 			<input type="text" name="last_name" id="last-name" required>
 		</div>
 
+		<?php if ( '1' === $attributes['include_city_state'] && '1' !== $attributes['hidden_city_state'] ) : ?>
+			<div class="m-form-item m-form-city m-form-register-city">
+				<label for="zip_code"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<input type="text" name="city" id="city" required>
+			</div>
+			<div class="m-form-item m-form-state m-form-register-state">
+				<label for="zip_code"><?php _e( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<input type="text" name="state" id="state" required>
+			</div>
+		<?php endif; ?>
+
 		<div class="m-form-item m-form-zip-code m-form-register-zip-code">
 			<label for="zip_code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="tel" name="zip_code" id="zip-code" required>
 		</div>
 
-		<div class="m-form-item m-form-country m-form-register-country">
-			<label for="country"><?php _e( 'Country:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<select name="country" id="country">
-				<option value="">Choose country</option>
-				<?php foreach ( $attributes['countries'] as $country ) : ?>
-					<option value="<?php echo $country['alpha2Code']; ?>"><?php echo $country['name']; ?></option>
-				<?php endforeach; ?>
-			</select>
-		</div>
+		<?php if ( isset( $attributes['countries'] ) ) : ?>
+			<div class="m-form-item m-form-country m-form-register-country">
+				<label for="country"><?php _e( 'Country:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<select name="country" id="country">
+					<option value="">Choose country</option>
+					<?php foreach ( $attributes['countries'] as $country ) : ?>
+						<option value="<?php echo $country['alpha2Code']; ?>"><?php echo $country['name']; ?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		<?php endif; ?>
 
 		<div class="m-form-item m-form-item-rh-name">
 			<label for="rh_name"><?php _e( 'Only fill in if you are not human:', 'user-account-management' ); ?></label>

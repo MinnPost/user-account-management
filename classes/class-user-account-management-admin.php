@@ -74,7 +74,7 @@ class User_Account_Management_Admin {
 	private function get_admin_tabs() {
 		$tabs = array(
 			'user_account_management_settings' => 'User Account Management Settings',
-			//'embed_ads_settings' => 'Embed Ads Settings',
+			'register_settings' => 'Register Settings',
 		); // this creates the tabs for the admin
 		return $tabs;
 	}
@@ -96,12 +96,6 @@ class User_Account_Management_Admin {
 			$this->render_tabs( $tabs, $tab );
 
 			switch ( $tab ) {
-				case 'appnexus_acm_settings':
-					require_once( plugin_dir_path( __FILE__ ) . '/../templates/admin/settings.php' );
-					break;
-				/*case 'embed_ads_settings':
-					require_once( plugin_dir_path( __FILE__ ) . '/../templates/admin/settings.php' );
-					break;*/
 				default:
 					require_once( plugin_dir_path( __FILE__ ) . '/../templates/admin/settings.php' );
 					break;
@@ -168,7 +162,8 @@ class User_Account_Management_Admin {
 		);
 
 		$this->user_account_management_settings( 'user_account_management_settings', 'user_account_management_settings', $all_field_callbacks );
-		$this->embed_ads_settings( 'embed_ads_settings', 'embed_ads_settings', $all_field_callbacks );
+		$this->register_settings( 'register_settings', 'register_settings', $all_field_callbacks );
+		//$this->login_settings( 'login_settings', 'login_settings', $all_field_callbacks );
 
 	}
 
@@ -276,194 +271,135 @@ class User_Account_Management_Admin {
 	}
 
 	/**
-	* Fields for the Embed Ads Settings tab
+	* Fields for the Register Settings tab
 	* This runs add_settings_section once, as well as add_settings_field and register_setting methods for each option
 	*
 	* @param string $page
 	* @param string $section
 	* @param string $input_callback
 	*/
-	private function embed_ads_settings( $page, $section, $callbacks ) {
+	private function register_settings( $page, $section, $callbacks ) {
 		$tabs = $this->tabs;
 		foreach ( $tabs as $key => $value ) {
 			if ( $key === $page ) {
 				$title = $value;
 			}
 		}
-		$multiple_embeds = array(
-			'overall' => 'Embed Ad Settings',
-			'multiple_on' => 'Multiple Embeds',
-			'multiple_off' => 'Single Embed',
+		add_settings_section( $page, $title, null, $page );
+
+		$settings = array(
+			'include_countries' => array(
+				'title' => __( 'Include country as user metadata?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'checkbox',
+					'desc' => 'Whether to save country for user.',
+				),
+			),
+			'include_city_state' => array(
+				'title' => __( 'Include city/state as user metadata?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'checkbox',
+					'desc' => 'Whether to save city/state for user.',
+				),
+			),
+			'hidden_city_state' => array(
+				'title' => __( 'Get city/state based on zip/country?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'checkbox',
+					'desc' => 'Whether to load and save the city/state for the user, based on the zip/country.',
+				),
+			),
+			'geonames_api_username' => array(
+				'title' => __( 'Geonames API username', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'text',
+					'desc' => 'API username from geonames.org for geocoding the city/state from country/zip',
+				),
+			),
 		);
-		$settings = array();
 
-		foreach ( $multiple_embeds as $key => $value ) {
-			$section = $section . '_' . $key;
-			add_settings_section( $section, $value, null, $page );
-
-			if ( 'overall' === $key ) {
-				$embed_settings = array(
-					'show_in_editor' => array(
-						'title' => __( 'Show shortcode in editor?', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'checkbox',
-							'desc' => 'If checked, the [cms_ad] shortcode(s) will show in the post editor, so it/they can be moved around the post as needed.',
-							'default' => '',
-						),
-					),
-					'post_types' => array(
-						'title' => __( 'Post types to embed ads', 'user-account-management' ),
-						'callback' => $callbacks['checkboxes'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'checkboxes',
-							'desc' => 'By default this will list all post types in your installation.',
-							'items' => $this->post_type_options(),
-						),
-					),
-					'multiple_embeds' => array(
-						'title' => __( 'Multiple embeds per story?', 'user-account-management' ),
-						'callback' => $callbacks['radio'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'select',
-							'desc' => '',
-							'items' => array(
-								'yes' => array(
-									'text' => 'yes',
-									'value' => '1',
-									'id' => 'yes',
-									'desc' => '',
-									'default' => '',
-								),
-								'no' => array(
-									'text' => 'no',
-									'value' => '0',
-									'id' => 'no',
-									'desc' => '',
-									'default' => '',
-								),
-							),
-						),
-					),
-				);
-			} elseif ( 'multiple_off' === $key ) {
-				$embed_settings = array(
-					'auto_embed_position' => array(
-						'title' => __( 'Auto embed position', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'desc' => __( 'Position for the in-story ad, if it is not otherwise included.', 'user-account-management' ),
-						),
-					),
-					'auto_embed_top_offset' => array(
-						'title' => __( 'Auto embed top character offset', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'desc' => __( 'How many characters from the top of the story to put the ad.', 'user-account-management' ),
-						),
-					),
-					'auto_embed_bottom_offset' => array(
-						'title' => __( 'Auto embed bottom character offset', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'desc' => __( 'How many characters from the bottom of the story to put the ad.', 'user-account-management' ),
-						),
-					),
-				);
-			} else {
-				/*
-				$scaip_period = get_option( 'scaip_settings_period', 4 );
-				$scaip_repetitions = get_option( 'scaip_settings_repetitions', 10 );
-				$scaip_minimum_paragraphs = get_option( 'scaip_settings_min_paragraphs', 6 );
-				*/
-				$embed_settings = array(
-					'insert_every_paragraphs' => array(
-						'title' => __( 'Number of paragraphs between each insertion', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'default' => '4',
-							'desc' => __( 'The ad inserter will wait this number of paragraphs after the start of the article, insert the first ad zone, count this many more paragraphs, insert the second ad zone, and so on.', 'user-account-management' ),
-						),
-					),
-					'maximum_embed_count' => array(
-						'title' => __( 'Maximum number of embeds', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'default' => '10',
-							'desc' => __( 'The absolute maximum number of embed ads that could display in any post. How many actually display depends on how long the post is, and how often an ad should be displayed. You can safely give this a high number.', 'user-account-management' ),
-						),
-					),
-					'minimum_paragraph_count' => array(
-						'title' => __( 'Minimum paragraph count', 'user-account-management' ),
-						'callback' => $callbacks['text'],
-						'page' => $page,
-						'section' => $section,
-						'args' => array(
-							'type' => 'text',
-							'default' => '6',
-							'desc' => __( 'This setting allows you to prevent ads from appearing on posts with fewer paragraphs than the threshold.', 'user-account-management' ),
-						),
-					),
-				);
-			}
-			foreach ( $embed_settings as $key => $attributes ) {
-				$id = $this->option_prefix . $key;
-				$name = $this->option_prefix . $key;
-				$title = $attributes['title'];
-				$callback = $attributes['callback'];
-				$page = $attributes['page'];
-				$section = $attributes['section'];
-				$args = array_merge(
-					$attributes['args'],
-					array(
-						'title' => $title,
-						'id' => $id,
-						'label_for' => $id,
-						'name' => $name,
-					)
-				);
-				add_settings_field( $id, $title, $callback, $page, $section, $args );
-				register_setting( $page, $id );
-			}
+		foreach ( $settings as $key => $attributes ) {
+			$id = $this->option_prefix . $key;
+			$name = $this->option_prefix . $key;
+			$title = $attributes['title'];
+			$callback = $attributes['callback'];
+			$page = $attributes['page'];
+			$section = $attributes['section'];
+			$args = array_merge(
+				$attributes['args'],
+				array(
+					'title' => $title,
+					'id' => $id,
+					'label_for' => $id,
+					'name' => $name,
+				)
+			);
+			add_settings_field( $id, $title, $callback, $page, $section, $args );
+			register_setting( $section, $id );
 		}
-		$settings[ $key ] = $embed_settings;
 	}
 
-	private function post_type_options() {
-		$types = get_post_types();
-		$items = array();
-		foreach ( $types as $type ) {
-			$item = array(
-				'text' => $type,
-				'value' => $type,
-				'id' => $type,
-				'desc' => '',
-				'default' => '',
-			);
-			$items[] = $item;
+	/**
+	* Fields for the Login Settings tab
+	* This runs add_settings_section once, as well as add_settings_field and register_setting methods for each option
+	*
+	* @param string $page
+	* @param string $section
+	* @param string $input_callback
+	*/
+	private function login_settings( $page, $section, $callbacks ) {
+		$tabs = $this->tabs;
+		foreach ( $tabs as $key => $value ) {
+			if ( $key === $page ) {
+				$title = $value;
+			}
 		}
-		return $items;
+		add_settings_section( $page, $title, null, $page );
+
+		$settings = array(
+			/*'default_login_redirect' => array(
+				'title' => __( 'Default redirect URL after login', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'text',
+					'desc' => 'Where to send users after they log in. The plugin will use /user/ if no value is here.',
+				),
+			),*/
+		);
+
+		foreach ( $settings as $key => $attributes ) {
+			$id = $this->option_prefix . $key;
+			$name = $this->option_prefix . $key;
+			$title = $attributes['title'];
+			$callback = $attributes['callback'];
+			$page = $attributes['page'];
+			$section = $attributes['section'];
+			$args = array_merge(
+				$attributes['args'],
+				array(
+					'title' => $title,
+					'id' => $id,
+					'label_for' => $id,
+					'name' => $name,
+				)
+			);
+			add_settings_field( $id, $title, $callback, $page, $section, $args );
+			register_setting( $section, $id );
+		}
 	}
 
 	/**
