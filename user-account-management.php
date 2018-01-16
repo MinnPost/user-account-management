@@ -828,6 +828,10 @@ class User_Account_Management {
 		$attributes['reset_url'] = site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' );
 		$attributes['user_data'] = $user_data; // WP_User object
 
+		// if you want to use html as the mime type, use the filter
+		// we do not include this here because a theme template would be required anyway
+		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
+
 		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
 	}
