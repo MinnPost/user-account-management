@@ -63,6 +63,10 @@ class User_Account_Management {
 	 * @return void
 	 */
 	private function add_actions() {
+
+		// handle redirects before rendering shortcodes
+		add_action( 'wp', array( $this, 'user_status_check' ) );
+
 		// shortcodes for pages
 		add_shortcode( 'custom-login-form', array( $this, 'render_login_form' ) ); // login
 		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) ); // register
@@ -198,6 +202,19 @@ class User_Account_Management {
 			}
 		}
 
+	}
+
+	public function user_status_check() {
+		$redirect = '';
+		if ( isset( $_REQUEST['redirect_to'] ) ) {
+			if ( is_user_logged_in() && is_page( 'user/login' ) ) {
+				$redirect = wp_validate_redirect( $_REQUEST['redirect_to'], $redirect );
+			}
+		}
+		if ( ! empty( $redirect ) ) {
+			wp_redirect( $redirect );
+			exit;
+		}
 	}
 
 	/**
