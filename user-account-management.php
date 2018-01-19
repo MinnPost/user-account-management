@@ -92,6 +92,7 @@ class User_Account_Management {
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
 		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
 		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
+		add_filter( 'retrieve_password_title', array( $this, 'replace_retrieve_password_title' ), 10, 4 ); // lost password email subject
 		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
 
@@ -851,12 +852,23 @@ class User_Account_Management {
 		// we do not include this here because a theme template would be required anyway
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
-		// wordpress has built in hooks for changing the message and subject:
-		//add_filter ( 'retrieve_password_title', 'my_retrieve_password_subject_filter', 10, 3 ); // this includes the title, $user_login, and $user_data
-		//add_filter ( 'retrieve_password_message', 'my_retrieve_password_message_filter', 10, 4 ); // this includes $message, $key, $user_login, and $user_data
-
 		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
+	}
+
+	/**
+	 * Returns the email subject for the password reset mail.
+	 * Called through the retrieve_password_title filter.
+	 *
+	 * @param string  $title    Default mail message.
+	 * @param string  $user_login The username for the user.
+	 * @param WP_User $user_data  WP_User object.
+	 *
+	 * @return string   The mail subject to use
+	 */
+	public function replace_retrieve_password_title( $title, $user_login, $user_data ) {
+		$title = 'Reset your password on ' . get_bloginfo( 'name' );
+		return $title;
 	}
 
 	/**

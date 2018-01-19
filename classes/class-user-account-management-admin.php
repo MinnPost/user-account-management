@@ -75,6 +75,7 @@ class User_Account_Management_Admin {
 		$tabs = array(
 			'user_account_management_settings' => 'User Account Management Settings',
 			'register_settings' => 'Register Settings',
+			'email_settings' => 'Email Settings',
 		); // this creates the tabs for the admin
 		return $tabs;
 	}
@@ -163,7 +164,7 @@ class User_Account_Management_Admin {
 
 		$this->user_account_management_settings( 'user_account_management_settings', 'user_account_management_settings', $all_field_callbacks );
 		$this->register_settings( 'register_settings', 'register_settings', $all_field_callbacks );
-		//$this->login_settings( 'login_settings', 'login_settings', $all_field_callbacks );
+		$this->email_settings( 'email_settings', 'email_settings', $all_field_callbacks );
 
 	}
 
@@ -205,6 +206,16 @@ class User_Account_Management_Admin {
 					'type' => 'text',
 					'desc' => 'How many seconds before the cache expires',
 					'default' => '2592000',
+				),
+			),
+			'default_login_redirect' => array(
+				'title' => __( 'Default redirect URL after login', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page' => $page,
+				'section' => $section,
+				'args' => array(
+					'type' => 'text',
+					'desc' => 'Where to send users after they log in or register. The plugin will use /user/ if no value is here.',
 				),
 			),
 			/*'server_path' => array(
@@ -363,14 +374,14 @@ class User_Account_Management_Admin {
 	}
 
 	/**
-	* Fields for the Login Settings tab
+	* Fields for the Email Settings tab
 	* This runs add_settings_section once, as well as add_settings_field and register_setting methods for each option
 	*
 	* @param string $page
 	* @param string $section
 	* @param string $input_callback
 	*/
-	private function login_settings( $page, $section, $callbacks ) {
+	private function email_settings( $page, $section, $callbacks ) {
 		$tabs = $this->tabs;
 		foreach ( $tabs as $key => $value ) {
 			if ( $key === $page ) {
@@ -380,16 +391,16 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
-			/*'default_login_redirect' => array(
-				'title' => __( 'Default redirect URL after login', 'user-account-management' ),
+			'from_address' => array(
+				'title' => __( 'From Address', 'user-account-management' ),
 				'callback' => $callbacks['text'],
 				'page' => $page,
 				'section' => $section,
 				'args' => array(
 					'type' => 'text',
-					'desc' => 'Where to send users after they log in. The plugin will use /user/ if no value is here.',
+					'desc' => 'The email address that should send user account emails',
 				),
-			),*/
+			),
 		);
 
 		foreach ( $settings as $key => $attributes ) {
