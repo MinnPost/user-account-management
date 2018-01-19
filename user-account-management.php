@@ -852,8 +852,8 @@ class User_Account_Management {
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
 		// wordpress has built in hooks for changing the message and subject:
-		//add_filter ( 'retrieve_password_title', 'my_retrieve_password_subject_filter', 10, 1 );
-		//add_filter ( 'retrieve_password_message', 'my_retrieve_password_message_filter', 10, 2 );
+		//add_filter ( 'retrieve_password_title', 'my_retrieve_password_subject_filter', 10, 3 ); // this includes the title, $user_login, and $user_data
+		//add_filter ( 'retrieve_password_message', 'my_retrieve_password_message_filter', 10, 4 ); // this includes $message, $key, $user_login, and $user_data
 
 		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
