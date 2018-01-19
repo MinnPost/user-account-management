@@ -850,6 +850,10 @@ class User_Account_Management {
 		// we do not include this here because a theme template would be required anyway
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
+		// wordpress has built in hooks for changing the message and subject:
+		//add_filter ( 'retrieve_password_title', 'my_retrieve_password_subject_filter', 10, 1 );
+		//add_filter ( 'retrieve_password_message', 'my_retrieve_password_message_filter', 10, 2 );
+
 		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
 	}
@@ -876,9 +880,18 @@ class User_Account_Management {
 		// we do not include this here because a theme template would be required anyway
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
-		$attributes['message'] = $this->get_template_html( 'new-user-notification-email', 'email', $attributes );
-
 		// add a filter to change all of the attributes
+		$attributes = apply_filters( 'user_account_management_new_user_email_attributes', $attributes );
+
+		// example to edit the new user email attributes
+		/*
+		add_filter( 'user_account_management_new_user_email_attributes', 'new_user_email_attributes', 10, 1 );
+		function new_user_email_attributes( $new_user_email_attributes ) {
+			return $new_user_email_attributes;
+		}
+		*/
+
+		$attributes['message'] = $this->get_template_html( 'new-user-notification-email', 'email', $attributes );
 
 		$wp_new_user_notification_email['to'] = $attributes['to'];
 		$wp_new_user_notification_email['subject'] = $attributes['subject'];
@@ -1078,8 +1091,20 @@ class User_Account_Management {
 		}
 
 		// add a filter to skip the new user notification
+		$notification_allowed = apply_filters( 'user_account_management_skip_new_user_notification', true );
 
-		wp_new_user_notification( $user_id, null, 'user' );
+		// example to skip the new user notification
+		/*
+		add_filter( 'user_account_management_skip_new_user_notification', 'skip_new_user_notification', 10, 1 );
+		function skip_new_user_notification( $notification_allowed ) {
+			$notification_allowed = false;
+			return $notification_allowed;
+		}
+		*/
+
+		if ( true === $notification_allowed ) {
+			wp_new_user_notification( $user_id, null, 'user' );
+		}
 
 		return $user_id;
 	}
