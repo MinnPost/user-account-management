@@ -92,7 +92,8 @@ class User_Account_Management {
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
 		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
 		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
-		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 );
+		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
+		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
 
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
@@ -859,21 +860,21 @@ class User_Account_Management {
 	}
 
 	/**
-	 * Returns the message body for the password reset mail.
-	 * Called through the retrieve_password_message filter.
+	 * Returns the message body for the new user notification email.
+	 * Called through the wp_new_user_notification_email filter.
 	 *
-	 * @param string  $to         mail recipient
-	 * @param string  $subject    mail subject
-	 * @param string  $message    mail message
+	 * @param array  $wp_new_user_notification_email         Used to build the wp_mail contents
+	 * @param object  $user                                  The WP_User object for the new user
+	 * @param string  $blogname                              The site title
 	 *
-	 * @return string   The mail message to send.
+	 * @return array   The mail parameters
 	 */
 	public function replace_new_user_email( $wp_new_user_notification_email, $user, $blogname ) {
 
 		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient
 		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
 		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
-		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail message
+		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail headers
 		$attributes['blogname'] = $blogname; // site name
 		$attributes['user_data'] = $user->data; // WP_User object
 		$attributes['login_url'] = site_url( '/user/login' ); // login url
@@ -894,6 +895,54 @@ class User_Account_Management {
 		*/
 
 		$attributes['message'] = $this->get_template_html( 'new-user-notification-email', 'email', $attributes );
+
+		$wp_new_user_notification_email['to'] = $attributes['to'];
+		$wp_new_user_notification_email['subject'] = $attributes['subject'];
+		$wp_new_user_notification_email['message'] = $attributes['message'];
+		$wp_new_user_notification_email['headers'] = $attributes['headers'];
+
+		return $wp_new_user_notification_email;
+	}
+
+	/**
+	 * Returns the message body for the new user notification email that goes to admins.
+	 * Called through the wp_new_user_notification_email_admin filter.
+	 *
+	 * By default, this email is not sent by this plugin, but can be enabled with the
+	 * user_account_management_allow_new_user_notification_admin filter
+	 *
+	 * @param array  $wp_new_user_notification_email         Used to build the wp_mail contents
+	 * @param object  $user                                  The WP_User object for the new user
+	 * @param string  $blogname                              The site title
+	 *
+	 * @return array   The mail parameters
+	 */
+	public function replace_new_user_email_admin( $wp_new_user_notification_email, $user, $blogname ) {
+
+		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient - the site admin
+		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
+		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
+		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail headers
+		$attributes['blogname'] = $blogname; // site name
+		$attributes['user_data'] = $user->data; // WP_User object
+		$attributes['login_url'] = site_url( '/user/login' ); // login url
+
+		// if you want to use html as the mime type, use the filter
+		// we do not include this here because a theme template would be required anyway
+		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
+
+		// add a filter to change all of the attributes
+		$attributes = apply_filters( 'user_account_management_new_user_email_admin_attributes', $attributes );
+
+		// example to edit the new user email attributes
+		/*
+		add_filter( 'user_account_management_new_user_email_admin_attributes', 'new_user_email_admin_attributes', 10, 1 );
+		function new_user_email_admin_attributes( $new_user_email_admin_attributes ) {
+			return $new_user_email_admin_attributes;
+		}
+		*/
+
+		$attributes['message'] = $this->get_template_html( 'new-user-notification-email-admin', 'email', $attributes );
 
 		$wp_new_user_notification_email['to'] = $attributes['to'];
 		$wp_new_user_notification_email['subject'] = $attributes['subject'];
