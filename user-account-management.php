@@ -92,6 +92,7 @@ class User_Account_Management {
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
 		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
 		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
+		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 );
 
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
@@ -854,6 +855,40 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Returns the message body for the password reset mail.
+	 * Called through the retrieve_password_message filter.
+	 *
+	 * @param string  $to         mail recipient
+	 * @param string  $subject    mail subject
+	 * @param string  $message    mail message
+	 *
+	 * @return string   The mail message to send.
+	 */
+	public function replace_new_user_email( $wp_new_user_notification_email, $user, $blogname ) {
+
+		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient
+		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
+		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
+		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail message
+		$attributes['user_data'] = $user->data; // WP_User object
+
+		// if you want to use html as the mime type, use the filter
+		// we do not include this here because a theme template would be required anyway
+		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
+
+		$attributes['message'] = $this->get_template_html( 'new-user-notification-email', 'email', $attributes );
+
+		// add a filter to change all of the attributes
+
+		$wp_new_user_notification_email['to'] = $attributes['to'];
+		$wp_new_user_notification_email['subject'] = $attributes['subject'];
+		$wp_new_user_notification_email['message'] = $attributes['message'];
+		$wp_new_user_notification_email['headers'] = $attributes['headers'];
+
+		return $wp_new_user_notification_email;
+	}
+
+	/**
 	 * Register API endpoints for dealing with user accounts
 	 *
 	 */
@@ -1041,6 +1076,10 @@ class User_Account_Management {
 				update_user_meta( $user_id, '_state', $citystate['state'] );
 			}
 		}
+
+		// add a filter to skip the new user notification
+
+		wp_new_user_notification( $user_id, null, 'user' );
 
 		return $user_id;
 	}
