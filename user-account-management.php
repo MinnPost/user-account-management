@@ -470,6 +470,9 @@ class User_Account_Management {
 	public function add_scripts_styles() {
 		$user_page = get_page_by_path( 'user' );
 		global $post;
+		if ( ! is_object( $user_page ) || ! is_object( $post ) ) {
+			return;
+		}
 		if ( is_page( $user_page->ID ) || $user_page->ID === $post->post_parent ) {
 
 			// stylesheet path
