@@ -98,6 +98,10 @@ class User_Account_Management {
 		add_filter ('send_email_change_email', array ( $this, 'send_email_change_email' ), 10, 3 ); // send email when user changes email
 		add_filter ('send_password_change_email', array ( $this, 'send_password_change_email' ), 10, 3 ); // send email when user changes password
 
+		// whether to send email to admins when user changes password
+		// we can't use a filter for this, but maybe later we could use an option
+		function wp_password_change_notification() {}
+
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
 
