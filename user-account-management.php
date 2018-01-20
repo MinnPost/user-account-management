@@ -95,6 +95,8 @@ class User_Account_Management {
 		add_filter( 'retrieve_password_title', array( $this, 'replace_retrieve_password_title' ), 10, 4 ); // lost password email subject
 		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
+		add_filter ('send_email_change_email', array ( $this, 'send_email_change_email' ), 10, 3 ); // send email when user changes email
+		add_filter ('send_password_change_email', array ( $this, 'send_password_change_email' ), 10, 3 ); // send email when user changes password
 
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
@@ -965,6 +967,38 @@ class User_Account_Management {
 		$wp_new_user_notification_email['headers'] = $attributes['headers'];
 
 		return $wp_new_user_notification_email;
+	}
+
+	/**
+	 * Whether to send an email when users change their email address
+	 *
+	 * By default, we turn this off, but it can be enabled by other users.
+	 *
+	 * @param array  $send         Whether to send the email
+	 * @param array  $user         Original user array
+	 * @param array  $userdata     Updated user array
+	 *
+	 * @return array   The mail parameters
+	 */
+	public function send_email_change_email( $send, $user, $userdata ) {
+		$send = apply_filters( 'user_account_management_send_email_change_email', false, $user, $userdata );
+		return $send;
+	}
+
+	/**
+	 * Whether to send an email when users change their password
+	 *
+	 * By default, we turn this off, but it can be enabled by other users.
+	 *
+	 * @param array  $send         Whether to send the email
+	 * @param array  $user         Original user array
+	 * @param array  $userdata     Updated user array
+	 *
+	 * @return array   The mail parameters
+	 */
+	public function send_password_change_email( $send, $user, $userdata ) {
+		$send = apply_filters( 'user_account_management_send_password_change_email', false, $user, $userdata );
+		return $send;
 	}
 
 	/**
