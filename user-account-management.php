@@ -899,6 +899,7 @@ class User_Account_Management {
 		$attributes['blogname'] = $blogname; // site name
 		$attributes['user_data'] = $user->data; // WP_User object
 		$attributes['login_url'] = site_url( '/user/login' ); // login url
+		$attributes['account_url'] = site_url( '/user/' ); // user account url
 
 		// if you want to use html as the mime type, use the filter
 		// we do not include this here because a theme template would be required anyway
