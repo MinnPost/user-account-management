@@ -72,6 +72,7 @@ class User_Account_Management {
 		add_shortcode( 'custom-register-form', array( $this, 'render_register_form' ) ); // register
 		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // lost password
 		add_shortcode( 'custom-password-reset-form', array( $this, 'render_password_reset_form' ) ); // reset password
+		add_shortcode( 'custom-password-change-form', array( $this, 'render_password_change_form' ) ); // reset password
 
 		// actions
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
@@ -85,6 +86,7 @@ class User_Account_Management {
 		add_action( 'login_form_resetpass', array( $this, 'redirect_to_custom_password_reset' ) ); // reset password
 		add_action( 'login_form_rp', array( $this, 'do_password_reset' ) ); // reset password
 		add_action( 'login_form_resetpass', array( $this, 'do_password_reset' ) ); // reset password
+		add_action( 'init', array( $this, 'do_password_change' ) ); // logged in user change password
 
 		// filters
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
@@ -157,6 +159,11 @@ class User_Account_Management {
 			'password-reset' => array(
 				'title' => __( 'Set a New Password', 'user-account-management' ),
 				'content' => '[custom-password-reset-form]',
+				'parent' => 'user',
+			),
+			'password' => array(
+				'title' => __( 'Change Your Password', 'user-account-management' ),
+				'content' => '[custom-password-change-form]',
 				'parent' => 'user',
 			),
 		);
@@ -470,6 +477,41 @@ class User_Account_Management {
 	}
 
 	/**
+	 * A shortcode for rendering the form used to change a logged in user's password.
+	 *
+	 * @param  array   $attributes  Shortcode attributes.
+	 * @param  string  $content     The text content for shortcode. Not used.
+	 *
+	 * @return string  The shortcode output
+	 */
+	public function render_password_change_form( $attributes, $content = null ) {
+
+		$attributes['current_url'] = $this->get_current_url();
+		$attributes['redirect'] = $attributes['current_url'];
+
+		if ( ! is_user_logged_in() ) {
+			return __( 'You are not signed in.', 'user-account-management' );
+		} else {
+			//$attributes['login'] = rawurldecode( $_REQUEST['login'] );
+
+			// Error messages
+			$errors = array();
+			if ( isset( $_REQUEST['error'] ) ) {
+				$error_codes = explode( ',', $_REQUEST['error'] );
+
+				foreach ( $error_codes as $code ) {
+					$errors[] = $this->get_error_message( $code );
+				}
+			}
+			$attributes['errors'] = $errors;
+
+
+
+			return $this->get_template_html( 'password-change-form', 'front-end', $attributes );
+		}
+	}
+
+	/**
 	 * Add plugin JavaScript
 	 *
 	 */
@@ -650,6 +692,43 @@ class User_Account_Management {
 
 			wp_redirect( $redirect_url );
 			exit;
+		}
+	}
+
+	/**
+	 * Changes a logged in user's password
+	 */
+	public function do_password_change() {
+		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
+			global $user_ID;
+			if ( ! is_user_logged_in() ) {
+				return;
+			}
+
+			$redirect_url = $_POST['user_account_management_redirect'];
+
+			if ( wp_verify_nonce( $_POST['user_account_management_password_nonce'], 'uam-password-nonce' ) ) {
+				if ( '' === $_POST['new_password'] ) {
+					$redirect_url = add_query_arg( 'error', 'new_password_empty', $redirect_url );
+				} else {
+					$user_data = array(
+						'ID' => $user_ID,
+						'user_pass' => $_POST['new_password'],
+					);
+					wp_update_user( $user_data );
+					$redirect_url = add_query_arg( 'password-reset', 'true', $redirect_url );
+				}
+
+				if ( isset( $redirect_url ) ) {
+					$redirect_url = wp_validate_redirect( $redirect_url, $redirect_url );
+				}
+				if ( ! empty( $redirect_url ) ) {
+					wp_redirect( $redirect_url );
+					exit;
+				}
+
+			}
+
 		}
 	}
 
@@ -1233,6 +1312,21 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Get the current url, for cases we need to use it as a form submission destination
+	 *
+	 * @return string         The current url
+	 */
+	private function get_current_url() {
+		if ( is_page() || is_single() ) {
+			$current_url = wp_get_canonical_url();
+		} else {
+			global $wp;
+			$current_url = home_url( add_query_arg( array(), $wp->request ) );
+		}
+		return $current_url;
+	}
+
+	/**
 	 * Renders the contents of the given template to a string and returns it.
 	 *
 	 * @param string $template_name The name of the template to render (without .php)
@@ -1374,6 +1468,7 @@ class User_Account_Management {
 			case 'invalidkey':
 				return __( 'The password reset link you used is not valid anymore.', 'user-account-management' );
 			case 'password_reset_empty':
+			case 'new_password_empty':
 				return __( "Sorry, we don't accept empty passwords.", 'user-account-management' );
 			default:
 				break;
