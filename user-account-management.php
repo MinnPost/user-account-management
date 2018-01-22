@@ -486,6 +486,8 @@ class User_Account_Management {
 	 */
 	public function render_password_change_form( $attributes, $content = null ) {
 
+		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
+
 		$attributes['current_url'] = $this->get_current_url();
 		$attributes['redirect'] = $attributes['current_url'];
 
