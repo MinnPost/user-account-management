@@ -97,8 +97,8 @@ class User_Account_Management {
 		add_filter( 'retrieve_password_title', array( $this, 'replace_retrieve_password_title' ), 10, 4 ); // lost password email subject
 		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
-		add_filter ('send_email_change_email', array ( $this, 'send_email_change_email' ), 10, 3 ); // send email when user changes email
-		add_filter ('send_password_change_email', array ( $this, 'send_password_change_email' ), 10, 3 ); // send email when user changes password
+		add_filter( 'send_email_change_email', array( $this, 'send_email_change_email' ), 10, 3 ); // send email when user changes email
+		add_filter( 'send_password_change_email', array( $this, 'send_password_change_email' ), 10, 3 ); // send email when user changes password
 
 		// whether to send email to admins when user changes password
 		// we can't use a filter for this, but maybe later we could use an option
@@ -506,9 +506,6 @@ class User_Account_Management {
 				}
 			}
 			$attributes['errors'] = $errors;
-
-
-
 			return $this->get_template_html( 'password-change-form', 'front-end', $attributes );
 		}
 	}
@@ -702,7 +699,7 @@ class User_Account_Management {
 	 */
 	public function do_password_change() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
-			global $user_ID;
+			global $user_id;
 			if ( ! is_user_logged_in() ) {
 				return;
 			}
@@ -714,7 +711,7 @@ class User_Account_Management {
 					$redirect_url = add_query_arg( 'error', 'new_password_empty', $redirect_url );
 				} else {
 					$user_data = array(
-						'ID' => $user_ID,
+						'ID' => $user_id,
 						'user_pass' => $_POST['new_password'],
 					);
 					wp_update_user( $user_data );
@@ -728,9 +725,7 @@ class User_Account_Management {
 					wp_redirect( $redirect_url );
 					exit;
 				}
-
 			}
-
 		}
 	}
 
