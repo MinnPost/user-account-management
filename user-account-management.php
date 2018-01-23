@@ -249,6 +249,10 @@ class User_Account_Management {
 	 */
 	public function render_login_form( $attributes, $content = null ) {
 
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 		// if the user is already signed in, this lets us not leave them stranded
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
@@ -330,6 +334,10 @@ class User_Account_Management {
 	 */
 	public function render_register_form( $attributes, $content = null ) {
 
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
 		if ( isset( $_REQUEST['register-errors'] ) ) {
@@ -409,6 +417,10 @@ class User_Account_Management {
 	 */
 	public function render_password_lost_form( $attributes, $content = null ) {
 
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
 		if ( isset( $_REQUEST['errors'] ) ) {
@@ -457,6 +469,10 @@ class User_Account_Management {
 	 */
 	public function render_password_reset_form( $attributes, $content = null ) {
 
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
 		} else {
@@ -492,6 +508,10 @@ class User_Account_Management {
 	 */
 	public function render_password_change_form( $attributes, $content = null ) {
 
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
 
 		$attributes['current_url'] = $this->get_current_url();
@@ -526,6 +546,11 @@ class User_Account_Management {
 	 */
 	public function render_account_settings_form( $attributes, $content = null ) {
 		return 'what';
+
+		if ( ! is_array( $attributes ) ) {
+			$attributes = array();
+		}
+
 	}
 
 	/**
