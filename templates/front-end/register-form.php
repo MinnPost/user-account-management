@@ -75,7 +75,7 @@
 
 		<div class="m-form-item m-form-item-rh-name">
 			<label for="rh_name"><?php _e( 'Only fill in if you are not human:', 'user-account-management' ); ?></label>
-			<input type="text" name="rh_name" id="rh-name" value="" autocomplete="off" /></label>
+			<input type="text" name="rh_name" id="rh-name" value="" autocomplete="off" />
 		</div>
 
 		<div class="m-form-actions">

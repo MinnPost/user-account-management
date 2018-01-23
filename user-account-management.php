@@ -88,6 +88,7 @@ class User_Account_Management {
 		add_action( 'login_form_rp', array( $this, 'do_password_reset' ) ); // reset password
 		add_action( 'login_form_resetpass', array( $this, 'do_password_reset' ) ); // reset password
 		add_action( 'init', array( $this, 'do_password_change' ) ); // logged in user change password
+		add_action( 'init', array( $this, 'do_account_settings' ) ); // logged in user account settings
 
 		// filters
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
@@ -100,6 +101,7 @@ class User_Account_Management {
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
 		add_filter( 'send_email_change_email', array( $this, 'send_email_change_email' ), 10, 3 ); // send email when user changes email
 		add_filter( 'send_password_change_email', array( $this, 'send_password_change_email' ), 10, 3 ); // send email when user changes password
+		add_filter( 'query_vars', array( $this, 'user_query_vars' ), 10, 1 ); // query string params
 
 		// whether to send email to admins when user changes password
 		// we can't use a filter for this, but maybe later we could use an option
@@ -545,12 +547,55 @@ class User_Account_Management {
 	 * @return string  The shortcode output
 	 */
 	public function render_account_settings_form( $attributes, $content = null ) {
-		return 'what';
 
 		if ( ! is_array( $attributes ) ) {
 			$attributes = array();
 		}
 
+		global $wp_query;
+		if ( isset( $wp_query->query_vars['id'] ) ) {
+			$user_id = $wp_query->query_vars['id'];
+		}
+
+		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
+		// we should use it for this page as well, unless and until it becomes insufficient
+
+		$attributes['current_url'] = $this->get_current_url();
+		$attributes['redirect'] = $attributes['current_url'];
+
+		if ( ! is_user_logged_in() ) {
+			return __( 'You are not signed in.', 'user-account-management' );
+		} else {
+			//$attributes['login'] = rawurldecode( $_REQUEST['login'] );
+			// Error messages
+			$errors = array();
+			if ( isset( $_REQUEST['error'] ) ) {
+				$error_codes = explode( ',', $_REQUEST['error'] );
+
+				foreach ( $error_codes as $code ) {
+					$errors[] = $this->get_error_message( $code );
+				}
+			}
+			$attributes['errors'] = $errors;
+			if ( isset( $user_id ) && '' !== $user_id ) {
+				$attributes['user'] = get_userdata( $user_id );
+			} else {
+				$attributes['user'] = wp_get_current_user();
+			}
+			$attributes['user_meta'] = get_user_meta( $attributes['user']->ID );
+			if ( 'United States' === $attributes['user_meta']['_country'][0] ) {
+				$attributes['user_meta']['_country'][0] = 'United States of America'; // fix legacy naming
+			}
+
+			$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
+			$attributes['hidden_city_state'] = get_option( $this->option_prefix . 'hidden_city_state', false );
+			$include_countries = get_option( $this->option_prefix . 'include_countries', false );
+			if ( '1' === $include_countries ) {
+				$attributes['countries'] = $this->get_countries();
+			}
+
+			return $this->get_template_html( 'account-settings-form', 'front-end', $attributes );
+		}
 	}
 
 	/**
@@ -772,6 +817,41 @@ class User_Account_Management {
 					);
 					wp_update_user( $user_data );
 					$redirect_url = add_query_arg( 'password-reset', 'true', $redirect_url );
+				}
+
+				if ( isset( $redirect_url ) ) {
+					$redirect_url = wp_validate_redirect( $redirect_url, $redirect_url );
+				}
+				if ( ! empty( $redirect_url ) ) {
+					wp_redirect( $redirect_url );
+					exit;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Updates a logged in user's account settings
+	 */
+	public function do_account_settings() {
+		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
+			global $user_id;
+			if ( ! is_user_logged_in() ) {
+				return;
+			}
+
+			$redirect_url = $_POST['user_account_management_redirect'];
+
+			if ( wp_verify_nonce( $_POST['user_account_management_account_settings_nonce'], 'uam-account-settings-nonce' ) ) {
+				if ( '' === $_POST['new_password'] ) {
+					$redirect_url = add_query_arg( 'error', 'new_password_empty', $redirect_url );
+				} else {
+					$user_data = array(
+						'ID' => $user_id,
+						'user_pass' => $_POST['new_password'],
+					);
+					wp_update_user( $user_data );
+					$redirect_url = add_query_arg( 'account-settings-update', 'true', $redirect_url );
 				}
 
 				if ( isset( $redirect_url ) ) {
@@ -1136,6 +1216,11 @@ class User_Account_Management {
 	public function send_password_change_email( $send, $user, $userdata ) {
 		$send = apply_filters( 'user_account_management_send_password_change_email', false, $user, $userdata );
 		return $send;
+	}
+
+	public function user_query_vars( $query_vars ) {
+		$query_vars[] = 'id';
+		return $query_vars;
 	}
 
 	/**
