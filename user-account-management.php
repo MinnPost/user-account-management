@@ -73,6 +73,7 @@ class User_Account_Management {
 		add_shortcode( 'custom-password-lost-form', array( $this, 'render_password_lost_form' ) ); // lost password
 		add_shortcode( 'custom-password-reset-form', array( $this, 'render_password_reset_form' ) ); // reset password
 		add_shortcode( 'custom-password-change-form', array( $this, 'render_password_change_form' ) ); // reset password
+		add_shortcode( 'custom-account-settings-form', array( $this, 'render_account_settings_form' ) ); // account settings
 
 		// actions
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
@@ -164,6 +165,11 @@ class User_Account_Management {
 			'password' => array(
 				'title' => __( 'Change Your Password', 'user-account-management' ),
 				'content' => '[custom-password-change-form]',
+				'parent' => 'user',
+			),
+			'account-settings' => array(
+				'title' => __( 'Account Settings', 'user-account-management' ),
+				'content' => '[custom-account-settings-form]',
 				'parent' => 'user',
 			),
 		);
@@ -508,6 +514,18 @@ class User_Account_Management {
 			$attributes['errors'] = $errors;
 			return $this->get_template_html( 'password-change-form', 'front-end', $attributes );
 		}
+	}
+
+	/**
+	 * A shortcode for rendering the form used to change a logged in user's basic account info.
+	 *
+	 * @param  array   $attributes  Shortcode attributes.
+	 * @param  string  $content     The text content for shortcode. Not used.
+	 *
+	 * @return string  The shortcode output
+	 */
+	public function render_account_settings_form( $attributes, $content = null ) {
+		return 'what';
 	}
 
 	/**
