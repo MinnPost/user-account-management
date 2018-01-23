@@ -615,9 +615,22 @@ class User_Account_Management {
 			} else {
 				$email = $_POST['email'];
 				$password = $_POST['password'];
-				$first_name = sanitize_text_field( $_POST['first_name'] );
-				$last_name = sanitize_text_field( $_POST['last_name'] );
-				$zip_code = esc_attr( $_POST['zip_code'] );
+				// first, last, zip, country should be optional since people might want to remove them
+				if ( isset( $_POST['first_name'] ) ) {
+					$first_name = sanitize_text_field( $_POST['first_name'] );
+				} else {
+					$first_name = '';
+				}
+				if ( isset( $_POST['last_name'] ) ) {
+					$last_name = sanitize_text_field( $_POST['last_name'] );
+				} else {
+					$last_name = '';
+				}
+				if ( isset( $_POST['zip_code'] ) ) {
+					$zip_code = esc_attr( $_POST['zip_code'] );
+				} else {
+					$zip_code = '';
+				}
 				if ( isset( $_POST['country'] ) ) {
 					$country = sanitize_text_field( $_POST['country'] );
 				} else {
@@ -1222,7 +1235,7 @@ class User_Account_Management {
 	 *
 	 * @return int|WP_Error         The id of the user that was created, or error if failed.
 	 */
-	private function register_user( $email, $password, $first_name, $last_name, $zip_code, $country = '' ) {
+	private function register_user( $email, $password, $first_name = '', $last_name = '', $zip_code = '', $country = '' ) {
 		$errors = new WP_Error();
 
 		// Email address is used as both username and email. It is also the only
