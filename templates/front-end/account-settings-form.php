@@ -41,28 +41,28 @@
 		</div>
 
 		<div class="m-form-item m-form-first-name m-form-change-first-name">
-			<label for="first_name"><?php _e( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="first-name"><?php _e( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="text" name="first_name" id="first-name" value="<?php echo isset( $_POST['first_name'] ) ? $_POST['first_name'] : isset( $attributes['user']->first_name ) ? $attributes['user']->first_name : ''; ?>" required>
 		</div>
 
 		<div class="m-form-item m-form-last-name m-form-change-last-name">
-			<label for="last_name"><?php _e( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="last-name"><?php _e( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="text" name="last_name" id="last-name" value="<?php echo isset( $_POST['last_name'] ) ? $_POST['last_name'] : isset( $attributes['user']->last_name ) ? $attributes['user']->last_name : ''; ?>" required>
 		</div>
 
 		<?php if ( '1' === $attributes['include_city_state'] && '1' !== $attributes['hidden_city_state'] ) : ?>
 			<div class="m-form-item m-form-city m-form-change-city">
-				<label for="zip_code"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<label for="city"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 				<input type="text" name="city" id="city" value="<?php echo isset( $_POST['city'] ) ? $_POST['city'] : isset( $attributes['user_meta']['_city'][0] ) ? $attributes['user_meta']['_city'][0] : ''; ?>"  required>
 			</div>
 			<div class="m-form-item m-form-state m-form-change-state">
-				<label for="zip_code"><?php _e( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<label for="state"><?php _e( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 				<input type="text" name="state" id="state" value="<?php echo isset( $_POST['state'] ) ? $_POST['state'] : isset( $attributes['user_meta']['_state'][0] ) ? $attributes['user_meta']['_state'][0] : ''; ?>" required>
 			</div>
 		<?php endif; ?>
 
 		<div class="m-form-item m-form-zip-code m-form-change-zip-code">
-			<label for="zip_code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="zip-code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="tel" name="zip_code" id="zip-code" value="<?php echo isset( $_POST['zip_code'] ) ? $_POST['zip_code'] : isset( $attributes['user_meta']['_zip_code'][0] ) ? $attributes['user_meta']['_zip_code'][0] : ''; ?>" required>
 		</div>
 
