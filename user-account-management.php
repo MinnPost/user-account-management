@@ -701,31 +701,8 @@ class User_Account_Management {
 			} elseif ( isset( $_POST['rh_name'] ) && ! empty( $_POST['rh_name'] ) ) {
 				$redirect_url = add_query_arg( 'register-errors', 'honeypot', $redirect_url );
 			} else {
-				$email = $_POST['email'];
-				$password = $_POST['password'];
-				// first, last, zip, country should be optional since people might want to remove them
-				if ( isset( $_POST['first_name'] ) ) {
-					$first_name = sanitize_text_field( $_POST['first_name'] );
-				} else {
-					$first_name = '';
-				}
-				if ( isset( $_POST['last_name'] ) ) {
-					$last_name = sanitize_text_field( $_POST['last_name'] );
-				} else {
-					$last_name = '';
-				}
-				if ( isset( $_POST['zip_code'] ) ) {
-					$zip_code = esc_attr( $_POST['zip_code'] );
-				} else {
-					$zip_code = '';
-				}
-				if ( isset( $_POST['country'] ) ) {
-					$country = sanitize_text_field( $_POST['country'] );
-				} else {
-					$country = '';
-				}
-
-				$result = $this->register_user( $email, $password, $first_name, $last_name, $zip_code, $country );
+				$user_data = $this->setup_user_data( $_POST );
+				$result = $this->register_or_update_user( $user_data, 'register' );
 
 				if ( is_wp_error( $result ) ) {
 					// Parse errors into a string and append as parameter to redirect
@@ -733,13 +710,13 @@ class User_Account_Management {
 					$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
 				} else {
 					// user has been registered; log them in now
-					$user_data = array(
-						'user_login' => $email,
-						'user_password' => $password,
+					$login_data = array(
+						'user_login' => $user_data['user_email'],
+						'user_password' => $user_data['user_pass'],
 						'remember' => false,
 					);
 
-					$result = wp_signon( $user_data );
+					$result = wp_signon( $login_data );
 
 					if ( ! is_wp_error( $result ) ) {
 						global $current_user;
@@ -800,8 +777,8 @@ class User_Account_Management {
 	 */
 	public function do_password_change() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
-			global $user_id;
-			if ( ! is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			if ( 0 === $user_id ) {
 				return;
 			}
 
@@ -835,22 +812,63 @@ class User_Account_Management {
 	 */
 	public function do_account_settings() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
-			global $user_id;
-			if ( ! is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			if ( 0 === $user_id ) {
 				return;
 			}
 
 			$redirect_url = $_POST['user_account_management_redirect'];
 
 			if ( wp_verify_nonce( $_POST['user_account_management_account_settings_nonce'], 'uam-account-settings-nonce' ) ) {
-				if ( '' === $_POST['new_password'] ) {
-					$redirect_url = add_query_arg( 'error', 'new_password_empty', $redirect_url );
+				if ( empty( $_POST ) ) {
+					$redirect_url = add_query_arg( 'errors', 'account_settings_empty', $redirect_url );
 				} else {
-					$user_data = array(
-						'ID' => $user_id,
-						'user_pass' => $_POST['new_password'],
-					);
-					wp_update_user( $user_data );
+					$existing_user_data = get_userdata( $user_id );
+					$new_user_data = $this->setup_user_data( $_POST, $existing_user_data );
+					$result = $this->register_or_update_user( $new_user_data, 'update' );
+
+					//$result = wp_update_user( $new_user_data );
+					// todo: figure out if there's a way to update the user_login and then sign in the user
+					// currently this does not work because the user is not seen as logged in
+					/*if ( $new_user_data['user_login'] !== $existing_user_data->user_login ) {
+						// user_login has to be directly updated
+						global $wpdb;
+						$wpdb->update(
+							$wpdb->users,
+							array(
+								'user_login' => $new_user_data['user_login'],
+							),
+							array(
+								'ID' => $new_user_data['ID'],
+							)
+						);
+
+						add_filter( 'authenticate', array( $this, 'allow_programmatic_login' ), 10, 3 ); // hook in earlier than other callbacks to short-circuit them
+						$result = wp_signon(
+							array(
+								'user_login' => $new_user_data['user_login'],
+							)
+						);
+						remove_filter( 'authenticate', array( $this, 'allow_programmatic_login' ), 10, 3 );
+
+						if ( is_a( $result, 'WP_User' ) ) {
+
+							clean_user_cache( $result->ID );
+							wp_clear_auth_cookie();
+							wp_set_current_user( $result->ID );
+							wp_set_auth_cookie( $result->ID, true, false );
+							update_user_caches( $result );
+
+							//wp_set_current_user( $result->ID, $result->user_login );
+						}
+					}*/
+				}
+
+				if ( is_wp_error( $result ) ) {
+					// Parse errors into a string and append as parameter to redirect
+					$errors = join( ',', $result->get_error_codes() );
+					$redirect_url = add_query_arg( 'errors', $errors, $redirect_url );
+				} else {
 					$redirect_url = add_query_arg( 'account-settings-update', 'true', $redirect_url );
 				}
 
@@ -863,6 +881,21 @@ class User_Account_Management {
 				}
 			}
 		}
+	}
+
+	/**
+	  * An 'authenticate' filter callback that authenticates the user using only     the username.
+	  *
+	  * To avoid potential security vulnerabilities, this should only be used in     the context of a programmatic login,
+	  * and unhooked immediately after it fires.
+	  *
+	  * @param WP_User $user
+	  * @param string $username
+	  * @param string $password
+	  * @return bool|WP_User a WP_User object if the username matched an existing user, or false if it didn't
+	  */
+	public function allow_programmatic_login( $user, $username, $password ) {
+		return get_user_by( 'login', $username );
 	}
 
 	/**
@@ -1263,6 +1296,78 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Set up user data to be created or updated
+	 *
+	 * @param object  $posted       The $_POST object
+	 * @param array   $user_data    Any already existing data
+	 *
+	 * @return array   $user_data the data ready to be inserted or updated
+	 *
+	 */
+	private function setup_user_data( $posted, $existing_user_data = array() ) {
+
+		$user_data = array();
+		if ( isset( $existing_user_data->ID ) ) {
+			$user_data['ID'] = $existing_user_data->ID;
+		}
+
+		// email address is used as login in this plugin
+		if ( isset( $posted['email'] ) ) {
+			$user_data['user_email'] = $posted['email'];
+			$user_data['user_login'] = $user_data['user_email'];
+		}
+
+		// password is only sent to this method on register
+		if ( isset( $posted['password'] ) ) {
+			$user_data['user_pass'] = $posted['password'];
+		}
+
+		// first, last, zip, country should be optional since people might want to remove them
+		if ( isset( $posted['first_name'] ) ) {
+			$user_data['first_name'] = sanitize_text_field( $posted['first_name'] );
+		} else {
+			$user_data['first_name'] = '';
+		}
+		if ( isset( $posted['last_name'] ) ) {
+			$user_data['last_name'] = sanitize_text_field( $posted['last_name'] );
+		} else {
+			$user_data['last_name'] = '';
+		}
+
+		// if there is an existing user:
+		// add zip/country to the array if they are different than the previous version.
+		// otherwise leave them empty; this will keep the update_user_meta method from running needlessly
+		if ( isset( $user_data['ID'] ) ) {
+			$existing_zip_code = get_user_meta( $user_data['ID'], '_zip_code', true );
+			$existing_country = get_user_meta( $user_data['ID'], '_country', true );
+		}
+
+		if ( isset( $posted['zip_code'] ) ) {
+			$user_data['zip_code'] = esc_attr( $posted['zip_code'] );
+			// if there is an existing zip code but it is unchanged, keep it empty
+			if ( isset( $existing_zip_code ) && $existing_zip_code === $user_data['zip_code'] ) {
+				$user_data['zip_code'] = '';
+			}
+		} else {
+			$user_data['zip_code'] = '';
+		}
+		if ( isset( $posted['country'] ) && isset( $user_data['country'] ) && $user_data['country'] !== $posted['country'] ) {
+			$user_data['country'] = sanitize_text_field( $posted['country'] );
+			if ( isset( $existing_country ) && $existing_country === $user_data['country'] ) {
+				$user_data['country'] = '';
+			}
+		} else {
+			$user_data['country'] = '';
+		}
+
+		$user_data['user_nicename'] = strtolower( $user_data['first_name'] . '-' . $user_data['last_name'] );
+		$user_data['display_name'] = $user_data['first_name'] . ' ' . $user_data['last_name'];
+		$user_data['nickname'] = $user_data['first_name'];
+
+		return $user_data;
+	}
+
+	/**
 	 * Use the Geonames API to get the city/state from a postal code/country combination
 	 *
 	 * @param string  $zip_code    Zip/postal code
@@ -1352,64 +1457,63 @@ class User_Account_Management {
 	}
 
 	/**
-	 * Validates and then completes the new user signup process if all went well.
+	 * Validates and then completes the new user signup or existing user update process if all went well.
 	 *
-	 * @param string $email         The new user's email address
-	 * @param string $password      The new user's password
-	 * @param string $first_name    The new user's first name
-	 * @param string $last_name     The new user's last name
-	 * @param string $zip_code      The new user's zip code
-	 * @param string $country       The new user's country
+	 * @param array  $user_data            The prepared array of user data
+	 * @param string $action               Register or update
+	 * @param array  $existing_user_data   If it's an update, allow comparisons with existing user data
 	 *
 	 * @return int|WP_Error         The id of the user that was created, or error if failed.
 	 */
-	private function register_user( $email, $password, $first_name = '', $last_name = '', $zip_code = '', $country = '' ) {
+	private function register_or_update_user( $user_data, $action, $existing_user_data = array() ) {
+
+		$country = $user_data['country'];
+
 		$errors = new WP_Error();
 
 		// Email address is used as both username and email. It is also the only
 		// parameter we need to validate
-		if ( ! is_email( $email ) ) {
+		if ( ! is_email( $user_data['user_email'] ) ) {
 			$errors->add( 'email', $this->get_error_message( 'email' ) );
 			return $errors;
 		}
 
-		if ( username_exists( $email ) || email_exists( $email ) ) {
+		if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
 			$errors->add( 'email_exists', $this->get_error_message( 'email_exists' ) );
 			return $errors;
 		}
 
-		$user_data = array(
-			'user_login'    => $email,
-			'user_email'    => $email,
-			'user_pass'     => $password,
-			'first_name'    => $first_name,
-			'last_name'     => $last_name,
-			'display_name'  => $first_name . ' ' . $last_name,
-			'nickname'      => $first_name,
-		);
-
-		$user_id = wp_insert_user( $user_data );
-
-		if ( '' !== $zip_code ) {
-			update_user_meta( $user_id, '_zip_code', $zip_code );
+		if ( 'register' === $action ) {
+			$user_id = wp_insert_user( $user_data );
+		} elseif ( 'update' === $action ) {
+			$user_id = $user_data['ID'];
+			$result = wp_update_user( $user_data );
 		}
 
-		if ( '' !== $country ) {
-			update_user_meta( $user_id, '_country', $country );
+		if ( '' !== $user_data['zip_code'] ) {
+			update_user_meta( $user_id, '_zip_code', $user_data['zip_code'] );
 		}
 
-		// try to get the city/state from the zip code, if we can
-		if ( '' !== $zip_code ) {
-			if ( '' === $country ) {
-				$country = 'US';
+		if ( '' !== $user_data['country'] ) {
+			update_user_meta( $user_id, '_country', $user_data['country'] );
+		}
+
+		// try to get the city/state from the zip code
+		if ( '' !== $user_data['zip_code'] ) {
+			if ( '' === $user_data['country'] ) {
+				$user_data['country'] = 'US';
 			}
-			$citystate = $this->get_city_state( $zip_code, $country ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
+			$citystate = $this->get_city_state( $user_data['zip_code'], $user_data['country'] ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
 			if ( '' !== $citystate['city'] ) {
 				update_user_meta( $user_id, '_city', $citystate['city'] );
 			}
 			if ( '' !== $citystate['state'] ) {
 				update_user_meta( $user_id, '_state', $citystate['state'] );
 			}
+		}
+
+		if ( 'update' === $action ) {
+			return $result;
 		}
 
 		// add a filter to skip the new user notification to the user
