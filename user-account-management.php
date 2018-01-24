@@ -583,7 +583,7 @@ class User_Account_Management {
 				$attributes['user'] = wp_get_current_user();
 			}
 			$attributes['user_meta'] = get_user_meta( $attributes['user']->ID );
-			if ( 'United States' === $attributes['user_meta']['_country'][0] ) {
+			if ( isset( $attributes['user_meta']['_country'][0] ) && 'United States' === $attributes['user_meta']['_country'][0] ) {
 				$attributes['user_meta']['_country'][0] = 'United States of America'; // fix legacy naming
 			}
 
