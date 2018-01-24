@@ -484,8 +484,8 @@ class User_Account_Management {
 
 				// Error messages
 				$errors = array();
-				if ( isset( $_REQUEST['error'] ) ) {
-					$error_codes = explode( ',', $_REQUEST['error'] );
+				if ( isset( $_REQUEST['errors'] ) ) {
+					$error_codes = explode( ',', $_REQUEST['errors'] );
 
 					foreach ( $error_codes as $code ) {
 						$errors[] = $this->get_error_message( $code );
@@ -526,8 +526,8 @@ class User_Account_Management {
 
 			// Error messages
 			$errors = array();
-			if ( isset( $_REQUEST['error'] ) ) {
-				$error_codes = explode( ',', $_REQUEST['error'] );
+			if ( isset( $_REQUEST['errors'] ) ) {
+				$error_codes = explode( ',', $_REQUEST['errors'] );
 
 				foreach ( $error_codes as $code ) {
 					$errors[] = $this->get_error_message( $code );
@@ -569,8 +569,8 @@ class User_Account_Management {
 			//$attributes['login'] = rawurldecode( $_REQUEST['login'] );
 			// Error messages
 			$errors = array();
-			if ( isset( $_REQUEST['error'] ) ) {
-				$error_codes = explode( ',', $_REQUEST['error'] );
+			if ( isset( $_REQUEST['errors'] ) ) {
+				$error_codes = explode( ',', $_REQUEST['errors'] );
 
 				foreach ( $error_codes as $code ) {
 					$errors[] = $this->get_error_message( $code );
@@ -809,7 +809,7 @@ class User_Account_Management {
 
 			if ( wp_verify_nonce( $_POST['user_account_management_password_nonce'], 'uam-password-nonce' ) ) {
 				if ( '' === $_POST['new_password'] ) {
-					$redirect_url = add_query_arg( 'error', 'new_password_empty', $redirect_url );
+					$redirect_url = add_query_arg( 'errors', 'new_password_empty', $redirect_url );
 				} else {
 					$user_data = array(
 						'ID' => $user_id,
@@ -919,7 +919,7 @@ class User_Account_Management {
 
 					$redirect_url = add_query_arg( 'key', $rp_key, $redirect_url );
 					$redirect_url = add_query_arg( 'login', $rp_login, $redirect_url );
-					$redirect_url = add_query_arg( 'error', 'password_reset_empty', $redirect_url );
+					$redirect_url = add_query_arg( 'errors', 'password_reset_empty', $redirect_url );
 
 					wp_redirect( $redirect_url );
 					exit;
