@@ -70,6 +70,11 @@ class User_Account_Management {
 		$this->version = '0.0.1';
 		$this->slug = 'user-account-management';
 
+		$this->user_id = '';
+		if ( isset( $_REQUEST['user_id'] ) ) {
+			$this->user_id = esc_attr( $_REQUEST['user_id'] );
+		}
+
 		// things to do upon activate
 		$this->activate = $this->activate( $this->option_prefix, $this->version, $this->slug );
 
@@ -1526,6 +1531,24 @@ class User_Account_Management {
 			$current_url = home_url( add_query_arg( array(), $wp->request ) );
 		}
 		return $current_url;
+	}
+
+	/**
+	 * Check whether the current user is allowed to see the current screen
+	 *
+	 * @param int         The user id to check
+	 *
+	 * @return bool true or false
+	 */
+	public function check_user_permissions( $user_id = '' ) {
+		if ( '' === $user_id ) {
+			$user_id = $this->user_id;
+		}
+		if ( get_current_user_id() === $user_id || current_user_can( 'edit_users' ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
