@@ -175,7 +175,9 @@ class User_Account_Management {
 
 		// whether to send email to admins when user changes password
 		// we can't use a filter for this, but maybe later we could use an option
-		function wp_password_change_notification() {}
+		if ( ! function_exists( 'wp_password_change_notification' ) ) {
+			function wp_password_change_notification() {}
+		}
 
 		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
