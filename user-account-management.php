@@ -487,6 +487,12 @@ class User_Account_Management {
 		if ( ! is_user_logged_in() ) {
 			return __( 'You are not signed in.', 'user-account-management' );
 		} else {
+
+			$can_access = $this->check_user_permissions();
+			if ( false === $can_access ) {
+				return __( 'You do not have permission to access this page.', 'user-account-management' );
+			}
+
 			//$attributes['login'] = rawurldecode( $_REQUEST['login'] );
 
 			// Error messages
@@ -517,9 +523,9 @@ class User_Account_Management {
 			$attributes = array();
 		}
 
-		global $wp_query;
-		if ( isset( $wp_query->query_vars['id'] ) ) {
-			$user_id = $wp_query->query_vars['id'];
+		$can_access = $this->check_user_permissions();
+		if ( false === $can_access ) {
+			return __( 'You do not have permission to access this page.', 'user-account-management' );
 		}
 
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
