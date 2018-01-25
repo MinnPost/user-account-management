@@ -11,6 +11,34 @@
 class User_Account_Management {
 
 	/**
+	* @var string
+	* Prefix for plugin options
+	*/
+	private $option_prefix;
+
+	/**
+	* @var string
+	* Current version of the plugin
+	*/
+	private $version;
+
+	/**
+	* @var string
+	* The plugin's slug so we can include it when necessary
+	*/
+	private $slug;
+
+	/**
+	* @var object
+	*/
+	private $activate;
+
+	/**
+	* @var object
+	*/
+	private $admin;
+
+	/**
 	 * This is our constructor
 	 *
 	 * @return void
