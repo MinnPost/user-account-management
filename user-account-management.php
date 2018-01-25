@@ -529,6 +529,9 @@ class User_Account_Management {
 		if ( false === $can_access ) {
 			return __( 'You do not have permission to access this page.', 'user-account-management' );
 		}
+		if ( '' !== $this->user_id ) {
+			$user_id = $this->user_id;
+		}
 
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
 		// we should use it for this page as well, unless and until it becomes insufficient
@@ -1549,8 +1552,10 @@ class User_Account_Management {
 	 * @return bool true or false
 	 */
 	public function check_user_permissions( $user_id = '' ) {
-		if ( '' === $user_id ) {
+		if ( '' === $user_id && '' !== $this->user_id ) {
 			$user_id = $this->user_id;
+		} elseif ( '' === $user_id ) {
+			$user_id = get_current_user_id();
 		}
 		if ( get_current_user_id() === $user_id || current_user_can( 'edit_users' ) ) {
 			return true;
