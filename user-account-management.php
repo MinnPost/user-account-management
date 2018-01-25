@@ -487,7 +487,11 @@ class User_Account_Management {
 		$attributes['redirect'] = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
-			return __( 'You are not signed in.', 'user-account-management' );
+			$message = sprintf( '<p class="a-form-instructions">You are not signed in. You can <a href="%1$s">%2$s</a> if you do not have it.</p>',
+				wp_lostpassword_url(),
+				esc_html__( 'reset your password', 'user-account-management' )
+			);
+			return $message;
 		} else {
 
 			$can_access = $this->check_user_permissions();
