@@ -21,6 +21,9 @@ class User_Account_Management {
 		$this->version = '0.0.1';
 		$this->slug = 'user-account-management';
 
+		// things to do upon activate
+		$this->activate = $this->activate( $this->option_prefix, $this->version, $this->slug );
+
 		// load admin
 		$this->admin = $this->load_admin();
 
@@ -29,10 +32,23 @@ class User_Account_Management {
 	}
 
 	/**
+	 * What to do upon activation of the plugin
+	 *
+	 * @return object
+	 *   Instance of User_Account_Management_Activate
+	 */
+	private function activate() {
+		require_once( plugin_dir_path( __FILE__ ) . 'classes/class-' . $this->slug . '-activate.php' );
+		$activate = new User_Account_Management_Activate( $this->option_prefix, $this->version, $this->slug );
+		return $activate;
+	}
+
+	/**
 	 * load the admin stuff
 	 * creates admin menu to save the config options
 	 *
-	 * @throws \Exception
+	 * @return object
+	 *   Instance of User_Account_Management_Admin
 	 */
 	private function load_admin() {
 		require_once( plugin_dir_path( __FILE__ ) . 'classes/class-' . $this->slug . '-admin.php' );
@@ -119,111 +135,6 @@ class User_Account_Management {
 		if ( true === $this->cache ) {
 			$cache_expiration = (int) get_option( $this->option_prefix . 'cache_time', 2592000 );
 			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients', $cache_expiration );
-		}
-
-	}
-
-	/**
-	  * Plugin activation hook.
-	  *
-	  * Creates all WordPress pages needed by the plugin.
-	  */
-	public static function plugin_activated() {
-		// Information needed for creating the plugin's pages
-		$page_definitions = array(
-			'user' => array(
-				'title' => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Your %1$s account', 'user-account-management' ),
-						get_bloginfo( 'name' )
-					),
-				'content' => '[account-info]',
-			),
-			'login' => array(
-				'title' => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Log in to %1$s', 'user-account-management' ),
-						get_bloginfo( 'name' )
-					),
-				'content' => '[custom-login-form]',
-				'parent' => 'user',
-			),
-			'register' => array(
-				'title' => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Create your %1$s account', 'user-account-management' ),
-						get_bloginfo( 'name' )
-					),
-				'content' => '[custom-register-form]',
-				'parent' => 'user',
-			),
-			'password-lost' => array(
-				'title' => __( 'Forgot Your Password?', 'user-account-management' ),
-				'content' => '[custom-password-lost-form]',
-				'parent' => 'user',
-			),
-			'password-reset' => array(
-				'title' => __( 'Set a New Password', 'user-account-management' ),
-				'content' => '[custom-password-reset-form]',
-				'parent' => 'user',
-			),
-			'password' => array(
-				'title' => __( 'Change Your Password', 'user-account-management' ),
-				'content' => '[custom-password-change-form]',
-				'parent' => 'user',
-			),
-			'account-settings' => array(
-				'title' => __( 'Account Settings', 'user-account-management' ),
-				'content' => '[custom-account-settings-form]',
-				'parent' => 'user',
-			),
-		);
-
-		foreach ( $page_definitions as $slug => $page ) {
-			if ( ! isset( $page['parent'] ) ) {
-				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $slug );
-				if ( ! $query->have_posts() ) {
-					// Add the page using the data from the array above
-					wp_insert_post(
-						array(
-							'post_content'   => $page['content'],
-							'post_name'      => $slug,
-							'post_title'     => $page['title'],
-							'post_status'    => 'publish',
-							'post_type'      => 'page',
-							'ping_status'    => 'closed',
-							'comment_status' => 'closed',
-						)
-					);
-				}
-			}
-		}
-
-		foreach ( $page_definitions as $slug => $page ) {
-			if ( isset( $page['parent'] ) ) {
-				$parent_result = get_page_by_path( $page['parent'] );
-				if ( null !== $parent_result ) {
-					$parent = $parent_result->ID;
-				} else {
-					$parent = 0;
-				}
-
-				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $slug );
-				if ( ! $query->have_posts() ) {
-					// Add the page using the data from the array above
-					wp_insert_post(
-						array(
-							'post_content'   => $page['content'],
-							'post_name'      => $slug,
-							'post_title'     => $page['title'],
-							'post_status'    => 'publish',
-							'post_type'      => 'page',
-							'ping_status'    => 'closed',
-							'comment_status' => 'closed',
-							'post_parent'    => $parent,
-						)
-					);
-				}
-			}
 		}
 
 	}
@@ -1809,9 +1720,6 @@ class User_Account_Management_Transient {
 	}
 
 }
-
-
-register_activation_hook( __FILE__, array( 'User_Account_Management', 'plugin_activated' ) );
 
 // Initialize the plugin
 $user_account_management = new User_Account_Management();
