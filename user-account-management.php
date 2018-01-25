@@ -220,11 +220,6 @@ class User_Account_Management {
 			$attributes = array();
 		}
 
-		// if the user is already signed in, this lets us not leave them stranded
-		if ( is_user_logged_in() ) {
-			return __( 'You are already signed in.', 'user-account-management' );
-		}
-
 		// Pass the redirect parameter to the WordPress login functionality: by default,
 		// don't specify a redirect, but if a valid redirect URL has been passed as
 		// request parameter, use it.
@@ -286,6 +281,11 @@ class User_Account_Management {
 			return $login_form_password_help;
 		}
 		*/
+
+		// if the user is already signed in, this lets us not leave them stranded
+		if ( is_user_logged_in() ) {
+			return __( 'You are already signed in.', 'user-account-management' );
+		}
 
 		// Render the login form using an external template
 		return $this->get_template_html( 'login-form', 'front-end', $attributes );
