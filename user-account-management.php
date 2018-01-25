@@ -39,6 +39,27 @@ class User_Account_Management {
 	private $admin;
 
 	/**
+	 * @var object
+	 * Static property to hold an instance of the class; this seems to make it reusable
+	 *
+	 */
+	static $instance = null;
+
+	/**
+	* Load the static $instance property that holds the instance of the class.
+	* This instance makes the class reusable by other plugins
+	*
+	* @return object
+	*
+	*/
+	static public function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new User_Account_Management();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * This is our constructor
 	 *
 	 * @return void
@@ -1750,4 +1771,4 @@ class User_Account_Management_Transient {
 }
 
 // Initialize the plugin
-$user_account_management = new User_Account_Management();
+$user_account_management = User_Account_Management::get_instance();
