@@ -1557,7 +1557,7 @@ class User_Account_Management {
 		} elseif ( '' === $user_id ) {
 			$user_id = get_current_user_id();
 		}
-		if ( get_current_user_id() === $user_id || current_user_can( 'edit_users' ) ) {
+		if ( get_current_user_id() === $user_id || current_user_can( 'edit_user', $user_id ) ) {
 			return true;
 		} else {
 			return false;
