@@ -1577,7 +1577,7 @@ class User_Account_Management {
 	 *
 	 * @return string               The contents of the template.
 	 */
-	private function get_template_html( $template_name, $location = '', $attributes = null ) {
+	public function get_template_html( $template_name, $location = '', $attributes = null ) {
 		if ( ! $attributes ) {
 			$attributes = array();
 		}
