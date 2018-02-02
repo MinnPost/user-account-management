@@ -5,6 +5,10 @@
 		<input type="hidden" name="state" value="">
 	<?php endif; ?>
 
+	<?php if ( isset( $attributes['redirect'] ) && ! empty( $attributes['redirect'] ) ) : ?>
+		<input type="hidden" name="redirect_to" value="<?php echo $attributes['redirect']; ?>">
+	<?php endif; ?>
+
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 	<?php echo $attributes['instructions']; ?>
 	<?php endif; ?>

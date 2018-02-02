@@ -268,9 +268,14 @@ class User_Account_Management {
 		}
 		*/
 
+		$registration_url = wp_registration_url();
+		if ( '' !== $attributes['redirect'] ) {
+			$registration_url = wp_registration_url() . '?redirect_to=' . $attributes['redirect'];
+		}
+
 		// translators: instructions on top of the form. placeholders are 1) registration link; 2) registration link text
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
-			wp_registration_url(),
+			$registration_url,
 			esc_html__( 'Register now', 'user-account-management' )
 		);
 
@@ -320,6 +325,14 @@ class User_Account_Management {
 			$attributes = array();
 		}
 
+		// Pass the redirect parameter to the WordPress login functionality: by default,
+		// don't specify a redirect, but if a valid redirect URL has been passed as
+		// request parameter, use it.
+		$attributes['redirect'] = '';
+		if ( isset( $_REQUEST['redirect_to'] ) ) {
+			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
+		}
+
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
 		if ( isset( $_REQUEST['register-errors'] ) ) {
@@ -347,9 +360,14 @@ class User_Account_Management {
 			$attributes['countries'] = $this->get_countries();
 		}
 
+		$login_url = wp_login_url();
+		if ( '' !== $attributes['redirect'] ) {
+			$login_url = wp_login_url() . '?redirect_to=' . $attributes['redirect'];
+		}
+
 		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
 		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
-			wp_login_url(),
+			$login_url,
 			esc_html__( 'Log in now', 'user-account-management' ),
 			wp_lostpassword_url(),
 			esc_html__( 'account help', 'user-account-management' )
@@ -711,14 +729,19 @@ class User_Account_Management {
 
 					$result = wp_signon( $login_data );
 
+					// user is successfully logged in
 					if ( ! is_wp_error( $result ) ) {
 						global $current_user;
 						$current_user = $result;
-						$default_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
-						if ( '' === $default_url ) {
-							$default_url = site_url( '/user/' );
+						$redirect_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
+						if ( '' === $redirect_url ) {
+							$redirect_url = site_url( '/user/' );
 						}
-						wp_safe_redirect( $default_url );
+						// check for hidden redirect field
+						if ( isset( $_POST['redirect_to'] ) && ! empty( $_POST['redirect_to'] ) ) {
+							$redirect_url = $_POST['redirect_to'];
+						}
+						wp_safe_redirect( $redirect_url );
 						exit();
 					}
 				}
