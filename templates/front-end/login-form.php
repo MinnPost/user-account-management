@@ -16,6 +16,14 @@
 		</div>
 	<?php endif; ?>
 
+	<?php if ( ! empty( $attributes['message_info'] ) ) : ?>
+		<div class="m-form-message m-form-message-info">
+			<p class="message-info">
+				<?php echo $attributes['message_info']; ?>
+			</p>
+		</div>
+	<?php endif; ?>
+
 	<?php if ( $attributes['lost_password_sent'] ) : ?>
 		<div class="m-form-message m-form-message-info">
 			<p>

@@ -222,6 +222,8 @@ class User_Account_Management {
 			$attributes = array();
 		}
 
+		$attributes['source'] = isset( $_GET['source'] ) ? esc_attr( $_GET['source'] ) : '';
+
 		// Pass the redirect parameter to the WordPress login functionality: by default,
 		// don't specify a redirect, but if a valid redirect URL has been passed as
 		// request parameter, use it.
@@ -246,6 +248,16 @@ class User_Account_Management {
 		// Check if user just logged out
 		$attributes['logged_out'] = isset( $_REQUEST['logged_out'] ) && 'true' === $_REQUEST['logged_out'];
 
+		// allow a custom message to be put into the styled message div
+		$attributes['message_info'] = apply_filters( 'user_account_management_login_form_message_info', '', $attributes['source'] );
+		// example to change the login form message info
+		/*
+		add_filter( 'user_account_management_login_form_message_info', 'login_form_message_info', 10, 2 );
+		function login_form_message_info( $login_form_message_info, $source = '' ) {
+			return $login_form_message_info;
+		}
+		*/
+
 		// form action for submission
 		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', wp_login_url() );
 		// example to change the form action
@@ -261,11 +273,12 @@ class User_Account_Management {
 			wp_registration_url(),
 			esc_html__( 'Register now', 'user-account-management' )
 		);
-		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'] );
+
+		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'], $attributes['source'] );
 		// example to change the login form instructions
 		/*
-		add_filter( 'user_account_management_login_form_instructions', 'login_form_instructions', 10, 1 );
-		function login_form_instructions( $login_form_instructions ) {
+		add_filter( 'user_account_management_login_form_instructions', 'login_form_instructions', 10, 2 );
+		function login_form_instructions( $login_form_instructions, $source = '' ) {
 			return $login_form_instructions;
 		}
 		*/
