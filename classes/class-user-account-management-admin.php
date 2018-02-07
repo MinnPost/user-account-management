@@ -391,14 +391,15 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
-			'from_address' => array(
-				'title' => __( 'From Address', 'user-account-management' ),
+			'cache_data' => array(
+				'title' => __( 'Cache data?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
 				'page' => $page,
 				'section' => $section,
 				'args' => array(
-					'type' => 'text',
-					'desc' => 'The email address that should send user account emails',
+					'type' => 'checkbox',
+					'desc' => 'Whether to cache data for this plugin (recommended)',
+					'default' => '1',
 				),
 			),
 		);
