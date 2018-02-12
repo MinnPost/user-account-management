@@ -1499,6 +1499,20 @@ class User_Account_Management {
 			return $errors;
 		}
 
+		// do pre save action
+		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
+
+		// add a filter to allow user data to be modified before it is saved
+		$user_data = apply_filters( 'user_account_management_modify_user_data', $user_data, $existing_user_data );
+
+		// example to remove a field from the user data that doesn't need to be saved
+		/*
+		add_filter( 'user_account_management_modify_user_data', 'modify_user_data', 10, 2 );
+		function modify_user_data( $user_data, $existing_user_data ) {
+			unset( $user_data['_newsletters'] );
+		}
+		*/
+
 		if ( 'register' === $action ) {
 			$user_id = wp_insert_user( $user_data );
 		} elseif ( 'update' === $action ) {
@@ -1527,6 +1541,9 @@ class User_Account_Management {
 				update_user_meta( $user_id, '_state', $citystate['state'] );
 			}
 		}
+
+		// do post save action
+		do_action( 'user_account_management_post_user_data_save', $user_data, $existing_user_data );
 
 		if ( 'update' === $action ) {
 			return $result;
