@@ -1380,6 +1380,19 @@ class User_Account_Management {
 		$user_data['display_name'] = $user_data['first_name'] . ' ' . $user_data['last_name'];
 		$user_data['nickname'] = $user_data['first_name'];
 
+		// add a filter to allow more $posted data to be added to $user_data
+		$user_data = apply_filters( 'user_account_management_add_to_user_data', $user_data, $posted, $existing_user_data );
+		// example to add a field
+		/*
+		add_filter( 'user_account_management_add_to_user_data', 'add_to_user_data', 10, 3 );
+		function add_to_user_data( $user_data, $posted, $existing_user_data ) {
+			if ( isset( $posted['_newsletters'] ) ) {
+				$user_data['_newsletters'] = sanitize_text_field( $posted['_newsletters'] );
+			}
+			return $user_data;
+		}
+		*/
+
 		return $user_data;
 	}
 
@@ -1493,18 +1506,16 @@ class User_Account_Management {
 			$errors->add( 'email', $this->get_error_message( 'email' ) );
 			return $errors;
 		}
+		// do pre save action
+		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
 
 		if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
 			$errors->add( 'email_exists', $this->get_error_message( 'email_exists' ) );
 			return $errors;
 		}
 
-		// do pre save action
-		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
-
 		// add a filter to allow user data to be modified before it is saved
 		$user_data = apply_filters( 'user_account_management_modify_user_data', $user_data, $existing_user_data );
-
 		// example to remove a field from the user data that doesn't need to be saved
 		/*
 		add_filter( 'user_account_management_modify_user_data', 'modify_user_data', 10, 2 );
