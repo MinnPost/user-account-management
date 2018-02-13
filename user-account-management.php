@@ -1748,7 +1748,7 @@ class User_Account_Management {
 	 *
 	 * @return string               An error message.
 	 */
-	private function get_error_message( $error_code ) {
+	public function get_error_message( $error_code ) {
 		switch ( $error_code ) {
 			case 'empty_username':
 				return __( 'You did not enter an email address.', 'user-account-management' );
@@ -1784,7 +1784,18 @@ class User_Account_Management {
 			default:
 				break;
 		}
-		error_log( 'unknown error code is ' . $error_code );
+		$custom_message = apply_filters( 'user_account_management_custom_error_message', '', $error_code );
+		if ( '' !== $custom_message ) {
+			return $custom_message;
+		}
+		// example to change the error message
+		/*
+		add_filter( 'user_account_management_custom_error_message', 'error_message', 10, 2 );
+		function login_form_message_info( $message, $error_code ) {
+			$message = 'this is my error';
+			return $message;
+		}
+		*/
 		return __( 'An unknown error occurred. Please try again later.', 'user-account-management' );
 	}
 
