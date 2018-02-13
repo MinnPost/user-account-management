@@ -1500,12 +1500,6 @@ class User_Account_Management {
 
 		$errors = new WP_Error();
 
-		// Email address is used as both username and email. It is also the only
-		// parameter we need to validate
-		if ( ! is_email( $user_data['user_email'] ) ) {
-			$errors->add( 'email', $this->get_error_message( 'email' ) );
-			return $errors;
-		}
 		// do pre save action
 		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
 
