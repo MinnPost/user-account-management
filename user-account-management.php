@@ -1519,6 +1519,17 @@ class User_Account_Management {
 		*/
 
 		if ( 'register' === $action ) {
+			// Email address is used as both username and email. It is also the only
+			// parameter we need to validate
+			if ( ! is_email( $user_data['user_email'] ) ) {
+				$errors->add( 'email', $this->get_error_message( 'email' ) );
+				return $errors;
+			}
+
+			if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
+				$errors->add( 'email_exists', $this->get_error_message( 'email_exists' ) );
+				return $errors;
+			}
 			$user_id = wp_insert_user( $user_data );
 		} elseif ( 'update' === $action ) {
 			$user_id = $user_data['ID'];
