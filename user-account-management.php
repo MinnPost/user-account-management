@@ -1503,8 +1503,14 @@ class User_Account_Management {
 		// do pre save action
 		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
 
-		if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
-			$errors->add( 'email_exists', $this->get_error_message( 'email_exists' ) );
+		// add more data to $result in the event that the pre user data save needs to show something
+		$result = apply_filters( 'user_account_management_pre_save_result', $user_data, $existing_user_data );
+		/*
+		add_filter( 'user_account_management_pre_save_result', 'pre_save_result', 10, 2 );
+		function pre_save_errors( $user_data, $existing_user_data ) {
+			$result = array( 'errors' => 'here is an error!' );
+			return $result;
+		}
 			return $errors;
 		}
 
@@ -1560,6 +1566,15 @@ class User_Account_Management {
 
 		// do post save action
 		do_action( 'user_account_management_post_user_data_save', $user_data, $existing_user_data );
+
+		// add more data to $result in the event that the post user data save needs something
+		$result = apply_filters( 'user_account_management_post_save_result', $result );
+		/*
+		add_filter( 'user_account_management_post_save_result', 'post_save_result', 10, 1 );
+		function post_save_result( $result ) {
+			return $result;
+		}
+		*/
 
 		if ( 'update' === $action ) {
 			return $result;
