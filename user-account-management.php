@@ -1338,6 +1338,8 @@ class User_Account_Management {
 			$user_data['user_pass'] = $posted['password'];
 		}
 
+		// email and password are sanitized by WordPress already
+
 		// first, last, zip, country should be optional since people might want to remove them
 		if ( isset( $posted['first_name'] ) ) {
 			$user_data['first_name'] = sanitize_text_field( $posted['first_name'] );
@@ -1381,6 +1383,7 @@ class User_Account_Management {
 		$user_data['nickname'] = $user_data['first_name'];
 
 		// add a filter to allow more $posted data to be added to $user_data
+		// users should sanitize data that is being added in this way
 		$user_data = apply_filters( 'user_account_management_add_to_user_data', $user_data, $posted, $existing_user_data );
 		// example to add a field
 		/*
