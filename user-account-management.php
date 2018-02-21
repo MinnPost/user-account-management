@@ -1514,6 +1514,11 @@ class User_Account_Management {
 			$result = array( 'errors' => 'here is an error!' );
 			return $result;
 		}
+		*/
+		// if errors are needed, they should be returned as wp_error objects
+		if ( is_wp_error( $result ) ) {
+			// Parse errors into a string and append as parameter to redirect
+			$errors = join( ',', $result->get_error_codes() );
 			return $errors;
 		}
 
