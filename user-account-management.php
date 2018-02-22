@@ -1202,6 +1202,13 @@ class User_Account_Management {
 	 */
 	public function replace_new_user_email_admin( $wp_new_user_notification_email, $user, $blogname ) {
 
+		$admin_notification_allowed = apply_filters( 'user_account_management_allow_new_user_notification_admin', false );
+
+		// if this keeps going unnecessarily, it can cause ISSUES with other plugins
+		if ( false === $admin_notification_allowed ) {
+			return;
+		}
+
 		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient - the site admin
 		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
 		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
