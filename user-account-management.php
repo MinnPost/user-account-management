@@ -235,12 +235,20 @@ class User_Account_Management {
 		// Check if the user just requested a new password
 		$attributes['lost_password_sent'] = isset( $_REQUEST['checkemail'] ) && 'confirm' === $_REQUEST['checkemail'];
 
+		// check if the form data is stored in a transient
+		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$form_data = array();
+		if ( '' !== $key ) {
+			$form_data = get_transient( 'uam_login_' . $key );
+		}
+		$attributes['form_data'] = $form_data;
+
 		// Error messages
 		$errors = array();
 		if ( isset( $_REQUEST['login'] ) ) {
 			$error_codes = explode( ',', $_REQUEST['login'] );
 			foreach ( $error_codes as $code ) {
-				$errors[] = $this->get_error_message( $code );
+				$errors[] = $this->get_error_message( $code, $form_data );
 			}
 		}
 		$attributes['errors'] = $errors;
@@ -333,13 +341,27 @@ class User_Account_Management {
 			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
 		}
 
+		// check if the form data is stored in a transient
+		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$form_data = array();
+		if ( '' !== $key ) {
+			$form_data = get_transient( 'uam_register_' . $key );
+		}
+
+		// allow $_GET data to override form data if it is present
+		if ( isset( $_GET['user_email'] ) ) {
+			$form_data['user_email'] = rawurldecode( $_GET['user_email'] );
+		}
+
+		$attributes['form_data'] = $form_data;
+
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
 		if ( isset( $_REQUEST['register-errors'] ) ) {
 			$error_codes = explode( ',', $_REQUEST['register-errors'] );
 
 			foreach ( $error_codes as $error_code ) {
-				$attributes['errors'][] = $this->get_error_message( $error_code );
+				$attributes['errors'][] = $this->get_error_message( $error_code, $form_data );
 			}
 		}
 
@@ -421,13 +443,21 @@ class User_Account_Management {
 			$attributes = array();
 		}
 
+		// check if the form data is stored in a transient
+		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$form_data = array();
+		if ( '' !== $key ) {
+			$form_data = get_transient( 'uam_reset_' . $key );
+		}
+		$attributes['form_data'] = $form_data;
+
 		// Retrieve possible errors from request parameters
 		$attributes['errors'] = array();
 		if ( isset( $_REQUEST['errors'] ) ) {
 			$error_codes = explode( ',', $_REQUEST['errors'] );
 
 			foreach ( $error_codes as $error_code ) {
-				$attributes['errors'][] = $this->get_error_message( $error_code );
+				$attributes['errors'][] = $this->get_error_message( $error_code, $form_data );
 			}
 		}
 
@@ -577,14 +607,20 @@ class User_Account_Management {
 		if ( ! is_user_logged_in() ) {
 			return __( 'You are not signed in.', 'user-account-management' );
 		} else {
-			//$attributes['login'] = rawurldecode( $_REQUEST['login'] );
+			// check if the form data is stored in a transient
+			$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+			$form_data = array();
+			if ( '' !== $key ) {
+				$form_data = get_transient( 'uam_acct_settings_' . $key );
+			}
+			$attributes['form_data'] = $form_data;
 			// Error messages
 			$errors = array();
 			if ( isset( $_REQUEST['errors'] ) ) {
 				$error_codes = explode( ',', $_REQUEST['errors'] );
 
 				foreach ( $error_codes as $code ) {
-					$errors[] = $this->get_error_message( $code );
+					$errors[] = $this->get_error_message( $code, $form_data );
 				}
 			}
 			$attributes['errors'] = $errors;
@@ -719,6 +755,13 @@ class User_Account_Management {
 					// Parse errors into a string and append as parameter to redirect
 					$errors = join( ',', $result->get_error_codes() );
 					$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
+
+					$key = md5( microtime() . rand() );
+					$data = $user_data;
+					unset( $data['user_pass'] );
+					set_transient( 'uam_register_' . $key, $data, 120 );
+					$redirect_url = add_query_arg( 'form_key', $key, $redirect_url );
+
 				} else {
 					// user has been registered; log them in now
 					$login_data = array(
@@ -1018,9 +1061,15 @@ class User_Account_Management {
 		// the default WordPress authentication) functions have found errors
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_wp_error( $user ) ) {
+				$key = md5( microtime() . rand() );
+				$data = array(
+					'user_email' => $username,
+				);
+				set_transient( 'uam_login_' . $key, $data, 120 );
 				$error_codes = join( ',', $user->get_error_codes() );
 				$login_url = site_url( 'user/login' );
 				$login_url = add_query_arg( 'login', $error_codes, $login_url );
+				$login_url = add_query_arg( 'form_key', $key, $login_url );
 				wp_redirect( $login_url );
 				exit;
 			}
@@ -1275,7 +1324,7 @@ class User_Account_Management {
 	}
 
 	public function user_query_vars( $query_vars ) {
-		$query_vars[] = 'id';
+		$query_vars[] = 'user_id';
 		return $query_vars;
 	}
 
@@ -1543,12 +1592,12 @@ class User_Account_Management {
 			// Email address is used as both username and email. It is also the only
 			// parameter we need to validate
 			if ( ! is_email( $user_data['user_email'] ) ) {
-				$errors->add( 'email', $this->get_error_message( 'email' ) );
+				$errors->add( 'email', $this->get_error_message( 'email', $user_data ) );
 				return $errors;
 			}
 
 			if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
-				$errors->add( 'email_exists', $this->get_error_message( 'email_exists' ) );
+				$errors->add( 'email_exists', $this->get_error_message( 'email_exists', $user_data ) );
 				return $errors;
 			}
 			$user_id = wp_insert_user( $user_data );
@@ -1775,10 +1824,23 @@ class User_Account_Management {
 	 * Finds and returns a matching error message for the given error code.
 	 *
 	 * @param string $error_code    The error code to look up.
+	 * @param array $data           This should be user data, either provided by a form or a hook
 	 *
 	 * @return string               An error message.
 	 */
-	public function get_error_message( $error_code ) {
+	public function get_error_message( $error_code, $data = array() ) {
+		$custom_message = apply_filters( 'user_account_management_custom_error_message', '', $error_code, $data );
+		if ( '' !== $custom_message ) {
+			return $custom_message;
+		}
+		// example to change the error message
+		/*
+		add_filter( 'user_account_management_custom_error_message', 'error_message', 10, 3 );
+		function login_form_message_info( $message, $error_code, $data ) {
+			$message = 'this is my error';
+			return $message;
+		}
+		*/
 		switch ( $error_code ) {
 			case 'empty_username':
 				return __( 'You did not enter an email address.', 'user-account-management' );
@@ -1814,18 +1876,6 @@ class User_Account_Management {
 			default:
 				break;
 		}
-		$custom_message = apply_filters( 'user_account_management_custom_error_message', '', $error_code );
-		if ( '' !== $custom_message ) {
-			return $custom_message;
-		}
-		// example to change the error message
-		/*
-		add_filter( 'user_account_management_custom_error_message', 'error_message', 10, 2 );
-		function login_form_message_info( $message, $error_code ) {
-			$message = 'this is my error';
-			return $message;
-		}
-		*/
 		return __( 'An unknown error occurred. Please try again later.', 'user-account-management' );
 	}
 

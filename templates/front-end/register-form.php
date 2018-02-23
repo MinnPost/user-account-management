@@ -31,7 +31,7 @@
 
 		<div class="m-form-item m-form-email m-form-register-email">
 			<label for="email"><?php _e( 'Email Address:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="email" name="email" id="email" required>
+			<input type="email" name="email" id="email" required<?php if ( isset( $attributes['form_data']['user_email'] ) ) { echo ' value="' . $attributes['form_data']['user_email'] . '"'; } ?>>
 		</div>
 
 		<div class="m-form-item m-form-password m-form-register-password">
@@ -41,28 +41,28 @@
 
 		<div class="m-form-item m-form-first-name m-form-register-first-name">
 			<label for="first_name"><?php _e( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="text" name="first_name" id="first-name" required>
+			<input type="text" name="first_name" id="first-name" required<?php if ( isset( $attributes['form_data']['first_name'] ) ) { echo ' value="' . $attributes['form_data']['first_name'] . '"'; } ?>>
 		</div>
 
 		<div class="m-form-item m-form-last-name m-form-register-last-name">
 			<label for="last_name"><?php _e( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="text" name="last_name" id="last-name" required>
+			<input type="text" name="last_name" id="last-name" required<?php if ( isset( $attributes['form_data']['last_name'] ) ) { echo ' value="' . $attributes['form_data']['last_name'] . '"'; } ?>>
 		</div>
 
 		<?php if ( '1' === $attributes['include_city_state'] && '1' !== $attributes['hidden_city_state'] ) : ?>
 			<div class="m-form-item m-form-city m-form-register-city">
-				<label for="zip_code"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-				<input type="text" name="city" id="city" required>
+				<label for="city"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<input type="text" name="city" id="city" required<?php if ( isset( $attributes['form_data']['city'] ) ) { echo ' value="' . $attributes['form_data']['city'] . '"'; } ?>>
 			</div>
 			<div class="m-form-item m-form-state m-form-register-state">
-				<label for="zip_code"><?php _e( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-				<input type="text" name="state" id="state" required>
+				<label for="state"><?php _e( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+				<input type="text" name="state" id="state" required<?php if ( isset( $attributes['form_data']['state'] ) ) { echo ' value="' . $attributes['form_data']['state'] . '"'; } ?>>
 			</div>
 		<?php endif; ?>
 
 		<div class="m-form-item m-form-zip-code m-form-register-zip-code">
 			<label for="zip_code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="tel" name="zip_code" id="zip-code" required>
+			<input type="tel" name="zip_code" id="zip-code" required<?php if ( isset( $attributes['form_data']['zip_code'] ) ) { echo ' value="' . $attributes['form_data']['zip_code'] . '"'; } ?>>
 		</div>
 
 		<?php if ( isset( $attributes['countries'] ) ) : ?>
@@ -71,7 +71,13 @@
 				<select name="country" id="country">
 					<option value="">Choose country</option>
 					<?php foreach ( $attributes['countries'] as $country ) : ?>
-						<option value="<?php echo $country['alpha2Code']; ?>"><?php echo $country['name']; ?></option>
+						<?php
+						$selected = '';
+						if ( isset( $attributes['form_data']['country'] ) ) {
+							$selected = ' selected';
+						}
+						?>
+						<option value="<?php echo $country['alpha2Code']; ?>"<?php echo $selected; ?>><?php echo $country['name']; ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
