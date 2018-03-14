@@ -671,7 +671,7 @@ class User_Account_Management {
 				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.min.css', __FILE__ ), array(), $this->version, 'all' );
 			}
 			wp_enqueue_script( 'password-strength-meter' );
-			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), $this->version, true );
+			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), filemtime( plugin_dir_path( __FILE__ ) . 'assets/js/' . $this->slug . '.js' ), true );
 			// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 			wp_localize_script(
 				$this->slug,
