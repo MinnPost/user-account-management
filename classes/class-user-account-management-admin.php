@@ -29,8 +29,8 @@ class User_Account_Management_Admin {
 	public function __construct( $option_prefix, $version, $slug ) {
 
 		$this->option_prefix = $option_prefix;
-		$this->version = $version;
-		$this->slug = $slug;
+		$this->version       = $version;
+		$this->slug          = $slug;
 
 		$this->tabs = $this->get_admin_tabs();
 
@@ -74,8 +74,8 @@ class User_Account_Management_Admin {
 	private function get_admin_tabs() {
 		$tabs = array(
 			'user_account_management_settings' => 'User Account Management Settings',
-			'register_settings' => 'Register Settings',
-			'email_settings' => 'Email Settings',
+			'register_settings'                => 'Register Settings',
+			//'email_settings' => 'Email Settings',
 		); // this creates the tabs for the admin
 		return $tabs;
 	}
@@ -93,7 +93,7 @@ class User_Account_Management_Admin {
 
 			<?php
 			$tabs = $this->tabs;
-			$tab = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
+			$tab  = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
 			$this->render_tabs( $tabs, $tab );
 
 			switch ( $tab ) {
@@ -143,28 +143,28 @@ class User_Account_Management_Admin {
 	public function admin_settings_form() {
 
 		$get_data = filter_input_array( INPUT_GET, FILTER_SANITIZE_STRING );
-		$page = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
-		$section = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
+		$page     = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
+		$section  = isset( $get_data['tab'] ) ? sanitize_key( $get_data['tab'] ) : 'user_account_management_settings';
 
-		$input_callback_default = array( $this, 'display_input_field' );
+		$input_callback_default    = array( $this, 'display_input_field' );
 		$textarea_callback_default = array( $this, 'display_textarea' );
-		$input_checkboxes_default = array( $this, 'display_checkboxes' );
-		$input_radio_default = array( $this, 'display_radio' );
-		$input_select_default = array( $this, 'display_select' );
-		$link_default = array( $this, 'display_link' );
+		$input_checkboxes_default  = array( $this, 'display_checkboxes' );
+		$input_radio_default       = array( $this, 'display_radio' );
+		$input_select_default      = array( $this, 'display_select' );
+		$link_default              = array( $this, 'display_link' );
 
 		$all_field_callbacks = array(
-			'text' => $input_callback_default,
-			'textarea' => $textarea_callback_default,
+			'text'       => $input_callback_default,
+			'textarea'   => $textarea_callback_default,
 			'checkboxes' => $input_checkboxes_default,
-			'radio' => $input_radio_default,
-			'select' => $input_select_default,
-			'link' => $link_default,
+			'radio'      => $input_radio_default,
+			'select'     => $input_select_default,
+			'link'       => $link_default,
 		);
 
 		$this->user_account_management_settings( 'user_account_management_settings', 'user_account_management_settings', $all_field_callbacks );
 		$this->register_settings( 'register_settings', 'register_settings', $all_field_callbacks );
-		$this->email_settings( 'email_settings', 'email_settings', $all_field_callbacks );
+		//$this->email_settings( 'email_settings', 'email_settings', $all_field_callbacks );
 
 	}
 
@@ -186,34 +186,34 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
-			'cache_data' => array(
-				'title' => __( 'Cache data?', 'user-account-management' ),
+			'cache_data'             => array(
+				'title'    => __( 'Cache data?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'checkbox',
-					'desc' => 'Whether to cache data for this plugin (recommended)',
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type'    => 'checkbox',
+					'desc'    => 'Whether to cache data for this plugin (recommended)',
 					'default' => '1',
 				),
 			),
-			'cache_time' => array(
-				'title' => __( 'How long to cache data?', 'user-account-management' ),
+			'cache_time'             => array(
+				'title'    => __( 'How long to cache data?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'text',
-					'desc' => 'How many seconds before the cache expires',
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type'    => 'text',
+					'desc'    => 'How many seconds before the cache expires',
 					'default' => '2592000',
 				),
 			),
 			'default_login_redirect' => array(
-				'title' => __( 'Default redirect URL after login', 'user-account-management' ),
+				'title'    => __( 'Default redirect URL after login', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
 					'type' => 'text',
 					'desc' => 'Where to send users after they log in or register. The plugin will use /user/ if no value is here.',
 				),
@@ -272,19 +272,19 @@ class User_Account_Management_Admin {
 		);
 
 		foreach ( $settings as $key => $attributes ) {
-			$id = $this->option_prefix . $key;
-			$name = $this->option_prefix . $key;
-			$title = $attributes['title'];
+			$id       = $this->option_prefix . $key;
+			$name     = $this->option_prefix . $key;
+			$title    = $attributes['title'];
 			$callback = $attributes['callback'];
-			$page = $attributes['page'];
-			$section = $attributes['section'];
-			$args = array_merge(
+			$page     = $attributes['page'];
+			$section  = $attributes['section'];
+			$args     = array_merge(
 				$attributes['args'],
 				array(
-					'title' => $title,
-					'id' => $id,
+					'title'     => $title,
+					'id'        => $id,
 					'label_for' => $id,
-					'name' => $name,
+					'name'      => $name,
 				)
 			);
 			add_settings_field( $id, $title, $callback, $page, $section, $args );
@@ -310,42 +310,42 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
-			'include_countries' => array(
-				'title' => __( 'Include country as user metadata?', 'user-account-management' ),
+			'include_countries'     => array(
+				'title'    => __( 'Include country as user metadata?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
 					'type' => 'checkbox',
 					'desc' => 'Whether to save country for user.',
 				),
 			),
-			'include_city_state' => array(
-				'title' => __( 'Include city/state as user metadata?', 'user-account-management' ),
+			'include_city_state'    => array(
+				'title'    => __( 'Include city/state as user metadata?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
 					'type' => 'checkbox',
 					'desc' => 'Whether to save city/state for user.',
 				),
 			),
-			'hidden_city_state' => array(
-				'title' => __( 'Get city/state based on zip/country?', 'user-account-management' ),
+			'hidden_city_state'     => array(
+				'title'    => __( 'Get city/state based on zip/country?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
 					'type' => 'checkbox',
 					'desc' => 'Whether to load and save the city/state for the user, based on the zip/country.',
 				),
 			),
 			'geonames_api_username' => array(
-				'title' => __( 'Geonames API username', 'user-account-management' ),
+				'title'    => __( 'Geonames API username', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
 					'type' => 'text',
 					'desc' => 'API username from geonames.org for geocoding the city/state from country/zip',
 				),
@@ -353,19 +353,19 @@ class User_Account_Management_Admin {
 		);
 
 		foreach ( $settings as $key => $attributes ) {
-			$id = $this->option_prefix . $key;
-			$name = $this->option_prefix . $key;
-			$title = $attributes['title'];
+			$id       = $this->option_prefix . $key;
+			$name     = $this->option_prefix . $key;
+			$title    = $attributes['title'];
 			$callback = $attributes['callback'];
-			$page = $attributes['page'];
-			$section = $attributes['section'];
-			$args = array_merge(
+			$page     = $attributes['page'];
+			$section  = $attributes['section'];
+			$args     = array_merge(
 				$attributes['args'],
 				array(
-					'title' => $title,
-					'id' => $id,
+					'title'     => $title,
+					'id'        => $id,
 					'label_for' => $id,
-					'name' => $name,
+					'name'      => $name,
 				)
 			);
 			add_settings_field( $id, $title, $callback, $page, $section, $args );
@@ -381,7 +381,7 @@ class User_Account_Management_Admin {
 	* @param string $section
 	* @param string $input_callback
 	*/
-	private function email_settings( $page, $section, $callbacks ) {
+	/*private function email_settings( $page, $section, $callbacks ) {
 		$tabs = $this->tabs;
 		foreach ( $tabs as $key => $value ) {
 			if ( $key === $page ) {
@@ -392,38 +392,38 @@ class User_Account_Management_Admin {
 
 		$settings = array(
 			'cache_data' => array(
-				'title' => __( 'Cache data?', 'user-account-management' ),
+				'title'    => __( 'Cache data?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'checkbox',
-					'desc' => 'Whether to cache data for this plugin (recommended)',
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type'    => 'checkbox',
+					'desc'    => 'Whether to cache data for this plugin (recommended)',
 					'default' => '1',
 				),
 			),
 		);
 
 		foreach ( $settings as $key => $attributes ) {
-			$id = $this->option_prefix . $key;
-			$name = $this->option_prefix . $key;
-			$title = $attributes['title'];
+			$id       = $this->option_prefix . $key;
+			$name     = $this->option_prefix . $key;
+			$title    = $attributes['title'];
 			$callback = $attributes['callback'];
-			$page = $attributes['page'];
-			$section = $attributes['section'];
-			$args = array_merge(
+			$page     = $attributes['page'];
+			$section  = $attributes['section'];
+			$args     = array_merge(
 				$attributes['args'],
 				array(
-					'title' => $title,
-					'id' => $id,
+					'title'     => $title,
+					'id'        => $id,
 					'label_for' => $id,
-					'name' => $name,
+					'name'      => $name,
 				)
 			);
 			add_settings_field( $id, $title, $callback, $page, $section, $args );
 			register_setting( $section, $id );
 		}
-	}
+	}*/
 
 	/**
 	* Default display for <input> fields
@@ -432,10 +432,10 @@ class User_Account_Management_Admin {
 	*/
 	public function display_input_field( $args ) {
 		//error_log('args is ' . print_r($args, true));
-		$type   = $args['type'];
-		$id     = $args['label_for'];
-		$name   = $args['name'];
-		$desc   = $args['desc'];
+		$type    = $args['type'];
+		$id      = $args['label_for'];
+		$name    = $args['name'];
+		$desc    = $args['desc'];
 		$checked = '';
 
 		$class = 'regular-text';
@@ -483,15 +483,15 @@ class User_Account_Management_Admin {
 	*/
 	public function display_textarea( $args ) {
 		//error_log('args is ' . print_r($args, true));
-		$id     = $args['label_for'];
-		$name   = $args['name'];
-		$desc   = $args['desc'];
+		$id      = $args['label_for'];
+		$name    = $args['name'];
+		$desc    = $args['desc'];
 		$checked = '';
 
 		$class = 'regular-text';
 
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
-			$value  = esc_attr( get_option( $id, '' ) );
+			$value = esc_attr( get_option( $id, '' ) );
 			if ( '' === $value && isset( $args['default'] ) && '' !== $args['default'] ) {
 				$value = $args['default'];
 			}
@@ -521,15 +521,15 @@ class User_Account_Management_Admin {
 	* @param array $args
 	*/
 	public function display_checkboxes( $args ) {
-		$type = 'checkbox';
-		$name = $args['name'];
+		$type         = 'checkbox';
+		$name         = $args['name'];
 		$overall_desc = $args['desc'];
-		$options = get_option( $name, array() );
+		$options      = get_option( $name, array() );
 		foreach ( $args['items'] as $key => $value ) {
-			$text = $value['text'];
-			$id = $value['id'];
-			$desc = $value['desc'];
-			$checked = '';
+			$text        = $value['text'];
+			$id          = $value['id'];
+			$desc        = $value['desc'];
+			$checked     = '';
 			$field_value = isset( $value['value'] ) ? esc_attr( $value['value'] ) : esc_attr( $key );
 
 			if ( is_array( $options ) && in_array( (string) $field_value, $options, true ) ) {
@@ -568,13 +568,13 @@ class User_Account_Management_Admin {
 	public function display_radio( $args ) {
 		$type = 'radio';
 
-		$name = $args['name'];
+		$name       = $args['name'];
 		$group_desc = $args['desc'];
-		$options = get_option( $name, array() );
+		$options    = get_option( $name, array() );
 
 		foreach ( $args['items'] as $key => $value ) {
 			$text = $value['text'];
-			$id = $value['id'];
+			$id   = $value['id'];
 			$desc = $value['desc'];
 			if ( isset( $value['value'] ) ) {
 				$item_value = $value['value'];
@@ -621,10 +621,10 @@ class User_Account_Management_Admin {
 	* @param array $args
 	*/
 	public function display_select( $args ) {
-		$type   = $args['type'];
-		$id     = $args['label_for'];
-		$name   = $args['name'];
-		$desc   = $args['desc'];
+		$type = $args['type'];
+		$id   = $args['label_for'];
+		$name = $args['name'];
+		$desc = $args['desc'];
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
 			$current_value = get_option( $name );
 
@@ -634,8 +634,8 @@ class User_Account_Management_Admin {
 			);
 
 			foreach ( $args['items'] as $key => $value ) {
-				$text = $value['text'];
-				$value = $value['value'];
+				$text     = $value['text'];
+				$value    = $value['value'];
 				$selected = '';
 				if ( $key === $current_value || $value === $current_value ) {
 					$selected = ' selected';
@@ -668,9 +668,9 @@ class User_Account_Management_Admin {
 	* @param array $args
 	*/
 	public function display_link( $args ) {
-		$label   = $args['label'];
-		$desc   = $args['desc'];
-		$url = $args['url'];
+		$label = $args['label'];
+		$desc  = $args['desc'];
+		$url   = $args['url'];
 		if ( isset( $args['link_class'] ) ) {
 			echo sprintf( '<p><a class="%1$s" href="%2$s">%3$s</a></p>',
 				esc_attr( $args['link_class'] ),

@@ -67,8 +67,8 @@ class User_Account_Management {
 	public function __construct() {
 
 		$this->option_prefix = 'user_account_management_';
-		$this->version = '0.0.1';
-		$this->slug = 'user-account-management';
+		$this->version       = '0.0.1';
+		$this->slug          = 'user-account-management';
 
 		$this->user_id = '';
 		if ( isset( $_REQUEST['user_id'] ) ) {
@@ -189,7 +189,7 @@ class User_Account_Management {
 			$this->cache = false;
 		}
 		if ( true === $this->cache ) {
-			$cache_expiration = (int) get_option( $this->option_prefix . 'cache_time', 2592000 );
+			$cache_expiration      = (int) get_option( $this->option_prefix . 'cache_time', 2592000 );
 			$this->acct_transients = new User_Account_Management_Transient( 'user_account_transients', $cache_expiration );
 		}
 
@@ -236,7 +236,7 @@ class User_Account_Management {
 		$attributes['lost_password_sent'] = isset( $_REQUEST['checkemail'] ) && 'confirm' === $_REQUEST['checkemail'];
 
 		// check if the form data is stored in a transient
-		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$key       = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
 		$form_data = array();
 		if ( '' !== $key ) {
 			$form_data = get_transient( 'uam_login_' . $key );
@@ -342,7 +342,7 @@ class User_Account_Management {
 		}
 
 		// check if the form data is stored in a transient
-		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$key       = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
 		$form_data = array();
 		if ( '' !== $key ) {
 			$form_data = get_transient( 'uam_register_' . $key );
@@ -376,8 +376,8 @@ class User_Account_Management {
 		*/
 
 		$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
-		$attributes['hidden_city_state'] = get_option( $this->option_prefix . 'hidden_city_state', false );
-		$include_countries = get_option( $this->option_prefix . 'include_countries', false );
+		$attributes['hidden_city_state']  = get_option( $this->option_prefix . 'hidden_city_state', false );
+		$include_countries                = get_option( $this->option_prefix . 'include_countries', false );
 		if ( '1' === $include_countries ) {
 			$attributes['countries'] = $this->get_countries();
 		}
@@ -444,7 +444,7 @@ class User_Account_Management {
 		}
 
 		// check if the form data is stored in a transient
-		$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+		$key       = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
 		$form_data = array();
 		if ( '' !== $key ) {
 			$form_data = get_transient( 'uam_reset_' . $key );
@@ -508,7 +508,7 @@ class User_Account_Management {
 		} else {
 			if ( isset( $_REQUEST['login'] ) && isset( $_REQUEST['key'] ) ) {
 				$attributes['login'] = rawurldecode( $_REQUEST['login'] );
-				$attributes['key'] = rawurldecode( $_REQUEST['key'] );
+				$attributes['key']   = rawurldecode( $_REQUEST['key'] );
 
 				// Error messages
 				$errors = array();
@@ -545,7 +545,7 @@ class User_Account_Management {
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
 
 		$attributes['current_url'] = $this->get_current_url();
-		$attributes['redirect'] = $attributes['current_url'];
+		$attributes['redirect']    = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
 			$message = sprintf( '<p class="a-form-instructions">You are not signed in. You can <a href="%1$s">%2$s</a> if you do not have it.</p>',
@@ -602,13 +602,13 @@ class User_Account_Management {
 		// we should use it for this page as well, unless and until it becomes insufficient
 
 		$attributes['current_url'] = $this->get_current_url();
-		$attributes['redirect'] = $attributes['current_url'];
+		$attributes['redirect']    = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
 			return __( 'You are not signed in.', 'user-account-management' );
 		} else {
 			// check if the form data is stored in a transient
-			$key = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
+			$key       = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
 			$form_data = array();
 			if ( '' !== $key ) {
 				$form_data = get_transient( 'uam_acct_settings_' . $key );
@@ -635,8 +635,8 @@ class User_Account_Management {
 			}
 
 			$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
-			$attributes['hidden_city_state'] = get_option( $this->option_prefix . 'hidden_city_state', false );
-			$include_countries = get_option( $this->option_prefix . 'include_countries', false );
+			$attributes['hidden_city_state']  = get_option( $this->option_prefix . 'hidden_city_state', false );
+			$include_countries                = get_option( $this->option_prefix . 'include_countries', false );
 			if ( '1' === $include_countries ) {
 				$attributes['countries'] = $this->get_countries();
 			}
@@ -677,7 +677,7 @@ class User_Account_Management {
 				$this->slug,
 				'user_account_management_rest',
 				array(
-					'site_url' => site_url( '/' ),
+					'site_url'       => site_url( '/' ),
 					'rest_namespace' => 'wp-json/' . $this->slug . '/v1',
 				)
 			);
@@ -749,14 +749,14 @@ class User_Account_Management {
 				$redirect_url = add_query_arg( 'register-errors', 'honeypot', $redirect_url );
 			} else {
 				$user_data = $this->setup_user_data( $_POST );
-				$result = $this->register_or_update_user( $user_data, 'register' );
+				$result    = $this->register_or_update_user( $user_data, 'register' );
 
 				if ( is_wp_error( $result ) ) {
 					// Parse errors into a string and append as parameter to redirect
-					$errors = join( ',', $result->get_error_codes() );
+					$errors       = join( ',', $result->get_error_codes() );
 					$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
 
-					$key = md5( microtime() . rand() );
+					$key  = md5( microtime() . rand() );
 					$data = $user_data;
 					unset( $data['user_pass'] );
 					set_transient( 'uam_register_' . $key, $data, 120 );
@@ -765,9 +765,9 @@ class User_Account_Management {
 				} else {
 					// user has been registered; log them in now
 					$login_data = array(
-						'user_login' => $user_data['user_email'],
+						'user_login'    => $user_data['user_email'],
 						'user_password' => $user_data['user_pass'],
-						'remember' => false,
+						'remember'      => false,
 					);
 
 					$result = wp_signon( $login_data );
@@ -848,7 +848,7 @@ class User_Account_Management {
 					$redirect_url = add_query_arg( 'errors', 'new_password_empty', $redirect_url );
 				} else {
 					$user_data = array(
-						'ID' => $user_id,
+						'ID'        => $user_id,
 						'user_pass' => $_POST['new_password'],
 					);
 					wp_update_user( $user_data );
@@ -883,8 +883,8 @@ class User_Account_Management {
 					$redirect_url = add_query_arg( 'errors', 'account_settings_empty', $redirect_url );
 				} else {
 					$existing_user_data = get_userdata( $user_id );
-					$new_user_data = $this->setup_user_data( $_POST, $existing_user_data );
-					$result = $this->register_or_update_user( $new_user_data, 'update' );
+					$new_user_data      = $this->setup_user_data( $_POST, $existing_user_data );
+					$result             = $this->register_or_update_user( $new_user_data, 'update' );
 
 					//$result = wp_update_user( $new_user_data );
 					// todo: figure out if there's a way to update the user_login and then sign in the user
@@ -925,7 +925,7 @@ class User_Account_Management {
 
 				if ( is_wp_error( $result ) ) {
 					// Parse errors into a string and append as parameter to redirect
-					$errors = join( ',', $result->get_error_codes() );
+					$errors       = join( ',', $result->get_error_codes() );
 					$redirect_url = add_query_arg( 'errors', $errors, $redirect_url );
 				} else {
 					$redirect_url = add_query_arg( 'account-settings-update', 'true', $redirect_url );
@@ -943,16 +943,16 @@ class User_Account_Management {
 	}
 
 	/**
-	  * An 'authenticate' filter callback that authenticates the user using only     the username.
-	  *
-	  * To avoid potential security vulnerabilities, this should only be used in     the context of a programmatic login,
-	  * and unhooked immediately after it fires.
-	  *
-	  * @param WP_User $user
-	  * @param string $username
-	  * @param string $password
-	  * @return bool|WP_User a WP_User object if the username matched an existing user, or false if it didn't
-	  */
+	* An 'authenticate' filter callback that authenticates the user using only     the username.
+	*
+	* To avoid potential security vulnerabilities, this should only be used in     the context of a programmatic login,
+	* and unhooked immediately after it fires.
+	*
+	* @param WP_User $user
+	* @param string $username
+	* @param string $password
+	* @return bool|WP_User a WP_User object if the username matched an existing user, or false if it didn't
+	*/
 	public function allow_programmatic_login( $user, $username, $password ) {
 		return get_user_by( 'login', $username );
 	}
@@ -989,7 +989,7 @@ class User_Account_Management {
 	 */
 	public function do_password_reset() {
 		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
-			$rp_key = rawurldecode( $_REQUEST['rp_key'] );
+			$rp_key   = rawurldecode( $_REQUEST['rp_key'] );
 			$rp_login = rawurldecode( $_REQUEST['rp_login'] );
 
 			$user = check_password_reset_key( $rp_key, $rp_login );
@@ -1022,9 +1022,9 @@ class User_Account_Management {
 
 				// user has a new password; log them in now
 				$user_data = array(
-					'user_login' => $rp_login,
+					'user_login'    => $rp_login,
 					'user_password' => $_POST['new_password'],
-					'remember' => false,
+					'remember'      => false,
 				);
 
 				$result = wp_signon( $user_data );
@@ -1032,7 +1032,7 @@ class User_Account_Management {
 				if ( ! is_wp_error( $result ) ) {
 					global $current_user;
 					$current_user = $result;
-					$default_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
+					$default_url  = get_option( $this->option_prefix . 'default_login_redirect', '' );
 					if ( '' === $default_url ) {
 						$default_url = site_url( '/user/' );
 					}
@@ -1061,15 +1061,15 @@ class User_Account_Management {
 		// the default WordPress authentication) functions have found errors
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_wp_error( $user ) ) {
-				$key = md5( microtime() . rand() );
+				$key  = md5( microtime() . rand() );
 				$data = array(
 					'user_email' => $username,
 				);
 				set_transient( 'uam_login_' . $key, $data, 120 );
 				$error_codes = join( ',', $user->get_error_codes() );
-				$login_url = site_url( 'user/login' );
-				$login_url = add_query_arg( 'login', $error_codes, $login_url );
-				$login_url = add_query_arg( 'form_key', $key, $login_url );
+				$login_url   = site_url( 'user/login' );
+				$login_url   = add_query_arg( 'login', $error_codes, $login_url );
+				$login_url   = add_query_arg( 'form_key', $key, $login_url );
 				wp_redirect( $login_url );
 				exit;
 			}
@@ -1141,7 +1141,7 @@ class User_Account_Management {
 	 */
 	public function set_default_display_name( $name ) {
 		$first_name = isset( $_POST['first_name'] ) ? sanitize_text_field( $_POST['first_name'] ) : '';
-		$last_name = isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : '';
+		$last_name  = isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : '';
 		if ( '' !== $first_name && '' !== $last_name ) {
 			$name = $first_name . ' ' . $last_name;
 		}
@@ -1161,11 +1161,11 @@ class User_Account_Management {
 	 */
 	public function replace_retrieve_password_message( $message, $key, $user_login, $user_data ) {
 
-		$attributes['message'] = $message; // default mail message
-		$attributes['key'] = $key; //activation key
+		$attributes['message']    = $message; // default mail message
+		$attributes['key']        = $key; //activation key
 		$attributes['user_login'] = $user_login; // user's email address
-		$attributes['reset_url'] = site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' );
-		$attributes['user_data'] = $user_data; // WP_User object
+		$attributes['reset_url']  = site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' );
+		$attributes['user_data']  = $user_data; // WP_User object
 
 		// if you want to use html as the mime type, use the filter
 		// we do not include this here because a theme template would be required anyway
@@ -1202,13 +1202,13 @@ class User_Account_Management {
 	 */
 	public function replace_new_user_email( $wp_new_user_notification_email, $user, $blogname ) {
 
-		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient
-		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
-		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
-		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail headers
-		$attributes['blogname'] = $blogname; // site name
-		$attributes['user_data'] = $user->data; // WP_User object
-		$attributes['login_url'] = site_url( '/user/login' ); // login url
+		$attributes['to']          = $wp_new_user_notification_email['to']; // default recipient
+		$attributes['subject']     = $wp_new_user_notification_email['subject']; // default subject
+		$attributes['message']     = $wp_new_user_notification_email['message']; // default mail message
+		$attributes['headers']     = $wp_new_user_notification_email['headers']; // default mail headers
+		$attributes['blogname']    = $blogname; // site name
+		$attributes['user_data']   = $user->data; // WP_User object
+		$attributes['login_url']   = site_url( '/user/login' ); // login url
 		$attributes['account_url'] = site_url( '/user/' ); // user account url
 
 		// if you want to use html as the mime type, use the filter
@@ -1228,7 +1228,7 @@ class User_Account_Management {
 
 		$attributes['message'] = $this->get_template_html( 'new-user-notification-email', 'email', $attributes );
 
-		$wp_new_user_notification_email['to'] = $attributes['to'];
+		$wp_new_user_notification_email['to']      = $attributes['to'];
 		$wp_new_user_notification_email['subject'] = $attributes['subject'];
 		$wp_new_user_notification_email['message'] = $attributes['message'];
 		$wp_new_user_notification_email['headers'] = $attributes['headers'];
@@ -1258,11 +1258,11 @@ class User_Account_Management {
 			return;
 		}
 
-		$attributes['to'] = $wp_new_user_notification_email['to']; // default recipient - the site admin
-		$attributes['subject'] = $wp_new_user_notification_email['subject']; // default subject
-		$attributes['message'] = $wp_new_user_notification_email['message']; // default mail message
-		$attributes['headers'] = $wp_new_user_notification_email['headers']; // default mail headers
-		$attributes['blogname'] = $blogname; // site name
+		$attributes['to']        = $wp_new_user_notification_email['to']; // default recipient - the site admin
+		$attributes['subject']   = $wp_new_user_notification_email['subject']; // default subject
+		$attributes['message']   = $wp_new_user_notification_email['message']; // default mail message
+		$attributes['headers']   = $wp_new_user_notification_email['headers']; // default mail headers
+		$attributes['blogname']  = $blogname; // site name
 		$attributes['user_data'] = $user->data; // WP_User object
 		$attributes['login_url'] = site_url( '/user/login' ); // login url
 
@@ -1283,7 +1283,7 @@ class User_Account_Management {
 
 		$attributes['message'] = $this->get_template_html( 'new-user-notification-email-admin', 'email', $attributes );
 
-		$wp_new_user_notification_email['to'] = $attributes['to'];
+		$wp_new_user_notification_email['to']      = $attributes['to'];
 		$wp_new_user_notification_email['subject'] = $attributes['subject'];
 		$wp_new_user_notification_email['message'] = $attributes['message'];
 		$wp_new_user_notification_email['headers'] = $attributes['headers'];
@@ -1335,14 +1335,14 @@ class User_Account_Management {
 	public function register_api_endpoints() {
 		register_rest_route( $this->slug . '/v1', '/check-zip', array(
 			array(
-				'methods'         => WP_REST_Server::READABLE,
-				'callback'        => array( $this, 'check_zip' ),
-				'args'            => array(
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'check_zip' ),
+				'args'     => array(
 					'zip_code' => array(
 						'sanitize_callback' => 'esc_attr',
 					),
-					'country' => array(
-						'default' => 'US',
+					'country'  => array(
+						'default'           => 'US',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
@@ -1360,9 +1360,9 @@ class User_Account_Management {
 	 *
 	 */
 	public function check_zip( WP_REST_Request $request ) {
-		$params = $request->get_params();
-		$zip_code = $params['zip_code'];
-		$country = $params['country'];
+		$params    = $request->get_params();
+		$zip_code  = $params['zip_code'];
+		$country   = $params['country'];
 		$citystate = $this->get_city_state( $zip_code, $country );
 		return $citystate;
 	}
@@ -1413,7 +1413,7 @@ class User_Account_Management {
 		// otherwise leave them empty; this will keep the update_user_meta method from running needlessly
 		if ( isset( $user_data['ID'] ) ) {
 			$existing_zip_code = get_user_meta( $user_data['ID'], '_zip_code', true );
-			$existing_country = get_user_meta( $user_data['ID'], '_country', true );
+			$existing_country  = get_user_meta( $user_data['ID'], '_country', true );
 		}
 
 		if ( isset( $posted['zip_code'] ) ) {
@@ -1435,8 +1435,8 @@ class User_Account_Management {
 		}
 
 		$user_data['user_nicename'] = strtolower( $user_data['first_name'] . '-' . $user_data['last_name'] );
-		$user_data['display_name'] = $user_data['first_name'] . ' ' . $user_data['last_name'];
-		$user_data['nickname'] = $user_data['first_name'];
+		$user_data['display_name']  = $user_data['first_name'] . ' ' . $user_data['last_name'];
+		$user_data['nickname']      = $user_data['first_name'];
 
 		// add a filter to allow more $posted data to be added to $user_data
 		// users should sanitize data that is being added in this way
@@ -1491,13 +1491,13 @@ class User_Account_Management {
 			// load data from cache if it is available
 			$citystate = $cached;
 		} else {
-			$request = wp_remote_get( $url );
-			$body = wp_remote_retrieve_body( $request );
-			$location = json_decode( $body, true );
-			$city = $location['postalcodes'][0]['placeName'];
-			$state = $location['postalcodes'][0]['adminName1'];
+			$request   = wp_remote_get( $url );
+			$body      = wp_remote_retrieve_body( $request );
+			$location  = json_decode( $body, true );
+			$city      = $location['postalcodes'][0]['placeName'];
+			$state     = $location['postalcodes'][0]['adminName1'];
 			$citystate = array(
-				'city' => $city,
+				'city'  => $city,
 				'state' => $state,
 			);
 
@@ -1603,7 +1603,7 @@ class User_Account_Management {
 			$user_id = wp_insert_user( $user_data );
 		} elseif ( 'update' === $action ) {
 			$user_id = $user_data['ID'];
-			$result = wp_update_user( $user_data );
+			$result  = wp_update_user( $user_data );
 		}
 
 		if ( '' !== $user_data['zip_code'] ) {
@@ -1779,8 +1779,8 @@ class User_Account_Management {
 			$countries = $cached;
 		} else {
 			// call the server to get the list
-			$request = wp_remote_get( $countries_url );
-			$body = wp_remote_retrieve_body( $request );
+			$request   = wp_remote_get( $countries_url );
+			$body      = wp_remote_retrieve_body( $request );
 			$countries = json_decode( $body, true );
 
 			if ( true === $this->cache ) {
@@ -1854,6 +1854,7 @@ class User_Account_Management {
 					'user-account-management'
 				);
 			case 'incorrect_password':
+				// translators: parameter is the wp_lostpassword_url() url
 				$err = __(
 					"The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>.",
 					'user-account-management'
@@ -1895,9 +1896,9 @@ class User_Account_Management_Transient {
 	 * @param string $name The name of the field that lists all cache keys.
 	 */
 	public function __construct( $name, $cache_expiration = 2592000 ) {
-		$this->name = $name;
+		$this->name             = $name;
 		$this->cache_expiration = $cache_expiration; // cache expiration in seconds
-		$this->cache_prefix = esc_sql( 'acct_mgmt_' );
+		$this->cache_prefix     = esc_sql( 'acct_mgmt_' );
 	}
 
 	/**
@@ -1919,10 +1920,10 @@ class User_Account_Management_Transient {
 	 */
 	public function set( $cachekey, $value ) {
 
-		$prefix = $this->cache_prefix;
+		$prefix   = $this->cache_prefix;
 		$cachekey = $prefix . $cachekey;
 
-		$keys = $this->all_keys();
+		$keys   = $this->all_keys();
 		$keys[] = $cachekey;
 		set_transient( $this->name, $keys, $this->cache_expiration );
 
@@ -1936,7 +1937,7 @@ class User_Account_Management_Transient {
 	 * @return mixed value of transient. False of empty, otherwise array.
 	 */
 	public function get( $cachekey ) {
-		$prefix = $this->cache_prefix;
+		$prefix   = $this->cache_prefix;
 		$cachekey = $prefix . $cachekey;
 		return get_transient( $cachekey );
 	}
@@ -1948,7 +1949,7 @@ class User_Account_Management_Transient {
 	 * @return bool True if successful, false otherwise.
 	 */
 	public function delete( $cachekey ) {
-		$prefix = $this->cache_prefix;
+		$prefix   = $this->cache_prefix;
 		$cachekey = $prefix . $cachekey;
 		return delete_transient( $cachekey );
 	}
@@ -1959,7 +1960,7 @@ class User_Account_Management_Transient {
 	 * @return bool True if successful, false otherwise.
 	 */
 	public function flush() {
-		$keys = $this->all_keys();
+		$keys   = $this->all_keys();
 		$result = true;
 		foreach ( $keys as $key ) {
 			$result = delete_transient( $key );

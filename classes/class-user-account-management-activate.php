@@ -28,8 +28,8 @@ class User_Account_Management_Activate {
 	*/
 	public function __construct( $option_prefix, $version, $slug ) {
 		$this->option_prefix = $option_prefix;
-		$this->version = $version;
-		$this->slug = $slug;
+		$this->version       = $version;
+		$this->slug          = $slug;
 
 		register_activation_hook( dirname( __DIR__ ) . '/' . $slug . '.php', array( $this, 'plugin_activated' ) );
 
@@ -46,55 +46,55 @@ class User_Account_Management_Activate {
 	}
 
 	/**
-	  * Plugin activation hook.
-	  *
-	  * Creates all WordPress pages needed by the plugin.
-	  */
+	* Plugin activation hook.
+	*
+	* Creates all WordPress pages needed by the plugin.
+	*/
 	public static function plugin_activated() {
 		// Information needed for creating the plugin's pages
 		$page_definitions = array(
-			'user' => array(
-				'title' => // translators: placeholder refers to site name
+			'user'             => array(
+				'title'   => // translators: placeholder refers to site name
 					sprintf( esc_html__( 'Your %1$s account', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[account-info]',
 			),
-			'login' => array(
-				'title' => // translators: placeholder refers to site name
+			'login'            => array(
+				'title'   => // translators: placeholder refers to site name
 					sprintf( esc_html__( 'Log in to %1$s', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[custom-login-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
-			'register' => array(
-				'title' => // translators: placeholder refers to site name
+			'register'         => array(
+				'title'   => // translators: placeholder refers to site name
 					sprintf( esc_html__( 'Create your %1$s account', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[custom-register-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
-			'password-lost' => array(
-				'title' => __( 'Forgot Your Password?', 'user-account-management' ),
+			'password-lost'    => array(
+				'title'   => __( 'Forgot Your Password?', 'user-account-management' ),
 				'content' => '[custom-password-lost-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
-			'password-reset' => array(
-				'title' => __( 'Set a New Password', 'user-account-management' ),
+			'password-reset'   => array(
+				'title'   => __( 'Set a New Password', 'user-account-management' ),
 				'content' => '[custom-password-reset-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
-			'password' => array(
-				'title' => __( 'Change Your Password', 'user-account-management' ),
+			'password'         => array(
+				'title'   => __( 'Change Your Password', 'user-account-management' ),
 				'content' => '[custom-password-change-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
 			'account-settings' => array(
-				'title' => __( 'Account Settings', 'user-account-management' ),
+				'title'   => __( 'Account Settings', 'user-account-management' ),
 				'content' => '[custom-account-settings-form]',
-				'parent' => 'user',
+				'parent'  => 'user',
 			),
 		);
 
