@@ -1335,7 +1335,7 @@ class User_Account_Management {
 	public function register_api_endpoints() {
 		register_rest_route( $this->slug . '/v1', '/check-zip', array(
 			array(
-				'methods'  => WP_REST_Server::READABLE,
+				'methods'  => array( WP_REST_Server::READABLE, WP_REST_Server::CREATABLE ),
 				'callback' => array( $this, 'check_zip' ),
 				'args'     => array(
 					'zip_code' => array(
