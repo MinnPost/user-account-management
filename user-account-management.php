@@ -1335,7 +1335,7 @@ class User_Account_Management {
 	public function register_api_endpoints() {
 		register_rest_route( $this->slug . '/v1', '/check-zip', array(
 			array(
-				'methods'  => array( WP_REST_Server::READABLE, WP_REST_Server::CREATABLE ),
+				'methods'  => array( WP_REST_Server::READABLE ),
 				'callback' => array( $this, 'check_zip' ),
 				'args'     => array(
 					'zip_code' => array(
@@ -1344,6 +1344,18 @@ class User_Account_Management {
 					'country'  => array(
 						'default'           => 'US',
 						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+				//'permission_callback' => array( $this, 'permissions_check' ),
+			),
+		) );
+		register_rest_route( $this->slug . '/v1', '/check-account-exists', array(
+			array(
+				'methods'  => array( WP_REST_Server::READABLE ),
+				'callback' => array( $this, 'check_email' ),
+				'args'     => array(
+					'email' => array(
+						'sanitize_callback' => 'sanitize_email',
 					),
 				),
 				//'permission_callback' => array( $this, 'permissions_check' ),
@@ -1365,6 +1377,28 @@ class User_Account_Management {
 		$country   = $params['country'];
 		$citystate = $this->get_city_state( $zip_code, $country );
 		return $citystate;
+	}
+
+	/**
+	 * API endpoint for checking email address for a pre-existing account
+	 *
+	 * @param object  $request    The REST request
+	 *
+	 * @return array   The REST response
+	 *
+	 */
+	public function check_email( WP_REST_Request $request ) {
+		$params = $request->get_params();
+		$email  = $params['email'];
+		if ( username_exists( $email ) || email_exists( $email ) ) {
+			$user = array(
+				'status' => 'success',
+				'reason' => 'user exists',
+				'uid'    => email_exists( $email ),
+			);
+			return $user;
+		}
+		return false;
 	}
 
 	/**
