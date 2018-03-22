@@ -1361,6 +1361,30 @@ class User_Account_Management {
 				//'permission_callback' => array( $this, 'permissions_check' ),
 			),
 		) );
+		register_rest_route( $this->slug . '/v1', '/create-user', array(
+			array(
+				'methods'  => array( WP_REST_Server::CREATABLE ),
+				'callback' => array( $this, 'api_register_user' ),
+				'args'     => array(
+					'email' => array(
+						'sanitize_callback' => 'sanitize_email',
+					),
+					'first_name' => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'last_name' => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'zip_code' => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'country' => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+				//'permission_callback' => array( $this, 'permissions_check' ),
+			),
+		) );
 	}
 
 	/**
@@ -1579,15 +1603,45 @@ class User_Account_Management {
 	}
 
 	/**
+	* Process the REST API request to create a user
+	*
+	* @param $request
+	*
+	* @return $result
+	*/
+	public function api_register_user( WP_REST_Request $request ) {
+		$email      = $request->get_param( 'email' );
+		$password   = $request->get_param( 'password' );
+		$first_name = $request->get_param( 'password' );
+		$last_name  = $request->get_param( 'password' );
+		$zip_code   = $request->get_param( 'password' );
+		$country    = $request->get_param( 'country' );
+
+		$posted    = array(
+			'email'      => $email,
+			'password'   => $password,
+			'first_name' => $first_name,
+			'last_name'  => $last_name,
+			'zip_code'   => $zip_code,
+			'country'    => $country,
+		);
+		$user_data = $this->setup_user_data( $posted );
+
+		$user_id = $this->register_or_update_user( $user_data, 'register', array(), true );
+		return $user_id;
+	}
+
+	/**
 	 * Validates and then completes the new user signup or existing user update process if all went well.
 	 *
 	 * @param array  $user_data            The prepared array of user data
 	 * @param string $action               Register or update
 	 * @param array  $existing_user_data   If it's an update, allow comparisons with existing user data
+	 * @param bool   $return               If true, only return the user. Don't do any redirecting or echoing stuff.
 	 *
 	 * @return int|WP_Error         The id of the user that was created, or error if failed.
 	 */
-	private function register_or_update_user( $user_data, $action, $existing_user_data = array() ) {
+	private function register_or_update_user( $user_data, $action, $existing_user_data = array(), $return = false ) {
 
 		$country = $user_data['country'];
 
