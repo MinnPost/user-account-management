@@ -1645,8 +1645,23 @@ class User_Account_Management {
 		);
 		$user_data = $this->setup_user_data( $posted );
 
-		$user_id = $this->register_or_update_user( $user_data, 'register', array(), true );
-		return $user_id;
+		$data = $this->register_or_update_user( $user_data, 'register', array() );
+
+		$result = array();
+		if ( is_int( $data ) ) {
+			$result = array(
+				'status' => 'success',
+				'reason' => 'new user',
+				'uid'    => $data,
+			);
+		} else {
+			$result = array(
+				'status' => 'error',
+				'reason' => 'user not created',
+				'errors' => $data,
+			);
+		}
+		return $result;
 	}
 
 	/**
