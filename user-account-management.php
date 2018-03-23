@@ -1633,7 +1633,7 @@ class User_Account_Management {
 	 *
 	 * @return int|WP_Error         The id of the user that was created, or error if failed.
 	 */
-	private function register_or_update_user( $user_data, $action, $existing_user_data = array(), $return = false ) {
+	private function register_or_update_user( $user_data, $action, $existing_user_data = array() ) {
 
 		$country = $user_data['country'];
 
