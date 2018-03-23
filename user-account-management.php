@@ -1366,19 +1366,26 @@ class User_Account_Management {
 				'methods'  => array( WP_REST_Server::CREATABLE ),
 				'callback' => array( $this, 'api_register_user' ),
 				'args'     => array(
-					'email' => array(
+					'email'      => array(
+						'required'          => true,
 						'sanitize_callback' => 'sanitize_email',
+					),
+					'password'   => array(
+						'required' => true,
 					),
 					'first_name' => array(
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'last_name' => array(
+					'last_name'  => array(
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'zip_code' => array(
+					'zip_code'   => array(
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'country' => array(
+					'city'       => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'state'      => array(
 						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
