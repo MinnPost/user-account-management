@@ -1464,6 +1464,8 @@ class User_Account_Management {
 		if ( isset( $user_data['ID'] ) ) {
 			$existing_zip_code = get_user_meta( $user_data['ID'], '_zip_code', true );
 			$existing_country  = get_user_meta( $user_data['ID'], '_country', true );
+			$existing_city     = get_user_meta( $user_data['ID'], '_city', true );
+			$existing_state    = get_user_meta( $user_data['ID'], '_state', true );
 		}
 
 		if ( isset( $posted['zip_code'] ) ) {
@@ -1482,6 +1484,26 @@ class User_Account_Management {
 			}
 		} else {
 			$user_data['country'] = '';
+		}
+
+		if ( isset( $posted['city'] ) ) {
+			$user_data['city'] = sanitize_text_field( $posted['city'] );
+			// if there is an existing city but it is unchanged, keep it empty
+			if ( isset( $existing_city ) && $existing_city === $user_data['city'] ) {
+				$user_data['city'] = '';
+			}
+		} else {
+			$user_data['city'] = '';
+		}
+
+		if ( isset( $posted['state'] ) ) {
+			$user_data['state'] = sanitize_text_field( $posted['state'] );
+			// if there is an existing state but it is unchanged, keep it empty
+			if ( isset( $existing_state ) && $existing_state === $user_data['state'] ) {
+				$user_data['state'] = '';
+			}
+		} else {
+			$user_data['state'] = '';
 		}
 
 		$user_data['user_nicename'] = strtolower( $user_data['first_name'] . '-' . $user_data['last_name'] );
@@ -1607,6 +1629,8 @@ class User_Account_Management {
 		$first_name = $request->get_param( 'password' );
 		$last_name  = $request->get_param( 'password' );
 		$zip_code   = $request->get_param( 'password' );
+		$city       = $request->get_param( 'city' );
+		$state      = $request->get_param( 'state' );
 		$country    = $request->get_param( 'country' );
 
 		$posted    = array(
@@ -1615,6 +1639,8 @@ class User_Account_Management {
 			'first_name' => $first_name,
 			'last_name'  => $last_name,
 			'zip_code'   => $zip_code,
+			'city'       => $city,
+			'state'      => $state,
 			'country'    => $country,
 		);
 		$user_data = $this->setup_user_data( $posted );
@@ -1699,13 +1725,22 @@ class User_Account_Management {
 			if ( '' === $user_data['country'] ) {
 				$user_data['country'] = 'US';
 			}
-			$citystate = $this->get_city_state( $user_data['zip_code'], $user_data['country'] ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
-			if ( '' !== $citystate['city'] ) {
-				update_user_meta( $user_id, '_city', $citystate['city'] );
+			if ( '' === $user_data['city'] || '' === $user_data['state'] ) {
+				$citystate = $this->get_city_state( $user_data['zip_code'], $user_data['country'] ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
+				if ( '' !== $citystate['city'] ) {
+					update_user_meta( $user_id, '_city', $citystate['city'] );
+				}
+				if ( '' !== $citystate['state'] ) {
+					update_user_meta( $user_id, '_state', $citystate['state'] );
+				}
 			}
-			if ( '' !== $citystate['state'] ) {
-				update_user_meta( $user_id, '_state', $citystate['state'] );
-			}
+		}
+
+		if ( '' !== $user_data['city'] ) {
+			update_user_meta( $user_id, '_city', $user_data['city'] );
+		}
+		if ( '' !== $user_data['state'] ) {
+			update_user_meta( $user_id, '_state', $user_data['state'] );
 		}
 
 		// do post save action
