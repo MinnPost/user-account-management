@@ -1,5 +1,7 @@
 <form id="change-password-form" action="<?php echo $attributes['current_url']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-change-password">
-
+	<?php if ( isset( $_GET['user_id'] ) ) : ?>
+		<input type="hidden" name="user_id" value="<?php echo $_GET['user_id']; ?>">
+	<?php endif; ?>
 	<input type="hidden" name="user_account_management_action" value="reset-password"/>
 	<input type="hidden" name="user_account_management_redirect" value="<?php echo $attributes['redirect']; ?>"/>
 	<input type="hidden" name="user_account_management_password_nonce" value="<?php echo wp_create_nonce( 'uam-password-nonce' ); ?>"/>

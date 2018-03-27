@@ -71,9 +71,6 @@ class User_Account_Management {
 		$this->slug          = 'user-account-management';
 
 		$this->user_id = '';
-		if ( isset( $_REQUEST['user_id'] ) ) {
-			$this->user_id = esc_attr( $_REQUEST['user_id'] );
-		}
 
 		// things to do upon activate
 		$this->activate = $this->activate( $this->option_prefix, $this->version, $this->slug );
@@ -133,6 +130,8 @@ class User_Account_Management {
 	 * @return void
 	 */
 	private function add_actions() {
+
+		add_action( 'init', array( $this, 'set_user_id' ), 10 );
 
 		// handle redirects before rendering shortcodes
 		add_action( 'wp', array( $this, 'user_status_check' ) );
@@ -195,6 +194,26 @@ class User_Account_Management {
 
 	}
 
+	/**
+	 * Set the currently selected user ID, allowing for the URL query string to override the current logged in user for moderators and such
+	 *
+	 *
+	 * @return id  $user_id
+	 */
+	public function set_user_id() {
+		if ( isset( $_REQUEST['user_id'] ) ) {
+			$this->user_id = esc_attr( $_REQUEST['user_id'] );
+		} else {
+			$this->user_id = get_current_user_id();
+		}
+		return $this->user_id;
+	}
+
+	/**
+	 * Redirect users if necessary
+	 *
+	 * @return id  $user_id
+	 */
 	public function user_status_check() {
 		$redirect = '';
 		if ( isset( $_REQUEST['redirect_to'] ) ) {
@@ -836,7 +855,7 @@ class User_Account_Management {
 	 */
 	public function do_password_change() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
-			$user_id = get_current_user_id();
+			$user_id = $this->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
@@ -871,7 +890,7 @@ class User_Account_Management {
 	 */
 	public function do_account_settings() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
-			$user_id = get_current_user_id();
+			$user_id = $this->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
@@ -933,6 +952,9 @@ class User_Account_Management {
 
 				if ( isset( $redirect_url ) ) {
 					$redirect_url = wp_validate_redirect( $redirect_url, $redirect_url );
+					if ( get_current_user_id() !== $this->user_id ) {
+						$redirect_url = add_query_arg( 'user_id', $this->user_id, $redirect_url );
+					}
 				}
 				if ( ! empty( $redirect_url ) ) {
 					wp_redirect( $redirect_url );

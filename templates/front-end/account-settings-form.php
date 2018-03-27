@@ -1,6 +1,8 @@
 <form id="account-settings-form" action="<?php echo $attributes['current_url']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-account-settings">
-
-	<input type="hidden" name="user_account_management_action" value="account-settings-update"/>
+	<?php if ( isset( $_GET['user_id'] ) ) : ?>
+		<input type="hidden" name="user_id" value="<?php echo $_GET['user_id']; ?>">
+	<?php endif; ?>
+	<input type="hidden" name="user_account_management_action" value="account-settings-update">
 	<input type="hidden" name="user_account_management_redirect" value="<?php echo $attributes['redirect']; ?>"/>
 	<input type="hidden" name="user_account_management_account_settings_nonce" value="<?php echo wp_create_nonce( 'uam-account-settings-nonce' ); ?>"/>
 	<?php if ( '1' === $attributes['include_city_state'] && '1' === $attributes['hidden_city_state'] ) : ?>
