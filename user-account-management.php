@@ -2,7 +2,7 @@
 /**
  * Plugin Name: User Account Management
  * Description: Replaces the WordPress user account management flow
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: Jonathan Stegall / based on Jarkko Laine's work
  * License: GPL-2.0+
  * Text Domain: user-account-management
@@ -67,7 +67,7 @@ class User_Account_Management {
 	public function __construct() {
 
 		$this->option_prefix = 'user_account_management_';
-		$this->version       = '0.0.1';
+		$this->version       = '0.0.2';
 		$this->slug          = 'user-account-management';
 
 		$this->user_id = '';
@@ -77,6 +77,8 @@ class User_Account_Management {
 
 		// load admin
 		$this->admin = $this->load_admin();
+
+		$this->redirect_after_login_url = $this->get_redirect_after_login_url();
 
 		$this->add_actions();
 
@@ -106,6 +108,21 @@ class User_Account_Management {
 		$admin = new User_Account_Management_Admin( $this->option_prefix, $this->version, $this->slug );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
 		return $admin;
+	}
+
+	/**
+	 * Deal with the possible parameters for redirecting users after they log in
+	 *
+	 * @return string
+	 */
+	private function get_redirect_after_login_url() {
+		$redirect_url = '';
+		if ( isset( $_REQUEST['redirect_to'] ) ) {
+			$redirect_url = $_REQUEST['redirect_to'];
+		} elseif ( isset( $_REQUEST['destination'] ) ) {
+			$redirect_url = $_REQUEST['destination'];
+		}
+		return $redirect_url;
 	}
 
 	/**
@@ -216,9 +233,9 @@ class User_Account_Management {
 	 */
 	public function user_status_check() {
 		$redirect = '';
-		if ( isset( $_REQUEST['redirect_to'] ) ) {
+		if ( '' !== $this->redirect_after_login_url ) {
 			if ( is_user_logged_in() && is_page( 'user/login' ) ) {
-				$redirect = wp_validate_redirect( $_REQUEST['redirect_to'], $redirect );
+				$redirect = wp_validate_redirect( $this->redirect_after_login_url, $redirect );
 			}
 		}
 		if ( ! empty( $redirect ) ) {
@@ -247,8 +264,8 @@ class User_Account_Management {
 		// don't specify a redirect, but if a valid redirect URL has been passed as
 		// request parameter, use it.
 		$attributes['redirect'] = '';
-		if ( isset( $_REQUEST['redirect_to'] ) ) {
-			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
+		if ( '' !== $this->redirect_after_login_url ) {
+			$attributes['redirect'] = wp_validate_redirect( $this->redirect_after_login_url, $attributes['redirect'] );
 		}
 
 		// Check if the user just requested a new password
@@ -356,8 +373,8 @@ class User_Account_Management {
 		// don't specify a redirect, but if a valid redirect URL has been passed as
 		// request parameter, use it.
 		$attributes['redirect'] = '';
-		if ( isset( $_REQUEST['redirect_to'] ) ) {
-			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
+		if ( '' !== $this->redirect_after_login_url ) {
+			$attributes['redirect'] = wp_validate_redirect( $this->redirect_after_login_url, $attributes['redirect'] );
 		}
 
 		// check if the form data is stored in a transient
@@ -708,7 +725,11 @@ class User_Account_Management {
 	 */
 	public function redirect_to_custom_login() {
 		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
-			$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : null;
+			if ( '' !== $this->redirect_after_login_url ) {
+				$redirect_to = $this->redirect_after_login_url;
+			} else {
+				$redirect_to = null;
+			}
 			if ( is_user_logged_in() ) {
 				$this->redirect_logged_in_user( $redirect_to );
 				exit;

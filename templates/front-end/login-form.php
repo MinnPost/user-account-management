@@ -1,7 +1,7 @@
 <form id="login-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-user m-form-login">
 
-	<?php if ( isset( $_GET['redirect_to'] ) ) : ?>
-	<input type="hidden" name="redirect_to" value="<?php echo $_GET['redirect_to']; ?>">
+	<?php if ( isset( $attributes['redirect'] ) ) : ?>
+	<input type="hidden" name="redirect_to" value="<?php echo $attributes['redirect']; ?>">
 	<?php endif; ?>
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
