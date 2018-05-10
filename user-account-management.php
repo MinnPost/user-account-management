@@ -254,11 +254,26 @@ class User_Account_Management {
 	 */
 	public function render_login_form( $attributes, $content = null ) {
 
+		$attributes = shortcode_atts(
+			array(
+				'source'           => '',
+				'action'           => '',
+				'redirect'         => '',
+				'redirect_here'    => false,
+				'instructions'     => '',
+				'instructions_tag' => '',
+			),
+			$attributes,
+			'login_form'
+		);
+
 		if ( ! is_array( $attributes ) ) {
 			$attributes = array();
 		}
 
-		$attributes['source'] = isset( $_GET['source'] ) ? esc_attr( $_GET['source'] ) : '';
+		if ( '' === $attributes['source'] ) {
+			$attributes['source'] = isset( $_GET['source'] ) ? esc_attr( $_GET['source'] ) : '';
+		}
 
 		// Pass the redirect parameter to the WordPress login functionality: by default,
 		// don't specify a redirect, but if a valid redirect URL has been passed as
@@ -266,6 +281,10 @@ class User_Account_Management {
 		$attributes['redirect'] = '';
 		if ( '' !== $this->redirect_after_login_url ) {
 			$attributes['redirect'] = wp_validate_redirect( $this->redirect_after_login_url, $attributes['redirect'] );
+		} else {
+			if ( true === filter_var( $attributes['redirect_here'], FILTER_VALIDATE_BOOLEAN ) ) {
+				$attributes['redirect'] = wp_validate_redirect( $this->get_current_url() );
+			}
 		}
 
 		// Check if the user just requested a new password
@@ -303,7 +322,10 @@ class User_Account_Management {
 		*/
 
 		// form action for submission
-		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', wp_login_url() );
+		if ( '' === $attributes['action'] ) {
+			$attributes['action'] = wp_login_url();
+		}
+		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', $attributes['action'] );
 		// example to change the form action
 		/*
 		add_filter( 'user_account_management_login_form_action', 'login_form_action', 10, 1 );
@@ -318,10 +340,19 @@ class User_Account_Management {
 		}
 
 		// translators: instructions on top of the form. placeholders are 1) registration link; 2) registration link text
-		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
-			$registration_url,
-			esc_html__( 'Register now', 'user-account-management' )
-		);
+		if ( '' === $attributes['instructions'] ) {
+			$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
+				$registration_url,
+				esc_html__( 'Register now', 'user-account-management' )
+			);
+		} else {
+			if ( '' !== $attributes['instructions_tag'] ) {
+				$tag = $attributes['instructions_tag'];
+			} else {
+				$tag = 'p';
+			}
+			$attributes['instructions'] = '<' . $tag . ' class="a-form-instructions">' . $attributes['instructions'] . '</' . $tag . '>';
+		}
 
 		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'], $attributes['source'] );
 		// example to change the login form instructions
