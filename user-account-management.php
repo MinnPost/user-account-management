@@ -364,7 +364,7 @@ class User_Account_Management {
 		*/
 
 		// translators: password help at bottom of the form. placeholders are 1) reset password link; 2) reset password link text
-		$attributes['password_help'] = sprintf( '<p class="a-form-instructions a-form-caption"><a href="%1$s">%2$s</a></p>',
+		$attributes['password_help'] = sprintf( '<p class="a-form-instructions a-form-caption"><small><a href="%1$s">%2$s</a></small></p>',
 			wp_lostpassword_url(),
 			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
 		);
@@ -1954,13 +1954,6 @@ class User_Account_Management {
 		do_action( 'user_account_management_after_' . $template_name );
 
 		$html = ob_get_contents();
-
-		//remove any new lines already in there
-		$html = str_replace( "\n", '', $html );
-		//replace <br /> with \n
-		$html = str_replace( [ '<br />', '<br>', '<br/>' ], "\n", $html );
-		//replace </p> with \n\n
-		$html = str_replace( '</p>', "\n\n", $html );
 
 		ob_end_clean();
 
