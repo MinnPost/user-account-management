@@ -18,118 +18,118 @@ msgid "Settings"
 msgstr ""
 
 #. translators: instructions on top of the form. placeholders are 1) registration link; 2) registration link text
-#: user-account-management.php:344
+#: user-account-management.php:346
 msgid "No account yet?"
 msgstr ""
 
-#: user-account-management.php:346
+#: user-account-management.php:348
 msgid "Register now"
 msgstr ""
 
-#: user-account-management.php:369
+#: user-account-management.php:371
 msgid "Need help or forgot your password?"
 msgstr ""
 
-#: user-account-management.php:382, user-account-management.php:491, user-account-management.php:553, user-account-management.php:574
+#: user-account-management.php:384, user-account-management.php:493, user-account-management.php:555, user-account-management.php:576
 msgid "You are already signed in."
 msgstr ""
 
 #. translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
-#: user-account-management.php:458
+#: user-account-management.php:460
 msgid "Already have an account?"
 msgstr ""
 
-#: user-account-management.php:458
+#: user-account-management.php:460
 msgid "Do you need "
 msgstr ""
 
-#: user-account-management.php:460
+#: user-account-management.php:462
 msgid "Log in now"
 msgstr ""
 
-#: user-account-management.php:462
+#: user-account-management.php:464
 msgid "account help"
 msgstr ""
 
 #. translators: terms & conditions at bottom of the form. placeholders are 1) name of site, 2) terms of use link, 3) terms link text, 4) privacy link, 5) privacy link text
-#: user-account-management.php:474
+#: user-account-management.php:476
 msgid "By proceeding, you agree to "
 msgstr ""
 
-#: user-account-management.php:474
+#: user-account-management.php:476
 msgid "'s"
 msgstr ""
 
-#: user-account-management.php:474
+#: user-account-management.php:476
 msgid " and "
 msgstr ""
 
-#: user-account-management.php:477
+#: user-account-management.php:479
 msgid "Privacy Policy"
 msgstr ""
 
-#: user-account-management.php:479
+#: user-account-management.php:481
 msgid "Terms of Use"
 msgstr ""
 
-#: user-account-management.php:493, user-account-management.php:2073
+#: user-account-management.php:495, user-account-management.php:2075
 msgid "Registering new users is currently not allowed."
 msgstr ""
 
-#: user-account-management.php:593
+#: user-account-management.php:595
 msgid "Invalid password reset link."
 msgstr ""
 
-#: user-account-management.php:620
+#: user-account-management.php:622
 msgid "reset your password"
 msgstr ""
 
-#: user-account-management.php:627, user-account-management.php:662
+#: user-account-management.php:629, user-account-management.php:664
 msgid "You do not have permission to access this page."
 msgstr ""
 
-#: user-account-management.php:675
+#: user-account-management.php:677
 msgid "You are not signed in."
 msgstr ""
 
-#: user-account-management.php:2051
+#: user-account-management.php:2053
 msgid "You did not enter an email address."
 msgstr ""
 
-#: user-account-management.php:2053
+#: user-account-management.php:2055
 msgid "You did not enter a password."
 msgstr ""
 
-#: user-account-management.php:2057
+#: user-account-management.php:2059
 msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
 msgstr ""
 
 #. translators: parameter is the wp_lostpassword_url() url
-#: user-account-management.php:2063
+#: user-account-management.php:2065
 msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
 msgstr ""
 
-#: user-account-management.php:2069
+#: user-account-management.php:2071
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: user-account-management.php:2071
+#: user-account-management.php:2073
 msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
-#: user-account-management.php:2075
+#: user-account-management.php:2077
 msgid "You filled out a form field that was created to stop spammers. Please try again."
 msgstr ""
 
-#: user-account-management.php:2078
+#: user-account-management.php:2080
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: user-account-management.php:2081
+#: user-account-management.php:2083
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: user-account-management.php:2085
+#: user-account-management.php:2087
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
