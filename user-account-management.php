@@ -163,9 +163,11 @@ class User_Account_Management {
 
 		// actions
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
-		add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
-		add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
-		add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
+		if ( ! is_admin() ) {
+			add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
+			add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
+			add_action( 'login_form_register', array( $this, 'redirect_to_custom_register' ) ); // register
+		}
 		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
 		add_action( 'login_form_lostpassword', array( $this, 'redirect_to_custom_lostpassword' ) ); // lost password
 		add_action( 'login_form_lostpassword', array( $this, 'do_password_lost' ) ); // lost password
