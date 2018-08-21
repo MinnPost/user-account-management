@@ -825,6 +825,8 @@ class User_Account_Management {
 				$result    = $this->register_or_update_user( $user_data, 'register' );
 
 				if ( is_wp_error( $result ) ) {
+					// Errors found
+					$redirect_url = site_url( 'user/register' );
 					// Parse errors into a string and append as parameter to redirect
 					$errors       = join( ',', $result->get_error_codes() );
 					$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
