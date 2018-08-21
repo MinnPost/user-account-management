@@ -1,6 +1,6 @@
 <form id="register-form" action="<?php echo $attributes['action']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-register">
 
-	<?php if ( '1' === $attributes['include_city_state'] && '1' === $attributes['hidden_city_state'] ) : ?>
+	<?php if ( 1 === filter_var( $attributes['include_city_state'], FILTER_VALIDATE_BOOLEAN ) && 1 === filter_var( $attributes['hidden_city_state'], FILTER_VALIDATE_BOOLEAN ) ) : ?>
 		<input type="hidden" name="city" value="">
 		<input type="hidden" name="state" value="">
 	<?php endif; ?>
@@ -49,7 +49,7 @@
 			<input type="text" name="last_name" id="last-name" required<?php if ( isset( $attributes['form_data']['last_name'] ) ) { echo ' value="' . $attributes['form_data']['last_name'] . '"'; } ?>>
 		</div>
 
-		<?php if ( '1' === $attributes['include_city_state'] && '1' !== $attributes['hidden_city_state'] ) : ?>
+		<?php if ( true === filter_var( $attributes['include_city_state'], FILTER_VALIDATE_BOOLEAN ) && false === filter_var( $attributes['hidden_city_state'], FILTER_VALIDATE_BOOLEAN ) ) : ?>
 			<div class="m-form-item m-form-city m-form-register-city">
 				<label for="city"><?php _e( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 				<input type="text" name="city" id="city" required<?php if ( isset( $attributes['form_data']['city'] ) ) { echo ' value="' . $attributes['form_data']['city'] . '"'; } ?>>

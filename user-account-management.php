@@ -201,7 +201,7 @@ class User_Account_Management {
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
 
 		$cache = get_option( $this->option_prefix . 'cache_data', false );
-		if ( '1' === $cache ) {
+		if ( true === filter_var( $cache, FILTER_VALIDATE_BOOLEAN ) ) {
 			$this->cache = true;
 		} else {
 			$this->cache = false;
@@ -447,7 +447,7 @@ class User_Account_Management {
 		$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
 		$attributes['hidden_city_state']  = get_option( $this->option_prefix . 'hidden_city_state', false );
 		$include_countries                = get_option( $this->option_prefix . 'include_countries', false );
-		if ( '1' === $include_countries ) {
+		if ( true === filter_var( $include_countries, FILTER_VALIDATE_BOOLEAN ) ) {
 			$attributes['countries'] = $this->get_countries();
 		}
 
@@ -706,7 +706,7 @@ class User_Account_Management {
 			$attributes['include_city_state'] = get_option( $this->option_prefix . 'include_city_state', false );
 			$attributes['hidden_city_state']  = get_option( $this->option_prefix . 'hidden_city_state', false );
 			$include_countries                = get_option( $this->option_prefix . 'include_countries', false );
-			if ( '1' === $include_countries ) {
+			if ( true === filter_var( $include_countries, FILTER_VALIDATE_BOOLEAN ) ) {
 				$attributes['countries'] = $this->get_countries();
 			}
 
