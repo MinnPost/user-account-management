@@ -1848,6 +1848,14 @@ class User_Account_Management {
 		}
 		*/
 
+		/**
+		* We don't automatically get access to core's profile_update action, so we should call it here. It will run regardless of whether this is a new or updating user.
+		*
+		* @param int     $user_id       User ID.
+		* @param WP_User $old_user_data Object containing user's data prior to update.
+		*/
+		do_action( 'profile_update', $user_id, $existing_user_data );
+
 		if ( 'update' === $action ) {
 			return $result;
 		}
