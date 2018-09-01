@@ -2,7 +2,7 @@
 /**
  * Plugin Name: User Account Management
  * Description: Replaces the WordPress user account management flow
- * Version: 0.0.4
+ * Version: 0.0.5
  * Author: Jonathan Stegall / based on Jarkko Laine's work
  * License: GPL-2.0+
  * Text Domain: user-account-management
@@ -67,7 +67,7 @@ class User_Account_Management {
 	public function __construct() {
 
 		$this->option_prefix = 'user_account_management_';
-		$this->version       = '0.0.4';
+		$this->version       = '0.0.5';
 		$this->slug          = 'user-account-management';
 
 		$this->user_id = '';

@@ -72,7 +72,7 @@ msgstr ""
 msgid "Terms of Use"
 msgstr ""
 
-#: user-account-management.php:495, user-account-management.php:2085
+#: user-account-management.php:495, user-account-management.php:2104
 msgid "Registering new users is currently not allowed."
 msgstr ""
 
@@ -92,44 +92,44 @@ msgstr ""
 msgid "You are not signed in."
 msgstr ""
 
-#: user-account-management.php:2063
+#: user-account-management.php:2082
 msgid "You did not enter an email address."
 msgstr ""
 
-#: user-account-management.php:2065
+#: user-account-management.php:2084
 msgid "You did not enter a password."
 msgstr ""
 
-#: user-account-management.php:2069
+#: user-account-management.php:2088
 msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
 msgstr ""
 
 #. translators: parameter is the wp_lostpassword_url() url
-#: user-account-management.php:2075
+#: user-account-management.php:2094
 msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
 msgstr ""
 
-#: user-account-management.php:2081
+#: user-account-management.php:2100
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: user-account-management.php:2083
+#: user-account-management.php:2102
 msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
-#: user-account-management.php:2087
+#: user-account-management.php:2106
 msgid "You filled out a form field that was created to stop spammers. Please try again."
 msgstr ""
 
-#: user-account-management.php:2090
+#: user-account-management.php:2109
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: user-account-management.php:2093
+#: user-account-management.php:2112
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: user-account-management.php:2097
+#: user-account-management.php:2116
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
