@@ -2,7 +2,7 @@
 /**
  * Plugin Name: User Account Management
  * Description: Replaces the WordPress user account management flow
- * Version: 0.0.5
+ * Version: 0.0.6
  * Author: Jonathan Stegall / based on Jarkko Laine's work
  * License: GPL-2.0+
  * Text Domain: user-account-management
@@ -67,7 +67,7 @@ class User_Account_Management {
 	public function __construct() {
 
 		$this->option_prefix = 'user_account_management_';
-		$this->version       = '0.0.5';
+		$this->version       = '0.0.6';
 		$this->slug          = 'user-account-management';
 
 		$this->user_id = '';
@@ -845,7 +845,11 @@ class User_Account_Management {
 						'remember'      => false,
 					);
 
-					$result = wp_signon( $login_data );
+					$result  = wp_signon( $login_data, is_ssl() );
+					$user_id = $result->ID;
+					wp_set_current_user( $user_id, $login_data['user_login'] );
+					wp_set_auth_cookie( $user_id, true, false );
+					do_action( 'wp_login', $login_data['user_login'] );
 
 					// user is successfully logged in
 					if ( ! is_wp_error( $result ) ) {
@@ -1105,7 +1109,11 @@ class User_Account_Management {
 					'remember'      => false,
 				);
 
-				$result = wp_signon( $user_data );
+				$result  = wp_signon( $user_data, is_ssl() );
+				$user_id = $result->ID;
+				wp_set_current_user( $user_id, $login_data['user_login'] );
+				wp_set_auth_cookie( $user_id, true, false );
+				do_action( 'wp_login', $login_data['user_login'] );
 
 				if ( ! is_wp_error( $result ) ) {
 					global $current_user;
