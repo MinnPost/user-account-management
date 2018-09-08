@@ -1250,7 +1250,7 @@ class User_Account_Management {
 		$attributes['message']    = $message; // default mail message
 		$attributes['key']        = $key; //activation key
 		$attributes['user_login'] = $user_login; // user's email address
-		$attributes['reset_url']  = site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'user-account-management' );
+		$attributes['reset_url']  = site_url( 'wp-login.php?action=rp&amp;key=' . rawurlencode( $key ) . '&amp;login=' . rawurlencode( $user_login ), 'user-account-management' );
 		$attributes['user_data']  = $user_data; // WP_User object
 
 		// if you want to use html as the mime type, use the filter
@@ -1634,7 +1634,7 @@ class User_Account_Management {
 
 		$geonames_api_username = get_option( $this->option_prefix . 'geonames_api_username', '' );
 		if ( '' !== $geonames_api_username ) {
-			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&country=' . urlencode( $country ) . '&username=' . $geonames_api_username;
+			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&amp;country=' . urlencode( $country ) . '&amp;username=' . $geonames_api_username;
 		} else {
 			return $citystate;
 		}
