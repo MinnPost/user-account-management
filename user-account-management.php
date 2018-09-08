@@ -1111,9 +1111,9 @@ class User_Account_Management {
 
 				$result  = wp_signon( $user_data, is_ssl() );
 				$user_id = $result->ID;
-				wp_set_current_user( $user_id, $login_data['user_login'] );
+				wp_set_current_user( $user_id, $user_data['user_login'] );
 				wp_set_auth_cookie( $user_id, true, false );
-				do_action( 'wp_login', $login_data['user_login'] );
+				do_action( 'wp_login', $user_data['user_login'] );
 
 				if ( ! is_wp_error( $result ) ) {
 					global $current_user;
