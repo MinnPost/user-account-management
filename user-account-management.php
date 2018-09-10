@@ -1712,9 +1712,9 @@ class User_Account_Management {
 	public function api_register_user( WP_REST_Request $request ) {
 		$email      = $request->get_param( 'email' );
 		$password   = $request->get_param( 'password' );
-		$first_name = $request->get_param( 'password' );
-		$last_name  = $request->get_param( 'password' );
-		$zip_code   = $request->get_param( 'password' );
+		$first_name = $request->get_param( 'first_name' );
+		$last_name  = $request->get_param( 'last_name' );
+		$zip_code   = $request->get_param( 'zip_code' );
 		$city       = $request->get_param( 'city' );
 		$state      = $request->get_param( 'state' );
 		$country    = $request->get_param( 'country' );
