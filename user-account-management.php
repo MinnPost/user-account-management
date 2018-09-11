@@ -163,6 +163,7 @@ class User_Account_Management {
 
 		// actions
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
+		add_action( 'wp_login', array( $this, 'after_successful_login' ), 10, 2 ); // what to do when a user logs in
 		if ( ! is_admin() ) {
 			add_action( 'login_form_login', array( $this, 'redirect_to_custom_login' ) ); // login
 			add_action( 'wp_logout', array( $this, 'redirect_after_logout' ) ); // logout
@@ -179,6 +180,7 @@ class User_Account_Management {
 		add_action( 'init', array( $this, 'do_account_settings' ) ); // logged in user account settings
 
 		// filters
+		add_filter( 'auth_cookie_expiration', array( $this, 'login_expiration' ) );
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
 		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
 		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
@@ -754,6 +756,26 @@ class User_Account_Management {
 	}
 
 	/**
+	 * Notably, make sure the auth cookie is set when a user logs in
+	 *
+	 * @param  string  $login   The user's username
+	 * @param  object  $user    The logged in user object
+	 *
+	 */
+	public function after_successful_login( $login, $user ) {
+		/**
+		 * Log in a user by setting authentication cookies.
+		 *
+		 * @param  int   $user_id
+		 * @param  bool  $remember
+		 * @param  mixed $secure
+		 *
+		 */
+		$remember = filter_var( get_option( $this->option_prefix . 'remember_user_login', false ), FILTER_VALIDATE_BOOLEAN );
+		wp_set_auth_cookie( $user->ID, $remember, is_ssl() );
+	}
+
+	/**
 	 * Redirect the user to the custom login page instead of wp-login.php.
 	 */
 	public function redirect_to_custom_login() {
@@ -848,7 +870,7 @@ class User_Account_Management {
 					$result  = wp_signon( $login_data, is_ssl() );
 					$user_id = $result->ID;
 					wp_set_current_user( $user_id, $login_data['user_login'] );
-					wp_set_auth_cookie( $user_id, true, false );
+					wp_set_auth_cookie( $user_id, true, is_ssl() );
 					do_action( 'wp_login', $login_data['user_login'] );
 
 					// user is successfully logged in
@@ -994,7 +1016,7 @@ class User_Account_Management {
 							clean_user_cache( $result->ID );
 							wp_clear_auth_cookie();
 							wp_set_current_user( $result->ID );
-							wp_set_auth_cookie( $result->ID, true, false );
+							wp_set_auth_cookie( $result->ID, true, is_ssl() );
 							update_user_caches( $result );
 
 							//wp_set_current_user( $result->ID, $result->user_login );
@@ -1112,7 +1134,7 @@ class User_Account_Management {
 				$result  = wp_signon( $user_data, is_ssl() );
 				$user_id = $result->ID;
 				wp_set_current_user( $user_id, $user_data['user_login'] );
-				wp_set_auth_cookie( $user_id, true, false );
+				wp_set_auth_cookie( $user_id, true, is_ssl() );
 				do_action( 'wp_login', $user_data['user_login'] );
 
 				if ( ! is_wp_error( $result ) ) {
@@ -1131,6 +1153,20 @@ class User_Account_Management {
 
 			exit;
 		}
+	}
+
+	/**
+	 * Set the login expiration time for auth cookies
+	 *
+	 * @param  int    $expire_in
+	 * @return int    $new_expire
+	 */
+	public function login_expiration( $expire_in ) {
+		$new_expire = get_option( $this->option_prefix . 'auth_cookie_expiration', '' );
+		if ( '' !== $new_expire ) {
+			$expire_in = (int) $new_expire;
+		}
+		return $expire_in;
 	}
 
 	/**

@@ -218,6 +218,27 @@ class User_Account_Management_Admin {
 					'desc' => 'Where to send users after they log in or register. The plugin will use /user/ if no value is here.',
 				),
 			),
+			'remember_user_login'    => array(
+				'title'    => __( 'Remember user logins?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type' => 'checkbox',
+					'desc' => 'Whether to remember users when they log in. If checked, users will stay logged in when they close their browsers.',
+				),
+			),
+			'auth_cookie_expiration' => array(
+				'title'    => __( 'Cookie expiration', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type'    => 'text',
+					'desc'    => 'How long (in seconds) before the user authentication cookie expires. Maximum is one year.',
+					'default' => 1209600,
+				),
+			),
 			/*'server_path' => array(
 				'title' => __( 'Server Path', 'user-account-management' ),
 				'callback' => $callbacks['text'],
