@@ -762,7 +762,10 @@ class User_Account_Management {
 	 * @param  object  $user    The logged in user object
 	 *
 	 */
-	public function after_successful_login( $login, $user ) {
+	public function after_successful_login( $login, $user = '' ) {
+		if ( ! ( $user instanceof WP_User ) ) {
+			return;
+		}
 		/**
 		 * Log in a user by setting authentication cookies.
 		 *
