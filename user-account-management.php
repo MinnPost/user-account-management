@@ -1673,7 +1673,7 @@ class User_Account_Management {
 
 		$geonames_api_username = get_option( $this->option_prefix . 'geonames_api_username', '' );
 		if ( '' !== $geonames_api_username ) {
-			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&amp;country=' . urlencode( $country ) . '&amp;username=' . $geonames_api_username;
+			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&country=' . urlencode( $country ) . '&username=' . $geonames_api_username;
 		} else {
 			return $citystate;
 		}
@@ -1688,9 +1688,12 @@ class User_Account_Management {
 			// load data from cache if it is available
 			$citystate = $cached;
 		} else {
-			$request   = wp_remote_get( $url );
-			$body      = wp_remote_retrieve_body( $request );
-			$location  = json_decode( $body, true );
+			$request  = wp_remote_get( $url );
+			$body     = wp_remote_retrieve_body( $request );
+			$location = json_decode( $body, true );
+			if ( ! is_array( $location['postalcodes'] ) ) {
+				return $citystate;
+			}
 			$city      = $location['postalcodes'][0]['placeName'];
 			$state     = $location['postalcodes'][0]['adminName1'];
 			$citystate = array(
