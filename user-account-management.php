@@ -989,42 +989,6 @@ class User_Account_Management {
 					$existing_user_data = get_userdata( $user_id );
 					$new_user_data      = $this->setup_user_data( $_POST, $existing_user_data );
 					$result             = $this->register_or_update_user( $new_user_data, 'update' );
-
-					//$result = wp_update_user( $new_user_data );
-					// todo: figure out if there's a way to update the user_login and then sign in the user
-					// currently this does not work because the user is not seen as logged in
-					/*if ( $new_user_data['user_login'] !== $existing_user_data->user_login ) {
-						// user_login has to be directly updated
-						global $wpdb;
-						$wpdb->update(
-							$wpdb->users,
-							array(
-								'user_login' => $new_user_data['user_login'],
-							),
-							array(
-								'ID' => $new_user_data['ID'],
-							)
-						);
-
-						add_filter( 'authenticate', array( $this, 'allow_programmatic_login' ), 10, 3 ); // hook in earlier than other callbacks to short-circuit them
-						$result = wp_signon(
-							array(
-								'user_login' => $new_user_data['user_login'],
-							)
-						);
-						remove_filter( 'authenticate', array( $this, 'allow_programmatic_login' ), 10, 3 );
-
-						if ( is_a( $result, 'WP_User' ) ) {
-
-							clean_user_cache( $result->ID );
-							wp_clear_auth_cookie();
-							wp_set_current_user( $result->ID );
-							wp_set_auth_cookie( $result->ID, true, is_ssl() );
-							update_user_caches( $result );
-
-							//wp_set_current_user( $result->ID, $result->user_login );
-						}
-					}*/
 				}
 
 				if ( is_wp_error( $result ) ) {
@@ -1047,21 +1011,6 @@ class User_Account_Management {
 				}
 			}
 		}
-	}
-
-	/**
-	* An 'authenticate' filter callback that authenticates the user using only     the username.
-	*
-	* To avoid potential security vulnerabilities, this should only be used in     the context of a programmatic login,
-	* and unhooked immediately after it fires.
-	*
-	* @param WP_User $user
-	* @param string $username
-	* @param string $password
-	* @return bool|WP_User a WP_User object if the username matched an existing user, or false if it didn't
-	*/
-	public function allow_programmatic_login( $user, $username, $password ) {
-		return get_user_by( 'login', $username );
 	}
 
 	/**
