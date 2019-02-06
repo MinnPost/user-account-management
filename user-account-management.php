@@ -1437,7 +1437,7 @@ class User_Account_Management {
 		) );
 		register_rest_route( $this->slug . '/v1', '/create-user', array(
 			array(
-				'methods'  => array( WP_REST_Server::CREATABLE ),
+				'methods'  => WP_REST_Server::CREATABLE,
 				'callback' => array( $this, 'api_register_user' ),
 				'args'     => array(
 					'email'    => array(
