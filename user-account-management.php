@@ -1473,9 +1473,9 @@ class User_Account_Management {
 						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
-				/*'permission_callback' => function( $request ) {
+				'permission_callback' => function( $request ) {
 					return $this->check_user_permissions();
-				},*/
+				},
 			),
 		) );
 	}
