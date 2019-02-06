@@ -1451,6 +1451,33 @@ class User_Account_Management {
 				//'permission_callback' => array( $this, 'permissions_check' ),
 			),
 		) );
+		register_rest_route( $this->slug . '/v1', '/update-user', array(
+			array(
+				'methods'  => WP_REST_Server::EDITABLE,
+				'callback' => array( $this, 'api_update_user' ),
+				'args'     => array(
+					'user_id'    => array(
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'email'    => array(
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_email',
+					),
+					'first_name'    => array(
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'last_name'    => array(
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+				/*'permission_callback' => function( $request ) {
+					return $this->check_user_permissions();
+				},*/
+			),
+		) );
 	}
 
 	/**
@@ -1738,6 +1765,39 @@ class User_Account_Management {
 				'errors' => $data,
 			);
 		}
+		return $result;
+	}
+
+	/**
+	* Process the REST API request to update a user
+	*
+	* @param $request
+	*
+	* @return $result
+	*/
+	public function api_update_user( WP_REST_Request $request ) {
+		$user_id = $request->get_param( 'user_id' );
+		$posted  = $request->get_params();
+
+		$existing_user_data = get_userdata( $user_id );
+		$new_user_data      = $this->setup_user_data( $posted, $existing_user_data );
+		$data               = $this->register_or_update_user( $new_user_data, 'update' );
+		
+		$result = array();
+		if ( is_int( $data ) ) {
+			$result = array(
+				'status' => 'success',
+				'reason' => 'updated user',
+				'uid'    => $data,
+			);
+		} else {
+			$result = array(
+				'status' => 'error',
+				'reason' => 'user ' . $user_id . ' not updated',
+				'errors' => $data,
+			);
+		}
+
 		return $result;
 	}
 
