@@ -1474,7 +1474,7 @@ class User_Account_Management {
 					),
 				),
 				'permission_callback' => function( $request ) {
-					return $this->check_user_permissions();
+					return $this->check_user_permissions( '', 'update' );
 				},
 			),
 		) );
@@ -1997,11 +1997,14 @@ class User_Account_Management {
 	 *
 	 * @return bool true or false
 	 */
-	public function check_user_permissions( $user_id = '' ) {
+	public function check_user_permissions( $user_id = '', $method = 'create' ) {
 		if ( '' === $user_id && '' !== $this->user_id ) {
 			$user_id = $this->user_id;
 		} elseif ( '' === $user_id ) {
 			$user_id = get_current_user_id();
+		}
+		if ( 'create' !== $method && 0 === $user_id ) {
+			return false;
 		}
 		if ( get_current_user_id() === $user_id || current_user_can( 'edit_user', $user_id ) ) {
 			return true;
