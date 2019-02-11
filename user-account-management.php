@@ -750,6 +750,7 @@ class User_Account_Management {
 				array(
 					'site_url'       => site_url( '/' ),
 					'rest_namespace' => 'wp-json/' . $this->slug . '/v1',
+					'nonce'          => wp_create_nonce( 'wp_rest' ),
 				)
 			);
 		}
@@ -974,21 +975,26 @@ class User_Account_Management {
 	 * Updates a logged in user's account settings
 	 */
 	public function do_account_settings() {
+
 		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
 			$user_id = $this->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
 
-			$redirect_url = $_POST['user_account_management_redirect'];
+			$redirect_url = sanitize_text_field( $_POST['user_account_management_redirect'] );
 
-			if ( wp_verify_nonce( $_POST['user_account_management_account_settings_nonce'], 'uam-account-settings-nonce' ) ) {
+			if ( wp_verify_nonce( sanitize_text_field( $_POST['user_account_management_account_settings_nonce'] ), 'uam-account-settings-nonce' ) ) {
 				if ( empty( $_POST ) ) {
 					$redirect_url = add_query_arg( 'errors', 'account_settings_empty', $redirect_url );
 				} else {
 					$existing_user_data = get_userdata( $user_id );
 					$new_user_data      = $this->setup_user_data( $_POST, $existing_user_data );
 					$result             = $this->register_or_update_user( $new_user_data, 'update' );
+				}
+
+				if ( isset( $_POST['rest'] ) && 'true' === sanitize_text_field( $_POST['rest'] ) ) {
+					return;
 				}
 
 				if ( is_wp_error( $result ) ) {
