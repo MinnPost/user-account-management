@@ -2,7 +2,7 @@
   "name": "user-account-management",
   "title": "User Account Management",
   "description": "",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "index.js",
   "repository": "https://github.com/MinnPost/user-account-management.git",
   "author": "MinnPost",
@@ -46,6 +46,6 @@
     "node-sass": "^4.11.0",
     "npm": "^6.7.0",
     "npm-check-updates": "^2.15.0",
-    "webpack": "^4.29.1"
+    "webpack": "^4.29.3"
   }
 }
