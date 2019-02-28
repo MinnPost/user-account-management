@@ -875,10 +875,10 @@ class User_Account_Management {
 					$user_id = $result->ID;
 					wp_set_current_user( $user_id, $login_data['user_login'] );
 					wp_set_auth_cookie( $user_id, true, is_ssl() );
-					do_action( 'wp_login', $login_data['user_login'] );
 
 					// user is successfully logged in
 					if ( ! is_wp_error( $result ) ) {
+						do_action( 'wp_login', $login_data['user_login'], $result );
 						global $current_user;
 						$current_user = $result;
 						$redirect_url = get_option( $this->option_prefix . 'default_login_redirect', '' );
@@ -1093,9 +1093,9 @@ class User_Account_Management {
 				$user_id = $result->ID;
 				wp_set_current_user( $user_id, $user_data['user_login'] );
 				wp_set_auth_cookie( $user_id, true, is_ssl() );
-				do_action( 'wp_login', $user_data['user_login'] );
 
 				if ( ! is_wp_error( $result ) ) {
+					do_action( 'wp_login', $user_data['user_login'], $result );
 					global $current_user;
 					$current_user = $result;
 					$default_url  = get_option( $this->option_prefix . 'default_login_redirect', '' );
