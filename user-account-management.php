@@ -783,6 +783,11 @@ class User_Account_Management {
 	 * Redirect the user to the custom login page instead of wp-login.php.
 	 */
 	public function redirect_to_custom_login() {
+		$skip_login_redirect = apply_filters( 'user_account_management_skip_login_redirect', false );
+		if ( true === $skip_login_redirect ) {
+			return;
+		}
+
 		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( '' !== $this->redirect_after_login_url ) {
 				$redirect_to = $this->redirect_after_login_url;
