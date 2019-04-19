@@ -1618,7 +1618,7 @@ class User_Account_Management {
 			$user_data['state'] = '';
 		}
 
-		$user_data['user_nicename'] = strtolower( $user_data['first_name'] . '-' . $user_data['last_name'] );
+		$user_data['user_nicename'] = sanitize_title( $user_data['user_login'] );
 		$user_data['display_name']  = $user_data['first_name'] . ' ' . $user_data['last_name'];
 		$user_data['nickname']      = $user_data['first_name'];
 
