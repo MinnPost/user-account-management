@@ -729,7 +729,7 @@ class User_Account_Management {
 		if ( is_page( $user_page->ID ) || $user_page->ID === $post->post_parent ) {
 
 			// stylesheet path
-			$stylesheet_path = apply_filters( 'user_account_management_front_end_stylesheet_path', plugins_url( 'assets/css/' . $this->slug . '.min.css' ) );
+			$stylesheet_path = apply_filters( 'user_account_management_front_end_stylesheet_path', plugins_url( 'assets/css/' . $this->slug . '.css' ) );
 			// example to change the stylesheet path
 			/*
 			add_filter( 'user_account_management_front_end_stylesheet_path', 'front_end_stylesheet_path', 10, 1 );
@@ -739,7 +739,7 @@ class User_Account_Management {
 			*/
 
 			if ( '' !== $stylesheet_path ) {
-				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.min.css', __FILE__ ), array(), $this->version, 'all' );
+				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.css', __FILE__ ), array(), filemtime( plugin_dir_path( __FILE__ ) . 'assets/css/' . $this->slug . '.css' ), 'all' );
 			}
 			wp_enqueue_script( 'password-strength-meter' );
 			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', __FILE__ ), array( 'jquery', 'password-strength-meter' ), filemtime( plugin_dir_path( __FILE__ ) . 'assets/js/' . $this->slug . '.js' ), true );
@@ -846,10 +846,14 @@ class User_Account_Management {
 	public function do_register_user() {
 		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
 
+			$honeypot_allowed = $this->honeypot_checker( $_POST );
+
 			if ( ! get_option( 'users_can_register' ) ) {
 				// Registration closed, display error
+				$redirect_url = site_url( 'user/register' );
 				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
-			} elseif ( isset( $_POST['rh_name'] ) && ! empty( $_POST['rh_name'] ) ) {
+			} elseif ( false === $honeypot_allowed ) {
+				$redirect_url = site_url( 'user/register' );
 				$redirect_url = add_query_arg( 'register-errors', 'honeypot', $redirect_url );
 			} else {
 				$user_data = $this->setup_user_data( $_POST );
@@ -2062,6 +2066,26 @@ class User_Account_Management {
 		ob_end_clean();
 
 		return $html;
+	}
+
+	/**
+	 * Check the honeypot fields for values
+	 *
+	 * @param array $posted
+	 * @return bool $allowed
+	 */
+	private function honeypot_checker( $posted ) {
+		// honeypot checker
+		$honeypot_name    = isset( $posted['mhp_name'] ) ? esc_attr( $posted['mhp_name'] ) : '';
+		$honeypot_email   = isset( $posted['mhp_email'] ) ? esc_attr( $posted['mhp_email'] ) : '';
+		$honeypot_comment = isset( $posted['mhp_comment'] ) ? esc_attr( $posted['mhp_comment'] ) : '';
+
+		if ( '' !== $honeypot_name || '' !== $honeypot_email || '' !== $honeypot_comment ) {
+			$allowed = false;
+		} else {
+			$allowed = true;
+		}
+		return $allowed;
 	}
 
 	/**

@@ -9,8 +9,10 @@
 		<input type="hidden" name="redirect_to" value="<?php echo $attributes['redirect']; ?>">
 	<?php endif; ?>
 
+	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
+
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
-	<?php echo $attributes['instructions']; ?>
+		<?php echo $attributes['instructions']; ?>
 	<?php endif; ?>
 
 	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
@@ -83,18 +85,13 @@
 			</div>
 		<?php endif; ?>
 
-		<div class="m-form-item m-form-item-rh-name">
-			<label for="rh_name"><?php _e( 'Only fill in if you are not human:', 'user-account-management' ); ?></label>
-			<input type="text" name="rh_name" id="rh-name" value="" autocomplete="off" />
-		</div>
-
 		<div class="m-form-actions">
 			<input type="submit" name="submit" class="register-button" value="<?php _e( 'Create new account', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-register">
 		</div>
 	</fieldset>
 
 	<?php if ( ! empty( $attributes['privacy_terms'] ) ) : ?>
-	<?php echo $attributes['privacy_terms']; ?>
+		<?php echo $attributes['privacy_terms']; ?>
 	<?php endif; ?>
 
 </form>

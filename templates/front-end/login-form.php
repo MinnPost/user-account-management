@@ -4,8 +4,10 @@
 	<input type="hidden" name="redirect_to" value="<?php echo $attributes['redirect']; ?>">
 	<?php endif; ?>
 
+	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
+
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
-	<?php echo $attributes['instructions']; ?>
+		<?php echo $attributes['instructions']; ?>
 	<?php endif; ?>
 
 	<?php if ( ! empty( $attributes['logged_out'] ) ) : ?>
@@ -65,7 +67,7 @@
 			<input type="submit" value="<?php _e( 'Log In', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-login">
 		</div>
 		<?php if ( ! empty( $attributes['password_help'] ) ) : ?>
-		<?php echo $attributes['password_help']; ?>
+			<?php echo $attributes['password_help']; ?>
 		<?php endif; ?>
 	</fieldset>
 </form>
