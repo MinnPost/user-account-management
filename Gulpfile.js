@@ -55,9 +55,9 @@ function styles() {
   		mqpacker( {
   			'sort': true
   		} ),
-		cssnano( {
-			'safe': true // Use safe optimizations.
-		} ) // Minify
+  		cssnano( {
+  			'safe': true // Use safe optimizations.
+  		} ) // Minify
     ]))
     .pipe(sourcemaps.write()) // Write the sourcemap files
     .pipe(gulp.dest(config.styles.dest)) // Drop the resulting CSS file in the specified dir
@@ -65,7 +65,7 @@ function styles() {
 }
 
 function sasslint() {
-  return gulp.src(config.styles.admin_src)
+  return gulp.src(config.styles.src)
     .pipe(gulpStylelint({
       fix: true
     }))
@@ -73,7 +73,7 @@ function sasslint() {
 }
 
 function scripts() {
-  return gulp.src(config.scripts.admin_src)
+  return gulp.src(config.scripts.src)
     .pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['@babel/preset-env']
@@ -124,8 +124,8 @@ function browserSyncReload(done) {
 
 // Watch directories, and run specific tasks on file changes
 function watch() {
-  gulp.watch(config.styles.admin_src, adminstyles);
-  gulp.watch(config.scripts.admin_src, adminscripts);
+  gulp.watch(config.styles.src, styles);
+  gulp.watch(config.scripts.src, scripts);
   
   // Reload browsersync when PHP files change, if active
   if (config.browserSync.active) {
@@ -156,6 +156,6 @@ gulp.task('styles',
 
 gulp.task('scripts',
   gulp.series(
-    gulp.parallel(scripts, scripts) // run these tasks asynchronously
+    gulp.parallel(scripts, uglifyscripts) // run these tasks asynchronously
   )
 );
