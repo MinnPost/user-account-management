@@ -844,7 +844,7 @@ class User_Account_Management {
 	 *
 	 */
 	public function do_register_user() {
-		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 
 			$honeypot_allowed = $this->honeypot_checker( $_POST );
 
@@ -928,7 +928,14 @@ class User_Account_Management {
 	 * Initiates password reset.
 	 */
 	public function do_password_lost() {
-		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+
+			$honeypot_allowed = $this->honeypot_checker( $_POST );
+			if ( false === $honeypot_allowed ) {
+				$redirect_url = site_url( 'user/password-lost' );
+				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
+			}
+
 			$errors = retrieve_password();
 			if ( is_wp_error( $errors ) ) {
 				// Errors found
@@ -992,6 +999,11 @@ class User_Account_Management {
 			}
 
 			$redirect_url = sanitize_text_field( $_POST['user_account_management_redirect'] );
+
+			$honeypot_allowed = $this->honeypot_checker( $_POST );
+			if ( false === $honeypot_allowed ) {
+				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
+			}
 
 			if ( wp_verify_nonce( sanitize_text_field( $_POST['user_account_management_account_settings_nonce'] ), 'uam-account-settings-nonce' ) ) {
 				if ( empty( $_POST ) ) {
@@ -1059,7 +1071,7 @@ class User_Account_Management {
 	 * Resets the user's password if the password reset form was submitted.
 	 */
 	public function do_password_reset() {
-		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			$rp_key   = rawurldecode( $_REQUEST['rp_key'] );
 			$rp_login = rawurldecode( $_REQUEST['rp_login'] );
 
@@ -1149,6 +1161,13 @@ class User_Account_Management {
 		// Check if the earlier authenticate filter (most likely,
 		// the default WordPress authentication) functions have found errors
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+
+			$honeypot_allowed = $this->honeypot_checker( $_POST );
+			if ( false === $honeypot_allowed ) {
+				$redirect_url = site_url( 'user/login' );
+				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
+			}
+
 			if ( is_wp_error( $user ) ) {
 				$key  = md5( microtime() . rand() );
 				$data = array(
@@ -1797,7 +1816,7 @@ class User_Account_Management {
 		$existing_user_data = get_userdata( $user_id );
 		$new_user_data      = $this->setup_user_data( $posted, $existing_user_data );
 		$data               = $this->register_or_update_user( $new_user_data, 'update' );
-		
+
 		$result = array();
 		if ( is_int( $data ) ) {
 			$result = array(
