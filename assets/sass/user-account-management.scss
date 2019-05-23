@@ -120,3 +120,14 @@ $color-gray: #ddd;
 
 	}
 }
+ 
+// hide the honeypots
+.m-form-register .m-register-field-shift {
+    left: -9999px; position: absolute;
+}
+
+// if html is rtl, switch the honeypots
+html[dir="rtl"] .m-form-register .m-register-field-shift {
+    right: -9999px;
+    left: auto;
+}
