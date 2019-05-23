@@ -1,7 +1,9 @@
 <form id="lost-password-form" method="post" action="<?php echo $attributes['action']; ?>" class="m-form m-form-standalone m-form-user m-form-lost-password">
 
+	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
+
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
-	<?php echo $attributes['instructions']; ?>
+		<?php echo $attributes['instructions']; ?>
 	<?php endif; ?>
 
 	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>

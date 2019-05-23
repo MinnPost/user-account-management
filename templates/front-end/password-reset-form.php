@@ -3,6 +3,8 @@
 	<input type="hidden" id="user_login" name="rp_login" value="<?php echo rawurlencode( $attributes['login'] ); ?>" autocomplete="off" />
 	<input type="hidden" name="rp_key" value="<?php echo rawurlencode( $attributes['key'] ); ?>" />
 
+	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
+
 	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
 		<div class="m-form-message m-form-message-error">
 			<?php if ( count( $attributes['errors'] ) > 1 ) : ?>

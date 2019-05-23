@@ -10,6 +10,8 @@
 		<input type="hidden" name="state" value="<?php echo isset( $_POST['state'] ) ? sanitize_text_field( $_POST['state'] ) : ! empty( $attributes['user_meta']['_state'] ) ? $attributes['user_meta']['_state'][0] : ''; ?>">
 	<?php endif; ?>
 
+	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
+
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 		<?php echo wp_kses_post( $attributes['instructions'] ); ?>
 	<?php endif; ?>
@@ -83,11 +85,6 @@
 				</select>
 			</div>
 		<?php endif; ?>
-
-		<div class="m-form-item m-form-item-rh-name">
-			<label for="rh_name"><?php echo esc_html__( 'Only fill in if you are not human:', 'user-account-management' ); ?></label>
-			<input type="text" name="rh_name" id="rh-name" value="" autocomplete="off" />
-		</div>
 
 		<div class="m-form-actions">
 			<input type="submit" name="submit" id="change-button" value="<?php echo esc_html__( 'Save Changes', 'user-account-management' ); ?>" class="btn btn-submit btn-account-settings">
