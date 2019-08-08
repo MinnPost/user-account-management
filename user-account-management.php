@@ -1569,9 +1569,11 @@ class User_Account_Management {
 		}
 
 		// email address is used as login in this plugin
-		if ( isset( $posted['email'] ) ) {
-			$user_data['user_email'] = $posted['email'];
-			$user_data['user_login'] = $user_data['user_email'];
+		if ( array_key_exists( 'email', $posted ) ) {
+			if ( ! empty( $posted['email'] ) ) {
+				$user_data['user_email'] = $posted['email'];
+				$user_data['user_login'] = $user_data['user_email'];
+			}
 		}
 
 		// password is only sent to this method on register
@@ -1582,15 +1584,19 @@ class User_Account_Management {
 		// email and password are sanitized by WordPress already
 
 		// first, last, zip, country should be optional since people might want to remove them
-		if ( isset( $posted['first_name'] ) ) {
-			$user_data['first_name'] = sanitize_text_field( $posted['first_name'] );
-		} else {
-			$user_data['first_name'] = '';
+		if ( array_key_exists( 'first_name', $posted ) ) {
+			if ( ! empty( $posted['first_name'] ) ) {
+				$user_data['first_name'] = sanitize_text_field( $posted['first_name'] );
+			} else {
+				$user_data['first_name'] = '';
+			}
 		}
-		if ( isset( $posted['last_name'] ) ) {
-			$user_data['last_name'] = sanitize_text_field( $posted['last_name'] );
-		} else {
-			$user_data['last_name'] = '';
+		if ( array_key_exists( 'last_name', $posted ) ) {
+			if ( ! empty( $posted['last_name'] ) ) {
+				$user_data['last_name'] = sanitize_text_field( $posted['last_name'] );
+			} else {
+				$user_data['last_name'] = '';
+			}
 		}
 
 		// if there is an existing user:
@@ -1603,47 +1609,63 @@ class User_Account_Management {
 			$existing_state    = get_user_meta( $user_data['ID'], '_state', true );
 		}
 
-		if ( isset( $posted['zip_code'] ) ) {
-			$user_data['zip_code'] = esc_attr( $posted['zip_code'] );
-			// if there is an existing zip code but it is unchanged, keep it empty
-			if ( isset( $existing_zip_code ) && $existing_zip_code === $user_data['zip_code'] ) {
+		if ( array_key_exists( 'zip_code', $posted ) ) {
+			if ( ! empty( $posted['zip_code'] ) ) {
+				$user_data['zip_code'] = esc_attr( $posted['zip_code'] );
+				// if there is an existing zip code but it is unchanged, remove it
+				if ( isset( $existing_zip_code ) && $existing_zip_code === $user_data['zip_code'] ) {
+					unset( $user_data['zip_code'] );
+				}
+			} else {
 				$user_data['zip_code'] = '';
 			}
-		} else {
-			$user_data['zip_code'] = '';
 		}
-		if ( isset( $posted['country'] ) && isset( $user_data['country'] ) && $user_data['country'] !== $posted['country'] ) {
-			$user_data['country'] = sanitize_text_field( $posted['country'] );
-			if ( isset( $existing_country ) && $existing_country === $user_data['country'] ) {
+
+		if ( array_key_exists( 'country', $posted ) ) {
+			if ( ! empty( $posted['country'] ) ) {
+				$user_data['country'] = sanitize_text_field( $posted['country'] );
+				// if there is an existing country but it is unchanged, remove it
+				if ( isset( $existing_country ) && $existing_country === $user_data['country'] ) {
+					unset( $user_data['country'] );
+				}
+			} else {
 				$user_data['country'] = '';
 			}
-		} else {
-			$user_data['country'] = '';
 		}
 
-		if ( isset( $posted['city'] ) ) {
-			$user_data['city'] = sanitize_text_field( $posted['city'] );
-			// if there is an existing city but it is unchanged, keep it empty
-			if ( isset( $existing_city ) && $existing_city === $user_data['city'] ) {
+		if ( array_key_exists( 'city', $posted ) ) {
+			if ( ! empty( $posted['city'] ) ) {
+				$user_data['city'] = sanitize_text_field( $posted['city'] );
+				// if there is an existing city but it is unchanged, remove it
+				if ( isset( $existing_city ) && $existing_city === $user_data['city'] ) {
+					unset( $user_data['city'] );
+				}
+			} else {
 				$user_data['city'] = '';
 			}
-		} else {
-			$user_data['city'] = '';
 		}
 
-		if ( isset( $posted['state'] ) ) {
-			$user_data['state'] = sanitize_text_field( $posted['state'] );
-			// if there is an existing state but it is unchanged, keep it empty
-			if ( isset( $existing_state ) && $existing_state === $user_data['state'] ) {
+		if ( array_key_exists( 'state', $posted ) ) {
+			if ( ! empty( $posted['state'] ) ) {
+				$user_data['state'] = sanitize_text_field( $posted['state'] );
+				// if there is an existing state but it is unchanged, remove it
+				if ( isset( $existing_state ) && $existing_state === $user_data['state'] ) {
+					unset( $user_data['state'] );
+				}
+			} else {
 				$user_data['state'] = '';
 			}
-		} else {
-			$user_data['state'] = '';
 		}
 
-		$user_data['user_nicename'] = sanitize_title( $user_data['user_login'] );
-		$user_data['display_name']  = $user_data['first_name'] . ' ' . $user_data['last_name'];
-		$user_data['nickname']      = $user_data['first_name'];
+		if ( array_key_exists( 'user_login', $user_data ) ) {
+			$user_data['user_nicename'] = sanitize_title( $user_data['user_login'] );
+		}
+		if ( array_key_exists( 'first_name', $user_data ) || array_key_exists( 'last_name', $user_data ) ) {
+			$user_data['display_name'] = $user_data['first_name'] . ' ' . $user_data['last_name'];
+		}
+		if ( array_key_exists( 'first_name', $user_data ) ) {
+			$user_data['nickname'] = $user_data['first_name'];
+		}
 
 		// add a filter to allow more $posted data to be added to $user_data
 		// users should sanitize data that is being added in this way
@@ -1847,8 +1869,6 @@ class User_Account_Management {
 	 */
 	private function register_or_update_user( $user_data, $action, $existing_user_data = array() ) {
 
-		$country = $user_data['country'];
-
 		$errors = new WP_Error();
 
 		// do pre save action
@@ -1898,34 +1918,34 @@ class User_Account_Management {
 			$result  = wp_update_user( $user_data );
 		}
 
-		if ( '' !== $user_data['zip_code'] ) {
+		if ( array_key_exists( 'zip_code', $user_data ) && '' !== $user_data['zip_code'] ) {
 			update_user_meta( $user_id, '_zip_code', $user_data['zip_code'] );
 		}
 
-		if ( '' !== $user_data['country'] ) {
+		if ( array_key_exists( 'country', $user_data ) && '' !== $user_data['country'] ) {
 			update_user_meta( $user_id, '_country', $user_data['country'] );
 		}
 
 		// try to get the city/state from the zip code
-		if ( '' !== $user_data['zip_code'] ) {
-			if ( '' === $user_data['country'] ) {
+		if ( array_key_exists( 'zip_code', $user_data ) && '' !== $user_data['zip_code'] ) {
+			if ( array_key_exists( 'country', $user_data ) && '' === $user_data['country'] ) {
 				$user_data['country'] = 'US';
 			}
-			if ( '' === $user_data['city'] || '' === $user_data['state'] ) {
+			if ( ( array_key_exists( 'city', $user_data ) && '' === $user_data['city'] ) || ( array_key_exists( 'state', $user_data ) && '' === $user_data['state'] ) ) {
 				$citystate = $this->get_city_state( $user_data['zip_code'], $user_data['country'] ); // this will return an empty value without the api key, this it will not set the below meta fields if that happens
-				if ( '' !== $citystate['city'] ) {
+				if ( array_key_exists( 'city', $user_data ) && '' !== $citystate['city'] ) {
 					update_user_meta( $user_id, '_city', $citystate['city'] );
 				}
-				if ( '' !== $citystate['state'] ) {
+				if ( array_key_exists( 'state', $user_data ) && '' !== $citystate['state'] ) {
 					update_user_meta( $user_id, '_state', $citystate['state'] );
 				}
 			}
 		}
 
-		if ( '' !== $user_data['city'] ) {
+		if ( array_key_exists( 'city', $user_data ) && '' !== $user_data['city'] ) {
 			update_user_meta( $user_id, '_city', $user_data['city'] );
 		}
-		if ( '' !== $user_data['state'] ) {
+		if ( array_key_exists( 'state', $user_data ) && '' !== $user_data['state'] ) {
 			update_user_meta( $user_id, '_state', $user_data['state'] );
 		}
 
