@@ -42,22 +42,19 @@ const config = {
   }
 };
 
-function styles() {
+function frontendstyles() {
   return gulp.src(config.styles.src)
     .pipe(sourcemaps.init()) // Sourcemaps need to init before compilation
     .pipe(sassGlob()) // Allow for globbed @import statements in SCSS
     .pipe(sass()) // Compile
     .on('error', sass.logError) // Error reporting
     .pipe(postcss([
-  		autoprefixer( {
-  			'browsers': [ 'last 2 version' ]
-  		} ),
-  		mqpacker( {
-  			'sort': true
-  		} ),
-  		cssnano( {
-  			'safe': true // Use safe optimizations.
-  		} ) // Minify
+      mqpacker( {
+        'sort': true
+      } ),
+      cssnano( {
+        'safe': true // Use safe optimizations.
+      } ) // Minify
     ]))
     .pipe(sourcemaps.write()) // Write the sourcemap files
     .pipe(gulp.dest(config.styles.dest)) // Drop the resulting CSS file in the specified dir
@@ -72,7 +69,7 @@ function sasslint() {
     .pipe(gulp.dest(config.styles.lint_dest));
 }
 
-function scripts() {
+function frontendscripts() {
   return gulp.src(config.scripts.src)
     .pipe(sourcemaps.init())
     .pipe(babel({
@@ -133,29 +130,15 @@ function watch() {
   }
 }
 
+// define complex tasks
+const styles  = gulp.series(sasslint, frontendstyles);
+const scripts = gulp.series(frontendscripts, uglifyscripts);
+const build   = gulp.series(gulp.parallel(styles, scripts, translate));
+
 // export tasks
-exports.sasslint      = sasslint;
-exports.styles        = styles;
-exports.scripts       = scripts;
-exports.uglifyscripts = uglifyscripts;
-exports.translate     = translate;
-exports.watch         = watch;
-
-// What happens when we run gulp?
-gulp.task('default',
-  gulp.series(
-    gulp.parallel(sasslint, styles, scripts, uglifyscripts, translate) // run these tasks asynchronously
-  )
-);
-
-gulp.task('styles',
-  gulp.series(
-    gulp.parallel(sasslint, styles) // run these tasks asynchronously
-  )
-);
-
-gulp.task('scripts',
-  gulp.series(
-    gulp.parallel(scripts, uglifyscripts) // run these tasks asynchronously
-  )
-);
+exports.styles     = styles;
+exports.scripts    = scripts;
+exports.translate  = translate;
+exports.watch      = watch;
+exports.build      = build;
+exports.default    = build;

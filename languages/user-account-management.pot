@@ -72,7 +72,7 @@ msgstr ""
 msgid "Terms of Use"
 msgstr ""
 
-#: user-account-management.php:497, user-account-management.php:2201
+#: user-account-management.php:497, user-account-management.php:2240
 msgid "Registering new users is currently not allowed."
 msgstr ""
 
@@ -92,44 +92,44 @@ msgstr ""
 msgid "You are not signed in."
 msgstr ""
 
-#: user-account-management.php:2179
+#: user-account-management.php:2218
 msgid "You did not enter an email address."
 msgstr ""
 
-#: user-account-management.php:2181
+#: user-account-management.php:2220
 msgid "You did not enter a password."
 msgstr ""
 
-#: user-account-management.php:2185
+#: user-account-management.php:2224
 msgid "We couldn't find an account with that email address. Maybe you used a different one when signing up?"
 msgstr ""
 
 #. translators: parameter is the wp_lostpassword_url() url
-#: user-account-management.php:2191
+#: user-account-management.php:2230
 msgid "The password you entered wasn't right. We can help you <a href='%s'>reset your password</a>."
 msgstr ""
 
-#: user-account-management.php:2197
+#: user-account-management.php:2236
 msgid "The email address you entered is not valid."
 msgstr ""
 
-#: user-account-management.php:2199
+#: user-account-management.php:2238
 msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
-#: user-account-management.php:2203
+#: user-account-management.php:2242
 msgid "You filled out a form field that was created to stop spammers. Please try again."
 msgstr ""
 
-#: user-account-management.php:2206
+#: user-account-management.php:2245
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: user-account-management.php:2209
+#: user-account-management.php:2248
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: user-account-management.php:2213
+#: user-account-management.php:2252
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
@@ -248,86 +248,82 @@ msgstr ""
 msgid "Thanks!"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:34
+#: templates/front-end/account-settings-form.php:36
 msgid "Your account settings were successfully updated."
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:41, templates/front-end/login-form.php:57, templates/front-end/password-lost-form.php:23, templates/front-end/register-form.php:35
+#: templates/front-end/account-settings-form.php:43, templates/front-end/login-form.php:59, templates/front-end/password-lost-form.php:25, templates/front-end/register-form.php:35
 msgid "Email Address:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:41, templates/front-end/account-settings-form.php:46, templates/front-end/account-settings-form.php:51, templates/front-end/account-settings-form.php:57, templates/front-end/account-settings-form.php:61, templates/front-end/account-settings-form.php:67, templates/front-end/account-settings-form.php:73, templates/front-end/login-form.php:57, templates/front-end/login-form.php:61, templates/front-end/password-change-form.php:33, templates/front-end/password-lost-form.php:23, templates/front-end/password-reset-form.php:22, templates/front-end/register-form.php:35, templates/front-end/register-form.php:40, templates/front-end/register-form.php:45, templates/front-end/register-form.php:50, templates/front-end/register-form.php:56, templates/front-end/register-form.php:60, templates/front-end/register-form.php:66, templates/front-end/register-form.php:72
+#: templates/front-end/account-settings-form.php:43, templates/front-end/account-settings-form.php:48, templates/front-end/account-settings-form.php:53, templates/front-end/account-settings-form.php:59, templates/front-end/account-settings-form.php:63, templates/front-end/account-settings-form.php:69, templates/front-end/account-settings-form.php:75, templates/front-end/login-form.php:59, templates/front-end/login-form.php:63, templates/front-end/password-change-form.php:35, templates/front-end/password-lost-form.php:25, templates/front-end/password-reset-form.php:24, templates/front-end/register-form.php:35, templates/front-end/register-form.php:40, templates/front-end/register-form.php:45, templates/front-end/register-form.php:50, templates/front-end/register-form.php:56, templates/front-end/register-form.php:60, templates/front-end/register-form.php:66, templates/front-end/register-form.php:72
 msgid "This field is required."
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:46, templates/front-end/register-form.php:45
+#: templates/front-end/account-settings-form.php:48, templates/front-end/register-form.php:45
 msgid "First Name:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:51, templates/front-end/register-form.php:50
+#: templates/front-end/account-settings-form.php:53, templates/front-end/register-form.php:50
 msgid "Last Name:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:57, templates/front-end/register-form.php:56
+#: templates/front-end/account-settings-form.php:59, templates/front-end/register-form.php:56
 msgid "City:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:61, templates/front-end/register-form.php:60
+#: templates/front-end/account-settings-form.php:63, templates/front-end/register-form.php:60
 msgid "State:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:67, templates/front-end/register-form.php:66
+#: templates/front-end/account-settings-form.php:69, templates/front-end/register-form.php:66
 msgid "Zip Code:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:73, templates/front-end/register-form.php:72
+#: templates/front-end/account-settings-form.php:75, templates/front-end/register-form.php:72
 msgid "Country:"
 msgstr ""
 
-#: templates/front-end/account-settings-form.php:88, templates/front-end/register-form.php:89
-msgid "Only fill in if you are not human:"
-msgstr ""
-
-#: templates/front-end/account-settings-form.php:93
+#: templates/front-end/account-settings-form.php:90
 msgid "Save Changes"
 msgstr ""
 
-#: templates/front-end/login-form.php:14
+#: templates/front-end/login-form.php:16
 msgid "You have logged out. You can log in again if necessary."
 msgstr ""
 
-#: templates/front-end/login-form.php:32
+#: templates/front-end/login-form.php:34
 msgid "Check your email for a link to reset your password. You will only be able to use this link one time (you can "
 msgstr ""
 
-#: templates/front-end/login-form.php:32
+#: templates/front-end/login-form.php:34
 msgid " if you need to)."
 msgstr ""
 
-#: templates/front-end/login-form.php:61, templates/front-end/register-form.php:40
+#: templates/front-end/login-form.php:63, templates/front-end/register-form.php:40
 msgid "Password:"
 msgstr ""
 
-#: templates/front-end/login-form.php:65
+#: templates/front-end/login-form.php:67
 msgid "Log In"
 msgstr ""
 
-#: templates/front-end/password-change-form.php:26
+#: templates/front-end/password-change-form.php:28
 msgid "Your password was successfully changed."
 msgstr ""
 
-#: templates/front-end/password-change-form.php:33, templates/front-end/password-reset-form.php:22
+#: templates/front-end/password-change-form.php:35, templates/front-end/password-reset-form.php:24
 msgid "New password:"
 msgstr ""
 
-#: templates/front-end/password-change-form.php:38
+#: templates/front-end/password-change-form.php:40
 msgid "Change Password"
 msgstr ""
 
-#: templates/front-end/password-lost-form.php:27, templates/front-end/password-reset-form.php:27
+#: templates/front-end/password-lost-form.php:29, templates/front-end/password-reset-form.php:29
 msgid "Reset Password"
 msgstr ""
 
-#: templates/front-end/register-form.php:94
+#: templates/front-end/register-form.php:89
 msgid "Create new account"
 msgstr ""
