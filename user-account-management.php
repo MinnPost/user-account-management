@@ -846,15 +846,10 @@ class User_Account_Management {
 	public function do_register_user() {
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 
-			$honeypot_allowed = $this->honeypot_checker( $_POST );
-
 			if ( ! get_option( 'users_can_register' ) ) {
 				// Registration closed, display error
 				$redirect_url = site_url( 'user/register' );
 				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
-			} elseif ( false === $honeypot_allowed ) {
-				$redirect_url = site_url( 'user/register' );
-				$redirect_url = add_query_arg( 'register-errors', 'honeypot', $redirect_url );
 			} else {
 				$user_data = $this->setup_user_data( $_POST );
 				$result    = $this->register_or_update_user( $user_data, 'register' );
@@ -930,12 +925,6 @@ class User_Account_Management {
 	public function do_password_lost() {
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 
-			$honeypot_allowed = $this->honeypot_checker( $_POST );
-			if ( false === $honeypot_allowed ) {
-				$redirect_url = site_url( 'user/password-lost' );
-				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
-			}
-
 			$errors = retrieve_password();
 			if ( is_wp_error( $errors ) ) {
 				// Errors found
@@ -999,11 +988,6 @@ class User_Account_Management {
 			}
 
 			$redirect_url = sanitize_text_field( $_POST['user_account_management_redirect'] );
-
-			$honeypot_allowed = $this->honeypot_checker( $_POST );
-			if ( false === $honeypot_allowed ) {
-				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
-			}
 
 			if ( wp_verify_nonce( sanitize_text_field( $_POST['user_account_management_account_settings_nonce'] ), 'uam-account-settings-nonce' ) ) {
 				if ( empty( $_POST ) ) {
@@ -1161,12 +1145,6 @@ class User_Account_Management {
 		// Check if the earlier authenticate filter (most likely,
 		// the default WordPress authentication) functions have found errors
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-
-			$honeypot_allowed = $this->honeypot_checker( $_POST );
-			if ( false === $honeypot_allowed ) {
-				$redirect_url = site_url( 'user/login' );
-				$redirect_url = add_query_arg( 'errors', 'honeypot', $redirect_url );
-			}
 
 			if ( is_wp_error( $user ) ) {
 				$key  = md5( microtime() . rand() );
@@ -2108,26 +2086,6 @@ class User_Account_Management {
 	}
 
 	/**
-	 * Check the honeypot fields for values
-	 *
-	 * @param array $posted
-	 * @return bool $allowed
-	 */
-	private function honeypot_checker( $posted ) {
-		// honeypot checker
-		$honeypot_name    = isset( $posted['mhp_name'] ) ? esc_attr( $posted['mhp_name'] ) : '';
-		$honeypot_email   = isset( $posted['mhp_email'] ) ? esc_attr( $posted['mhp_email'] ) : '';
-		$honeypot_comment = isset( $posted['mhp_comment'] ) ? esc_attr( $posted['mhp_comment'] ) : '';
-
-		if ( '' !== $honeypot_name || '' !== $honeypot_email || '' !== $honeypot_comment ) {
-			$allowed = false;
-		} else {
-			$allowed = true;
-		}
-		return $allowed;
-	}
-
-	/**
 	 * Get name/ISO2 code for all available countries. This gets used to render the <select> but here is only an array
 	 *
 	 *
@@ -2238,8 +2196,6 @@ class User_Account_Management {
 				return __( 'An account already exists with this email address. Is it yours?', 'user-account-management' );
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
-			case 'honeypot':
-				return __( 'You filled out a form field that was created to stop spammers. Please try again.', 'user-account-management' );
 			case 'expiredkey':
 			case 'invalidkey':
 				return __( 'The password reset link you used is not valid anymore.', 'user-account-management' );
