@@ -14,23 +14,20 @@ if ( ! class_exists( 'User_Account_Management' ) ) {
  */
 class User_Account_Management_Admin {
 
-	protected $option_prefix;
-	protected $version;
-	protected $slug;
+	public $option_prefix;
+	public $version;
+	public $slug;
+	public $file;
 
 	/**
 	* Constructor which sets up admin pages
-	*
-	* @param string $option_prefix
-	* @param string $version
-	* @param string $slug
-	* @throws \Exception
 	*/
-	public function __construct( $option_prefix, $version, $slug ) {
+	public function __construct() {
 
-		$this->option_prefix = $option_prefix;
-		$this->version       = $version;
-		$this->slug          = $slug;
+		$this->option_prefix = user_account_management()->option_prefix;
+		$this->version       = user_account_management()->version;
+		$this->slug          = user_account_management()->slug;
+		$this->plugin_file   = user_account_management()->file;
 
 		$this->tabs = $this->get_admin_tabs();
 
@@ -42,14 +39,29 @@ class User_Account_Management_Admin {
 	* Create the action hooks to create the admin page(s)
 	*
 	*/
-	public function add_actions() {
+	private function add_actions() {
 		if ( is_admin() ) {
+			add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
 			add_action( 'admin_menu', array( $this, 'create_admin_menu' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
 			add_action( 'admin_init', array( $this, 'admin_settings_form' ) );
-			add_action( 'plugins_loaded', array( $this, 'textdomain' ) );
 		}
+	}
 
+	/**
+	* Display a Settings link on the main Plugins page
+	*
+	* @param array $links
+	* @param string $file
+	* @return array $links
+	* These are the links that go with this plugin's entry
+	*/
+	public function plugin_action_links( $links, $file ) {
+		if ( plugin_basename( $this->plugin_file ) === $file ) {
+			$settings = '<a href="' . get_admin_url() . 'options-general.php?page=' . $this->slug . '">' . __( 'Settings', 'user-account-management' ) . '</a>';
+			array_unshift( $links, $settings );
+		}
+		return $links;
 	}
 
 	/**
@@ -119,12 +131,12 @@ class User_Account_Management_Admin {
 		echo '<h2 class="nav-tab-wrapper">';
 		foreach ( $tabs as $tab_key => $tab_caption ) {
 			$active = $current_tab === $tab_key ? ' nav-tab-active' : '';
-			echo sprintf( '<a class="nav-tab%1$s" href="%2$s">%3$s</a>',
+			echo sprintf(
+				'<a class="nav-tab%1$s" href="%2$s">%3$s</a>',
 				esc_attr( $active ),
 				esc_url( '?page=' . $this->slug . '&tab=' . $tab_key ),
 				esc_html( $tab_caption )
 			);
-			//}
 		}
 		echo '</h2>';
 
@@ -477,7 +489,8 @@ class User_Account_Management_Admin {
 				$value = $args['default'];
 			}
 
-			echo sprintf( '<input type="%1$s" value="%2$s" name="%3$s" id="%4$s" class="%5$s"%6$s>',
+			echo sprintf(
+				'<input type="%1$s" value="%2$s" name="%3$s" id="%4$s" class="%5$s"%6$s>',
 				esc_attr( $type ),
 				esc_attr( $value ),
 				esc_attr( $name ),
@@ -486,12 +499,14 @@ class User_Account_Management_Admin {
 				esc_html( $checked )
 			);
 			if ( '' !== $desc ) {
-				echo sprintf( '<p class="description">%1$s</p>',
+				echo sprintf(
+					'<p class="description">%1$s</p>',
 					esc_html( $desc )
 				);
 			}
 		} else {
-			echo sprintf( '<p><code>%1$s</code></p>',
+			echo sprintf(
+				'<p><code>%1$s</code></p>',
 				esc_html__( 'Defined in wp-config.php', 'user-account-management' )
 			);
 		}
@@ -517,19 +532,22 @@ class User_Account_Management_Admin {
 				$value = $args['default'];
 			}
 
-			echo sprintf( '<textarea name="%1$s" id="%2$s" class="%3$s">%4$s</textarea>',
+			echo sprintf(
+				'<textarea name="%1$s" id="%2$s" class="%3$s">%4$s</textarea>',
 				esc_attr( $name ),
 				esc_attr( $id ),
 				sanitize_html_class( $class . esc_html( ' code' ) ),
 				esc_attr( $value )
 			);
 			if ( '' !== $desc ) {
-				echo sprintf( '<p class="description">%1$s</p>',
+				echo sprintf(
+					'<p class="description">%1$s</p>',
 					esc_html( $desc )
 				);
 			}
 		} else {
-			echo sprintf( '<p><code>%1$s</code></p>',
+			echo sprintf(
+				'<p><code>%1$s</code></p>',
 				esc_html__( 'Defined in wp-config.php', 'user-account-management' )
 			);
 		}
@@ -560,7 +578,8 @@ class User_Account_Management_Admin {
 					$checked = 'checked';
 				}
 			}
-			echo sprintf( '<div class="checkbox"><label><input type="%1$s" value="%2$s" name="%3$s[]" id="%4$s"%5$s>%6$s</label></div>',
+			echo sprintf(
+				'<div class="checkbox"><label><input type="%1$s" value="%2$s" name="%3$s[]" id="%4$s"%5$s>%6$s</label></div>',
 				esc_attr( $type ),
 				$field_value,
 				esc_attr( $name ),
@@ -569,13 +588,15 @@ class User_Account_Management_Admin {
 				esc_html( $text )
 			);
 			if ( '' !== $desc ) {
-				echo sprintf( '<p class="description">%1$s</p>',
+				echo sprintf(
+					'<p class="description">%1$s</p>',
 					esc_html( $desc )
 				);
 			}
 		}
 		if ( '' !== $overall_desc ) {
-			echo sprintf( '<p class="description">%1$s</p>',
+			echo sprintf(
+				'<p class="description">%1$s</p>',
 				esc_html( $overall_desc )
 			);
 		}
@@ -613,7 +634,8 @@ class User_Account_Management_Admin {
 
 			$input_name = $name;
 
-			echo sprintf( '<div class="radio"><label><input type="%1$s" value="%2$s" name="%3$s[]" id="%4$s"%5$s>%6$s</label></div>',
+			echo sprintf(
+				'<div class="radio"><label><input type="%1$s" value="%2$s" name="%3$s[]" id="%4$s"%5$s>%6$s</label></div>',
 				esc_attr( $type ),
 				esc_attr( $item_value ),
 				esc_attr( $input_name ),
@@ -622,14 +644,16 @@ class User_Account_Management_Admin {
 				esc_html( $text )
 			);
 			if ( '' !== $desc ) {
-				echo sprintf( '<p class="description">%1$s</p>',
+				echo sprintf(
+					'<p class="description">%1$s</p>',
 					esc_html( $desc )
 				);
 			}
 		}
 
 		if ( '' !== $group_desc ) {
-			echo sprintf( '<p class="description">%1$s</p>',
+			echo sprintf(
+				'<p class="description">%1$s</p>',
 				esc_html( $group_desc )
 			);
 		}
@@ -649,7 +673,8 @@ class User_Account_Management_Admin {
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
 			$current_value = get_option( $name );
 
-			echo sprintf( '<div class="select"><select id="%1$s" name="%2$s"><option value="">- Select one -</option>',
+			echo sprintf(
+				'<div class="select"><select id="%1$s" name="%2$s"><option value="">- Select one -</option>',
 				esc_attr( $id ),
 				esc_attr( $name )
 			);
@@ -662,7 +687,8 @@ class User_Account_Management_Admin {
 					$selected = ' selected';
 				}
 
-				echo sprintf( '<option value="%1$s"%2$s>%3$s</option>',
+				echo sprintf(
+					'<option value="%1$s"%2$s>%3$s</option>',
 					esc_attr( $value ),
 					esc_attr( $selected ),
 					esc_html( $text )
@@ -671,13 +697,15 @@ class User_Account_Management_Admin {
 			}
 			echo '</select>';
 			if ( '' !== $desc ) {
-				echo sprintf( '<p class="description">%1$s</p>',
+				echo sprintf(
+					'<p class="description">%1$s</p>',
 					esc_html( $desc )
 				);
 			}
 			echo '</div>';
 		} else {
-			echo sprintf( '<p><code>%1$s</code></p>',
+			echo sprintf(
+				'<p><code>%1$s</code></p>',
 				esc_html__( 'Defined in wp-config.php', 'user-account-management' )
 			);
 		}
@@ -693,33 +721,26 @@ class User_Account_Management_Admin {
 		$desc  = $args['desc'];
 		$url   = $args['url'];
 		if ( isset( $args['link_class'] ) ) {
-			echo sprintf( '<p><a class="%1$s" href="%2$s">%3$s</a></p>',
+			echo sprintf(
+				'<p><a class="%1$s" href="%2$s">%3$s</a></p>',
 				esc_attr( $args['link_class'] ),
 				esc_url( $url ),
 				esc_html( $label )
 			);
 		} else {
-			echo sprintf( '<p><a href="%1$s">%2$s</a></p>',
+			echo sprintf(
+				'<p><a href="%1$s">%2$s</a></p>',
 				esc_url( $url ),
 				esc_html( $label )
 			);
 		}
 
 		if ( '' !== $desc ) {
-			echo sprintf( '<p class="description">%1$s</p>',
+			echo sprintf(
+				'<p class="description">%1$s</p>',
 				esc_html( $desc )
 			);
 		}
-
-	}
-
-	/**
-	 * Load textdomain
-	 *
-	 * @return void
-	 */
-	public function textdomain() {
-		load_plugin_textdomain( 'user-account-management', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 }
