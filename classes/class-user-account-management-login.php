@@ -195,7 +195,8 @@ class User_Account_Management_Login {
 		*/
 
 		// translators: password help at bottom of the form. placeholders are 1) reset password link; 2) reset password link text
-		$attributes['password_help'] = sprintf( '<p class="a-form-instructions a-form-caption"><small><a href="%1$s">%2$s</a></small></p>',
+		$attributes['password_help'] = sprintf(
+			'<p class="a-form-instructions a-form-caption"><small><a href="%1$s">%2$s</a></small></p>',
 			wp_lostpassword_url(),
 			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
 		);

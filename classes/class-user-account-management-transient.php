@@ -96,5 +96,4 @@ class User_Account_Management_Transient {
 		$result = delete_transient( $this->name );
 		return $result;
 	}
-
 }

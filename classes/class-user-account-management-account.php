@@ -185,7 +185,8 @@ class User_Account_Management_Account {
 		$attributes['redirect']    = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
-			$message = sprintf( '<p class="a-form-instructions">You are not signed in. You can <a href="%1$s">%2$s</a> if you do not have it.</p>',
+			$message = sprintf(
+				'<p class="a-form-instructions">You are not signed in. You can <a href="%1$s">%2$s</a> if you do not have it.</p>',
 				wp_lostpassword_url(),
 				esc_html__( 'reset your password', 'user-account-management' )
 			);

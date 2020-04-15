@@ -121,7 +121,7 @@ class User_Account_Management_Register {
 		if ( '' !== $attributes['redirect'] ) {
 			$login_url = wp_login_url() . '?redirect_to=' . $attributes['redirect'];
 		}
-		
+
 		$attributes['instructions'] = sprintf(
 			// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
 			'<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
@@ -140,7 +140,8 @@ class User_Account_Management_Register {
 		*/
 
 		// translators: terms & conditions at bottom of the form. placeholders are 1) name of site, 2) terms of use link, 3) terms link text, 4) privacy link, 5) privacy link text
-		$attributes['privacy_terms'] = sprintf( '<p class="a-form-instructions"><small>' . esc_html__( 'By proceeding, you agree to ', 'user-account-management' ) . ' %1$s' . esc_html__( "'s", 'user-account-management' ) . ' <a href="%2$s">%3$s</a> ' . esc_html__( ' and ', 'user-account-management' ) . '<a href="%4$s">%5$s</a>.</small></p>',
+		$attributes['privacy_terms'] = sprintf(
+			'<p class="a-form-instructions"><small>' . esc_html__( 'By proceeding, you agree to ', 'user-account-management' ) . ' %1$s' . esc_html__( "'s", 'user-account-management' ) . ' <a href="%2$s">%3$s</a> ' . esc_html__( ' and ', 'user-account-management' ) . '<a href="%4$s">%5$s</a>.</small></p>',
 			get_bloginfo( 'name' ),
 			site_url( 'privacy' ),
 			esc_html__( 'Privacy Policy', 'user-account-management' ),
