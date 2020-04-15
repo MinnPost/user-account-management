@@ -46,7 +46,7 @@ class User_Account_Management_Akismet {
 
 		$check = filter_var( get_option( $this->option_prefix . 'check_akismet', false ), FILTER_VALIDATE_BOOLEAN );
 
-		if ( false === $akismet ) {
+		if ( false === $check ) {
 			return false;
 		}
 
