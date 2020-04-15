@@ -232,7 +232,7 @@ class User_Account_Management_User_Data {
 
 		// add a filter to allow more $posted data to be added to $user_data
 		// users should sanitize data that is being added in this way
-		$user_data = apply_filters( 'user_account_management_add_to_user_data', $user_data, $posted, $existing_user_data );
+		$user_data = apply_filters( $this->option_prefix . 'add_to_user_data', $user_data, $posted, $existing_user_data );
 		// example to add a field
 		/*
 		add_filter( 'user_account_management_add_to_user_data', 'add_to_user_data', 10, 3 );
@@ -262,10 +262,10 @@ class User_Account_Management_User_Data {
 		$errors = new WP_Error();
 
 		// do pre save action
-		do_action( 'user_account_management_pre_user_data_save', $user_data, $existing_user_data );
+		do_action( $this->option_prefix . 'pre_user_data_save', $user_data, $existing_user_data );
 
 		// add more data to $result in the event that the pre user data save needs to show something
-		$result = apply_filters( 'user_account_management_pre_save_result', $user_data, $existing_user_data );
+		$result = apply_filters( $this->option_prefix . 'pre_save_result', $user_data, $existing_user_data );
 		/*
 		add_filter( 'user_account_management_pre_save_result', 'pre_save_result', 10, 2 );
 		function pre_save_errors( $user_data, $existing_user_data ) {
@@ -281,7 +281,7 @@ class User_Account_Management_User_Data {
 		}
 
 		// add a filter to allow user data to be modified before it is saved
-		$user_data = apply_filters( 'user_account_management_modify_user_data', $user_data, $existing_user_data );
+		$user_data = apply_filters( $this->option_prefix . 'modify_user_data', $user_data, $existing_user_data );
 		// example to remove a field from the user data that doesn't need to be saved
 		/*
 		add_filter( 'user_account_management_modify_user_data', 'modify_user_data', 10, 2 );
@@ -340,10 +340,10 @@ class User_Account_Management_User_Data {
 		}
 
 		// do post save action
-		do_action( 'user_account_management_post_user_data_save', $user_data, $existing_user_data );
+		do_action( $this->option_prefix . 'post_user_data_save', $user_data, $existing_user_data );
 
 		// add more data to $result in the event that the post user data save needs something
-		$result = apply_filters( 'user_account_management_post_save_result', $result );
+		$result = apply_filters( $this->option_prefix . 'post_save_result', $result );
 		/*
 		add_filter( 'user_account_management_post_save_result', 'post_save_result', 10, 1 );
 		function post_save_result( $result ) {
@@ -384,7 +384,7 @@ class User_Account_Management_User_Data {
 
 		// add a filter to skip the new user notification to the user
 		// by default, this is allowed
-		$user_notification_allowed = apply_filters( 'user_account_management_allow_new_user_notification', true );
+		$user_notification_allowed = apply_filters( $this->option_prefix . 'allow_new_user_notification', true );
 
 		// example to skip the new user notification
 		/*
@@ -397,7 +397,7 @@ class User_Account_Management_User_Data {
 
 		// add a filter to skip the new user notification to the admin
 		// by default, this is not allowed
-		$admin_notification_allowed = apply_filters( 'user_account_management_allow_new_user_notification_admin', false );
+		$admin_notification_allowed = apply_filters( $this->option_prefix . 'allow_new_user_notification_admin', false );
 
 		// example to skip the new user notification
 		/*

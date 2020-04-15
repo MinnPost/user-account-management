@@ -99,7 +99,7 @@ class User_Account_Management_Account {
 		}
 
 		// form action for submission
-		$attributes['action'] = apply_filters( 'user_account_management_lost_password_form_action', wp_lostpassword_url() );
+		$attributes['action'] = apply_filters( $this->option_prefix . 'lost_password_form_action', wp_lostpassword_url() );
 		// example to change the form action
 		/*
 		add_filter( 'user_account_management_lost_password_form_action', 'lost_password_form_action', 10, 1 );
@@ -110,7 +110,7 @@ class User_Account_Management_Account {
 
 		// translators: instructions on top of the form. so far no placeholders are necessary
 		$attributes['instructions'] = '<p class="a-form-instructions">' . esc_html__( 'Enter your email address and we\'ll send you a link you can use to pick a new password.' ) . '</p>';
-		$attributes['instructions'] = apply_filters( 'user_account_management_lost_password_form_instructions', $attributes['instructions'] );
+		$attributes['instructions'] = apply_filters( $this->option_prefix . 'lost_password_form_instructions', $attributes['instructions'] );
 		// example to change the lost password form instructions
 		/*
 		add_filter( 'user_account_management_lost_password_form_instructions', 'lost_password_form_instructions', 10, 1 );
@@ -323,15 +323,15 @@ class User_Account_Management_Account {
 	 * Changes a logged in user's password
 	 */
 	public function do_password_change() {
-		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
+		if ( isset( $_POST[ $this->option_prefix . 'action' ] ) && 'reset-password' === $_POST[ $this->option_prefix . 'action' ] ) {
 			$user_id = $this->user_data->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
 
-			$redirect_url = $_POST['user_account_management_redirect'];
+			$redirect_url = $_POST[ $this->option_prefix . 'redirect' ];
 
-			if ( wp_verify_nonce( $_POST['user_account_management_password_nonce'], 'uam-password-nonce' ) ) {
+			if ( wp_verify_nonce( $_POST[ $this->option_prefix . 'password_nonce' ], 'uam-password-nonce' ) ) {
 				if ( '' === $_POST['new_password'] ) {
 					$redirect_url = add_query_arg( 'errors', 'new_password_empty', $redirect_url );
 				} else {
@@ -359,15 +359,15 @@ class User_Account_Management_Account {
 	 */
 	public function do_account_settings() {
 
-		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
+		if ( isset( $_POST[ $this->option_prefix . 'action' ] ) && 'account-settings-update' === $_POST[ $this->option_prefix . 'action' ] ) {
 			$user_id = $this->user_data->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
 
-			$redirect_url = sanitize_text_field( $_POST['user_account_management_redirect'] );
+			$redirect_url = sanitize_text_field( $_POST[ $this->option_prefix . 'redirect' ] );
 
-			if ( wp_verify_nonce( sanitize_text_field( $_POST['user_account_management_account_settings_nonce'] ), 'uam-account-settings-nonce' ) ) {
+			if ( wp_verify_nonce( sanitize_text_field( $_POST[ $this->option_prefix . 'account_settings_nonce' ] ), 'uam-account-settings-nonce' ) ) {
 				if ( empty( $_POST ) ) {
 					$redirect_url = add_query_arg( 'errors', 'account_settings_empty', $redirect_url );
 				} else {
@@ -550,7 +550,7 @@ class User_Account_Management_Account {
 	 * @return array   The mail parameters
 	 */
 	public function send_email_change_email( $send, $user, $userdata ) {
-		$send = apply_filters( 'user_account_management_send_email_change_email', false, $user, $userdata );
+		$send = apply_filters( $this->option_prefix . 'send_email_change_email', false, $user, $userdata );
 		return $send;
 	}
 
@@ -566,7 +566,7 @@ class User_Account_Management_Account {
 	 * @return array   The mail parameters
 	 */
 	public function send_password_change_email( $send, $user, $userdata ) {
-		$send = apply_filters( 'user_account_management_send_password_change_email', false, $user, $userdata );
+		$send = apply_filters( $this->option_prefix . 'send_password_change_email', false, $user, $userdata );
 		return $send;
 	}
 

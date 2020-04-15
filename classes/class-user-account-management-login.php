@@ -70,11 +70,10 @@ class User_Account_Management_Login {
 		add_filter( 'auth_cookie_expiration', array( $this, 'login_expiration' ) );
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
 		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
-		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // register
-		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // register
 		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
-
+		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // used for register and login
+		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // used for register and login
 	}
 
 	/**
@@ -145,7 +144,7 @@ class User_Account_Management_Login {
 		$attributes['logged_out'] = isset( $_REQUEST['logged_out'] ) && 'true' === $_REQUEST['logged_out'];
 
 		// allow a custom message to be put into the styled message div
-		$attributes['message_info'] = apply_filters( 'user_account_management_login_form_message_info', '', $attributes['source'] );
+		$attributes['message_info'] = apply_filters( $this->option_prefix . 'login_form_message_info', '', $attributes['source'] );
 		// example to change the login form message info
 		/*
 		add_filter( 'user_account_management_login_form_message_info', 'login_form_message_info', 10, 2 );
@@ -158,7 +157,7 @@ class User_Account_Management_Login {
 		if ( '' === $attributes['action'] ) {
 			$attributes['action'] = wp_login_url();
 		}
-		$attributes['action'] = apply_filters( 'user_account_management_login_form_action', $attributes['action'] );
+		$attributes['action'] = apply_filters( $this->option_prefix . 'login_form_action', $attributes['action'] );
 		// example to change the form action
 		/*
 		add_filter( 'user_account_management_login_form_action', 'login_form_action', 10, 1 );
@@ -188,7 +187,7 @@ class User_Account_Management_Login {
 			$attributes['instructions'] = '<' . $tag . ' class="a-form-instructions">' . $attributes['instructions'] . '</' . $tag . '>';
 		}
 
-		$attributes['instructions'] = apply_filters( 'user_account_management_login_form_instructions', $attributes['instructions'], $attributes['source'] );
+		$attributes['instructions'] = apply_filters( $this->option_prefix . 'login_form_instructions', $attributes['instructions'], $attributes['source'] );
 		// example to change the login form instructions
 		/*
 		add_filter( 'user_account_management_login_form_instructions', 'login_form_instructions', 10, 2 );
@@ -202,7 +201,7 @@ class User_Account_Management_Login {
 			wp_lostpassword_url(),
 			esc_html__( 'Need help or forgot your password?', 'user-account-management' )
 		);
-		$attributes['password_help'] = apply_filters( 'user_account_management_login_form_password_help', $attributes['password_help'] );
+		$attributes['password_help'] = apply_filters( $this->option_prefix . 'login_form_password_help', $attributes['password_help'] );
 		// example to change the password help
 		/*
 		add_filter( 'user_account_management_login_form_password_help', 'login_form_password_help', 10, 1 );
@@ -247,7 +246,7 @@ class User_Account_Management_Login {
 	 * Redirect the user to the custom login page instead of wp-login.php.
 	 */
 	public function redirect_to_custom_login() {
-		$skip_login_redirect = apply_filters( 'user_account_management_skip_login_redirect', false );
+		$skip_login_redirect = apply_filters( $this->option_prefix . 'skip_login_redirect', false );
 		if ( true === $skip_login_redirect ) {
 			return;
 		}
