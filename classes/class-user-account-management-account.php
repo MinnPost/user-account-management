@@ -28,12 +28,11 @@ class User_Account_Management_Account {
 		$this->option_prefix = user_account_management()->option_prefix;
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
+		$this->transient     = user_account_management()->transient;
 		$this->user_data     = user_account_management()->user_data;
+		$this->cache         = user_account_management()->cache;
 
-		//$this->cache = user_account_management()->cache;
-		//$this->transient = user_account_management()->transient;
-
-		add_action( 'plugins_loaded', array( $this, 'add_actions' ) );
+		$this->add_actions();
 
 	}
 
@@ -95,7 +94,7 @@ class User_Account_Management_Account {
 			$error_codes = explode( ',', $_REQUEST['errors'] );
 
 			foreach ( $error_codes as $error_code ) {
-				$attributes['errors'][] = $this->get_error_message( $error_code, $form_data );
+				$attributes['errors'][] = user_account_management()->get_error_message( $error_code, $form_data );
 			}
 		}
 
@@ -123,7 +122,7 @@ class User_Account_Management_Account {
 		if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'user-account-management' );
 		} else {
-			return $this->get_template_html( 'password-lost-form', 'front-end', $attributes );
+			return user_account_management()->get_template_html( 'password-lost-form', 'front-end', $attributes );
 		}
 	}
 
@@ -154,12 +153,12 @@ class User_Account_Management_Account {
 					$error_codes = explode( ',', $_REQUEST['errors'] );
 
 					foreach ( $error_codes as $code ) {
-						$errors[] = $this->get_error_message( $code );
+						$errors[] = user_account_management()->get_error_message( $code );
 					}
 				}
 				$attributes['errors'] = $errors;
 
-				return $this->get_template_html( 'password-reset-form', 'front-end', $attributes );
+				return user_account_management()->get_template_html( 'password-reset-form', 'front-end', $attributes );
 			} else {
 				return __( 'Invalid password reset link.', 'user-account-management' );
 			}
@@ -182,7 +181,7 @@ class User_Account_Management_Account {
 
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
 
-		$attributes['current_url'] = $this->get_current_url();
+		$attributes['current_url'] = user_account_management()->get_current_url();
 		$attributes['redirect']    = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
@@ -193,7 +192,7 @@ class User_Account_Management_Account {
 			return $message;
 		} else {
 
-			$can_access = $this->check_user_permissions();
+			$can_access = $this->user_data->check_user_permissions();
 			if ( false === $can_access ) {
 				return __( 'You do not have permission to access this page.', 'user-account-management' );
 			}
@@ -206,11 +205,11 @@ class User_Account_Management_Account {
 				$error_codes = explode( ',', $_REQUEST['errors'] );
 
 				foreach ( $error_codes as $code ) {
-					$errors[] = $this->get_error_message( $code );
+					$errors[] = user_account_management()->get_error_message( $code );
 				}
 			}
 			$attributes['errors'] = $errors;
-			return $this->get_template_html( 'password-change-form', 'front-end', $attributes );
+			return user_account_management()->get_template_html( 'password-change-form', 'front-end', $attributes );
 		}
 	}
 
@@ -228,18 +227,18 @@ class User_Account_Management_Account {
 			$attributes = array();
 		}
 
-		$can_access = $this->check_user_permissions();
+		$can_access = $this->user_data->check_user_permissions();
 		if ( false === $can_access ) {
 			return __( 'You do not have permission to access this page.', 'user-account-management' );
 		}
-		if ( '' !== $this->user_id ) {
-			$user_id = $this->user_id;
+		if ( '' !== $this->user_data->user_id ) {
+			$user_id = $this->user_data->user_id;
 		}
 
 		// this functionality is mostly from https://pippinsplugins.com/change-password-form-short-code/
 		// we should use it for this page as well, unless and until it becomes insufficient
 
-		$attributes['current_url'] = $this->get_current_url();
+		$attributes['current_url'] = user_account_management()->get_current_url();
 		$attributes['redirect']    = $attributes['current_url'];
 
 		if ( ! is_user_logged_in() ) {
@@ -258,7 +257,7 @@ class User_Account_Management_Account {
 				$error_codes = explode( ',', $_REQUEST['errors'] );
 
 				foreach ( $error_codes as $code ) {
-					$errors[] = $this->get_error_message( $code, $form_data );
+					$errors[] = user_account_management()->get_error_message( $code, $form_data );
 				}
 			}
 			$attributes['errors'] = $errors;
@@ -276,10 +275,10 @@ class User_Account_Management_Account {
 			$attributes['hidden_city_state']  = get_option( $this->option_prefix . 'hidden_city_state', false );
 			$include_countries                = get_option( $this->option_prefix . 'include_countries', false );
 			if ( true === filter_var( $include_countries, FILTER_VALIDATE_BOOLEAN ) ) {
-				$attributes['countries'] = $this->get_countries();
+				$attributes['countries'] = user_account_management()->get_countries();
 			}
 
-			return $this->get_template_html( 'account-settings-form', 'front-end', $attributes );
+			return user_account_management()->get_template_html( 'account-settings-form', 'front-end', $attributes );
 		}
 	}
 
@@ -290,7 +289,7 @@ class User_Account_Management_Account {
 	public function redirect_to_custom_lostpassword() {
 		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_user_logged_in() ) {
-				$this->redirect_logged_in_user();
+				$this->login->redirect_logged_in_user();
 				exit;
 			}
 			wp_redirect( site_url( 'user/password-lost' ) );
@@ -325,7 +324,7 @@ class User_Account_Management_Account {
 	 */
 	public function do_password_change() {
 		if ( isset( $_POST['user_account_management_action'] ) && 'reset-password' === $_POST['user_account_management_action'] ) {
-			$user_id = $this->user_id;
+			$user_id = $this->user_data->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
@@ -361,7 +360,7 @@ class User_Account_Management_Account {
 	public function do_account_settings() {
 
 		if ( isset( $_POST['user_account_management_action'] ) && 'account-settings-update' === $_POST['user_account_management_action'] ) {
-			$user_id = $this->user_id;
+			$user_id = $this->user_data->user_id;
 			if ( 0 === $user_id ) {
 				return;
 			}
@@ -373,8 +372,8 @@ class User_Account_Management_Account {
 					$redirect_url = add_query_arg( 'errors', 'account_settings_empty', $redirect_url );
 				} else {
 					$existing_user_data = get_userdata( $user_id );
-					$new_user_data      = $this->setup_user_data( $_POST, $existing_user_data );
-					$result             = $this->register_or_update_user( $new_user_data, 'update' );
+					$new_user_data      = $this->user_data->setup_user_data( $_POST, $existing_user_data );
+					$result             = $this->user_data->register_or_update_user( $new_user_data, 'update' );
 				}
 
 				if ( isset( $_POST['rest'] ) && 'true' === sanitize_text_field( $_POST['rest'] ) ) {
@@ -391,8 +390,8 @@ class User_Account_Management_Account {
 
 				if ( isset( $redirect_url ) ) {
 					$redirect_url = wp_validate_redirect( $redirect_url, $redirect_url );
-					if ( get_current_user_id() !== $this->user_id ) {
-						$redirect_url = add_query_arg( 'user_id', $this->user_id, $redirect_url );
+					if ( get_current_user_id() !== $this->user_data->user_id ) {
+						$redirect_url = add_query_arg( 'user_id', $this->user_data->user_id, $redirect_url );
 					}
 				}
 				if ( ! empty( $redirect_url ) ) {
@@ -520,7 +519,7 @@ class User_Account_Management_Account {
 		// we do not include this here because a theme template would be required anyway
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
-		$msg = $this->get_template_html( 'retrieve-password-message', 'email', $attributes );
+		$msg = user_account_management()->get_template_html( 'retrieve-password-message', 'email', $attributes );
 		return $msg;
 	}
 

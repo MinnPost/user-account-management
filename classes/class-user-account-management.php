@@ -97,7 +97,14 @@ class User_Account_Management {
 		$this->option_prefix = 'user_account_management_';
 		$this->slug          = 'user-account-management';
 
-		$this->cache = false;
+		$cache = get_option( $this->option_prefix . 'cache_data', false );
+		if ( true === filter_var( $cache, FILTER_VALIDATE_BOOLEAN ) ) {
+			$this->cache = true;
+		} else {
+			$this->cache = false;
+		}
+		$this->cache_expiration = (int) get_option( $this->option_prefix . 'cache_time', 2592000 );
+
 	}
 
 	public function init() {
@@ -106,7 +113,7 @@ class User_Account_Management {
 		$this->activate = new User_Account_Management_Activate();
 
 		// Transient
-		$this->transient = new User_Account_Management_Transient( 'user_account_transients' );
+		$this->transient = new User_Account_Management_Transient( 'user_account_transients', $this->cache_expiration );
 
 		// User data setup
 		$this->user_data = new User_Account_Management_User_Data();
@@ -126,14 +133,19 @@ class User_Account_Management {
 		// Admin features
 		$this->admin = new User_Account_Management_Admin();
 
+		$this->add_actions();
 
+	}
+
+	private function add_actions() {
 		// handle redirects before rendering shortcodes
 		add_action( 'wp', array( $this, 'user_status_check' ) );
 
-		add_filter( 'query_vars', array( $this, 'user_query_vars' ), 10, 1 ); // query string params
+		// query string params
+		add_filter( 'query_vars', array( $this, 'user_query_vars' ), 10, 1 );
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) ); // javascript/css
-
+		// javascript/css
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) );
 	}
 
 	/**
@@ -204,7 +216,7 @@ class User_Account_Management {
 	 *
 	 * @return string         The current url
 	 */
-	private function get_current_url() {
+	public function get_current_url() {
 		if ( is_page() || is_single() ) {
 			$current_url = wp_get_canonical_url();
 		} else {
@@ -309,30 +321,8 @@ class User_Account_Management {
 			default:
 				break;
 		}
+		error_log( 'error code is ' . $error_code );
 		return __( 'An unknown error occurred. Please try again later.', 'user-account-management' );
-	}
-
-	/**
-	 * Check whether the current user is allowed to see the current screen
-	 *
-	 * @param int         The user id to check
-	 *
-	 * @return bool true or false
-	 */
-	public function check_user_permissions( $user_id = '', $method = 'create' ) {
-		if ( '' === $user_id && '' !== $this->user_id ) {
-			$user_id = $this->user_id;
-		} elseif ( '' === $user_id ) {
-			$user_id = get_current_user_id();
-		}
-		if ( 'create' !== $method && 0 === $user_id ) {
-			return false;
-		}
-		if ( get_current_user_id() === $user_id || current_user_can( 'edit_user', $user_id ) ) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/**
@@ -357,7 +347,7 @@ class User_Account_Management {
 
 		if ( true === $this->cache ) {
 			// check the cache for country data
-			$cached = $this->cache_get(
+			$cached = $this->transient->get(
 				array(
 					'url' => $countries_url,
 				)
@@ -375,7 +365,7 @@ class User_Account_Management {
 
 			if ( true === $this->cache ) {
 				// cache the json response
-				$cached = $this->cache_set(
+				$cached = $this->transient->set(
 					array(
 						'url' => $countries_url,
 					),
@@ -384,30 +374,6 @@ class User_Account_Management {
 			}
 		}
 		return $countries;
-	}
-
-	/**
-	 * Check to see if this API call exists in the cache
-	 * if it does, return the transient for that key
-	 *
-	 * @param mixed $call The API call we'd like to make.
-	 * @return $this->form_transients->get $cachekey
-	 */
-	private function cache_get( $call ) {
-		$cachekey = md5( wp_json_encode( $call ) );
-		return $this->transient->get( $cachekey );
-	}
-
-	/**
-	 * Create a cache entry for the current result, with the url and args as the key
-	 *
-	 * @param mixed $call The API query name.
-	 * @return Bool whether or not the value was set
-	 * @link https://wordpress.stackexchange.com/questions/174330/transient-storage-location-database-xcache-w3total-cache
-	 */
-	private function cache_set( $call, $data ) {
-		$cachekey = md5( wp_json_encode( $call ) );
-		return $this->transient->set( $cachekey, $data );
 	}
 
 	/**

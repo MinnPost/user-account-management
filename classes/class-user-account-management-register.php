@@ -28,13 +28,12 @@ class User_Account_Management_Register {
 		$this->option_prefix = user_account_management()->option_prefix;
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
+		$this->transient     = user_account_management()->transient;
 		$this->user_data     = user_account_management()->user_data;
 		$this->login         = user_account_management()->login;
+		$this->cache         = user_account_management()->cache;
 
-		add_action( 'plugins_loaded', array( $this, 'add_actions' ) );
-
-		//$this->cache = user_account_management()->cache;
-		//$this->transient = user_account_management()->transient;
+		$this->add_actions();
 
 	}
 
@@ -49,8 +48,8 @@ class User_Account_Management_Register {
 		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
 
 		// filters
-		add_filter( 'sanitize_user', array( $this, 'allow_email_as_username' ), 10, 3 ); // register
-		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
+		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // register
+		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // register
 	}
 
 	/**
@@ -95,7 +94,7 @@ class User_Account_Management_Register {
 			$error_codes = explode( ',', $_REQUEST['register-errors'] );
 
 			foreach ( $error_codes as $error_code ) {
-				$attributes['errors'][] = $this->get_error_message( $error_code, $form_data );
+				$attributes['errors'][] = user_account_management()->get_error_message( $error_code, $form_data );
 			}
 		}
 
@@ -195,8 +194,8 @@ class User_Account_Management_Register {
 				$redirect_url = site_url( 'user/register' );
 				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
 			} else {
-				$user_data = $this->setup_user_data( $_POST );
-				$result    = $this->register_or_update_user( $user_data, 'register' );
+				$user_data = $this->user_data->setup_user_data( $_POST );
+				$result    = $this->user_data->register_or_update_user( $user_data, 'register' );
 
 				if ( is_wp_error( $result ) ) {
 					// Errors found
@@ -246,42 +245,6 @@ class User_Account_Management_Register {
 			wp_redirect( $redirect_url );
 			exit;
 		}
-	}
-
-	/**
-	 * Allow users to use email addresses as username, preserving special characters
-	 *
-	 * @param string           $username           The username that will be stored
-	 * @param string           $raw_username       The posted username value
-	 * @param bool             $strict             Whether to be strict about special chars
-	 *
-	 * @return string $username
-	 */
-	public function allow_email_as_username( $username, $raw_username, $strict ) {
-		// This avoids infinite looping! We only re-run if strict was set.
-		if ( $strict && false !== is_email( $username ) ) {
-			return sanitize_user( $raw_username, false );
-		} else {
-			return $username;
-		}
-	}
-
-	/**
-	 * New user registrations should have display_name set
-	 * to 'firstname lastname'.
-	 *
-	 * @param string $name
-	 *
-	 * @return string name
-	 *
-	 */
-	public function set_default_display_name( $name ) {
-		$first_name = isset( $_POST['first_name'] ) ? sanitize_text_field( $_POST['first_name'] ) : '';
-		$last_name  = isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : '';
-		if ( '' !== $first_name && '' !== $last_name ) {
-			$name = $first_name . ' ' . $last_name;
-		}
-		return $name;
 	}
 
 	/**
@@ -383,75 +346,5 @@ class User_Account_Management_Register {
 		$wp_new_user_notification_email['headers'] = $attributes['headers'];
 
 		return $wp_new_user_notification_email;
-	}
-
-	/**
-	 * Use the Geonames API to get the city/state from a postal code/country combination
-	 *
-	 * @param string  $zip_code    Zip/postal code
-	 * @param string  $country     Country
-	 * @param bool  $reset         Allows the cache to be skipped
-	 *
-	 * @return array               The city/state pair, as well as the status success/error
-	 *
-	 */
-	public function get_city_state( $zip_code, $country, $reset = false ) {
-		$citystate = '';
-
-		// countries where the space breaks the api
-		if ( 'GB' === $country ) {
-			$zip_code = explode( ' ', $zip_code );
-			$zip_code = $zip_code[0];
-		}
-
-		$geonames_api_username = get_option( $this->option_prefix . 'geonames_api_username', '' );
-		if ( '' !== $geonames_api_username ) {
-			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&country=' . urlencode( $country ) . '&username=' . $geonames_api_username;
-		} else {
-			return $citystate;
-		}
-
-		$cached = $this->cache_get(
-			array(
-				'url' => $url,
-			)
-		);
-
-		if ( isset( $cached ) && is_array( $cached ) && false === $reset ) {
-			// load data from cache if it is available
-			$citystate = $cached;
-		} else {
-			$request  = wp_remote_get( $url );
-			$body     = wp_remote_retrieve_body( $request );
-			$location = json_decode( $body, true );
-			if ( ! is_array( $location['postalcodes'] ) ) {
-				return $citystate;
-			}
-			$city      = $location['postalcodes'][0]['placeName'];
-			$state     = $location['postalcodes'][0]['adminName1'];
-			$citystate = array(
-				'city'  => $city,
-				'state' => $state,
-			);
-
-			if ( true === $this->cache ) {
-				// cache the json response
-				$cached = $this->cache_set(
-					array(
-						'url' => $url,
-					),
-					$citystate
-				);
-			}
-		}
-
-		if ( '' !== $citystate ) {
-			$citystate['status'] = 'success';
-		} else {
-			$citystate['status'] = 'error';
-		}
-
-		return $citystate;
-
 	}
 }

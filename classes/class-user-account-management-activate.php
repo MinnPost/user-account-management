@@ -27,8 +27,12 @@ class User_Account_Management_Activate {
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
 
-		register_activation_hook( dirname( __DIR__ ) . '/' . $this->slug . '.php', array( $this, 'plugin_activated' ) );
+		$this->add_actions();
 
+	}
+
+	private function add_actions() {
+		register_activation_hook( dirname( __DIR__ ) . '/' . $this->slug . '.php', array( $this, 'plugin_activated' ) );
 	}
 
 	/**

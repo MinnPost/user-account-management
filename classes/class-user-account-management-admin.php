@@ -28,6 +28,8 @@ class User_Account_Management_Admin {
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
 		$this->plugin_file   = user_account_management()->file;
+		$this->transient     = user_account_management()->transient;
+		$this->cache         = user_account_management()->cache;
 
 		$this->tabs = $this->get_admin_tabs();
 

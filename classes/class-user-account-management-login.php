@@ -27,15 +27,15 @@ class User_Account_Management_Login {
 	*/
 	public function __construct() {
 
-		$this->option_prefix = user_account_management()->option_prefix;
-		$this->version       = user_account_management()->version;
-		$this->slug          = user_account_management()->slug;
-		$this->user_data     = user_account_management()->user_data;
-		$this->register      = user_account_management()->register;
-
+		$this->option_prefix            = user_account_management()->option_prefix;
+		$this->version                  = user_account_management()->version;
+		$this->slug                     = user_account_management()->slug;
+		$this->transient                = user_account_management()->transient;
+		$this->user_data                = user_account_management()->user_data;
+		$this->cache                    = user_account_management()->cache;
 		$this->redirect_after_login_url = $this->get_redirect_after_login_url();
 
-		add_action( 'plugins_loaded', array( $this, 'add_actions' ) );
+		$this->add_actions();
 
 	}
 
@@ -70,13 +70,11 @@ class User_Account_Management_Login {
 		add_filter( 'auth_cookie_expiration', array( $this, 'login_expiration' ) );
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
 		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
-		add_filter( 'sanitize_user', array( $this->register, 'allow_email_as_username' ), 10, 3 ); // register
-		add_filter( 'pre_user_display_name', array( $this, 'set_default_display_name' ) ); // register
+		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // register
+		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // register
 		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
 		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
 
-		//$this->cache = user_account_management()->cache;
-		//$this->transient = user_account_management()->transient;
 	}
 
 	/**
@@ -138,7 +136,7 @@ class User_Account_Management_Login {
 		if ( isset( $_REQUEST['login'] ) ) {
 			$error_codes = explode( ',', $_REQUEST['login'] );
 			foreach ( $error_codes as $code ) {
-				$errors[] = $this->get_error_message( $code, $form_data );
+				$errors[] = user_account_management()->get_error_message( $code, $form_data );
 			}
 		}
 		$attributes['errors'] = $errors;

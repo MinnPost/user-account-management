@@ -29,17 +29,16 @@ class User_Account_Management_User_Data {
 		$this->option_prefix = user_account_management()->option_prefix;
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
+		$this->transient     = user_account_management()->transient;
+		$this->cache         = user_account_management()->cache;
+		$this->user_id       = 0;
 
-		$this->user_id = 0;
-
-		add_action( 'plugins_loaded', array( $this, 'add_actions' ) );
+		$this->add_actions();
 
 	}
 
 	public function add_actions() {
-
 		add_action( 'init', array( $this, 'set_user_id' ), 10 );
-
 	}
 
 	/**
@@ -55,6 +54,65 @@ class User_Account_Management_User_Data {
 			$this->user_id = get_current_user_id();
 		}
 		return $this->user_id;
+	}
+
+	/**
+	 * Check whether the current user is allowed to see the current screen
+	 *
+	 * @param int         The user id to check
+	 *
+	 * @return bool true or false
+	 */
+	public function check_user_permissions( $user_id = '', $method = 'create' ) {
+		if ( '' === $user_id && '' !== $this->user_id ) {
+			$user_id = $this->user_id;
+		} elseif ( '' === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+		if ( 'create' !== $method && 0 === $user_id ) {
+			return false;
+		}
+		if ( get_current_user_id() === $user_id || current_user_can( 'edit_user', $user_id ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Allow users to use email addresses as username, preserving special characters
+	 *
+	 * @param string           $username           The username that will be stored
+	 * @param string           $raw_username       The posted username value
+	 * @param bool             $strict             Whether to be strict about special chars
+	 *
+	 * @return string $username
+	 */
+	public function allow_email_as_username( $username, $raw_username, $strict ) {
+		// This avoids infinite looping! We only re-run if strict was set.
+		if ( $strict && false !== is_email( $username ) ) {
+			return sanitize_user( $raw_username, false );
+		} else {
+			return $username;
+		}
+	}
+
+	/**
+	 * New user registrations should have display_name set
+	 * to 'firstname lastname'.
+	 *
+	 * @param string $name
+	 *
+	 * @return string name
+	 *
+	 */
+	public function set_default_display_name( $name ) {
+		$first_name = isset( $_POST['first_name'] ) ? sanitize_text_field( $_POST['first_name'] ) : '';
+		$last_name  = isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : '';
+		if ( '' !== $first_name && '' !== $last_name ) {
+			$name = $first_name . ' ' . $last_name;
+		}
+		return $name;
 	}
 
 	/**
@@ -236,12 +294,12 @@ class User_Account_Management_User_Data {
 			// Email address is used as both username and email. It is also the only
 			// parameter we need to validate
 			if ( ! is_email( $user_data['user_email'] ) ) {
-				$errors->add( 'email', $this->get_error_message( 'email', $user_data ) );
+				$errors->add( 'email', user_account_management()->get_error_message( 'email', $user_data ) );
 				return $errors;
 			}
 
 			if ( username_exists( $user_data['user_email'] ) || email_exists( $user_data['user_email'] ) ) {
-				$errors->add( 'email_exists', $this->get_error_message( 'email_exists', $user_data ) );
+				$errors->add( 'email_exists', user_account_management()->get_error_message( 'email_exists', $user_data ) );
 				return $errors;
 			}
 			$user_id = wp_insert_user( $user_data );
@@ -360,5 +418,74 @@ class User_Account_Management_User_Data {
 
 		return $user_id;
 	}
-	
+
+	/**
+	 * Use the Geonames API to get the city/state from a postal code/country combination
+	 *
+	 * @param string  $zip_code    Zip/postal code
+	 * @param string  $country     Country
+	 * @param bool  $reset         Allows the cache to be skipped
+	 *
+	 * @return array               The city/state pair, as well as the status success/error
+	 *
+	 */
+	public function get_city_state( $zip_code, $country, $reset = false ) {
+		$citystate = '';
+
+		// countries where the space breaks the api
+		if ( 'GB' === $country ) {
+			$zip_code = explode( ' ', $zip_code );
+			$zip_code = $zip_code[0];
+		}
+
+		$geonames_api_username = get_option( $this->option_prefix . 'geonames_api_username', '' );
+		if ( '' !== $geonames_api_username ) {
+			$url = 'http://api.geonames.org/postalCodeLookupJSON?postalcode=' . urlencode( $zip_code ) . '&country=' . urlencode( $country ) . '&username=' . $geonames_api_username;
+		} else {
+			return $citystate;
+		}
+
+		$cached = $this->transient->get(
+			array(
+				'url' => $url,
+			)
+		);
+
+		if ( isset( $cached ) && is_array( $cached ) && false === $reset ) {
+			// load data from cache if it is available
+			$citystate = $cached;
+		} else {
+			$request  = wp_remote_get( $url );
+			$body     = wp_remote_retrieve_body( $request );
+			$location = json_decode( $body, true );
+			if ( ! is_array( $location['postalcodes'] ) ) {
+				return $citystate;
+			}
+			$city      = $location['postalcodes'][0]['placeName'];
+			$state     = $location['postalcodes'][0]['adminName1'];
+			$citystate = array(
+				'city'  => $city,
+				'state' => $state,
+			);
+
+			if ( true === $this->cache ) {
+				// cache the json response
+				$cached = $this->transient->set(
+					array(
+						'url' => $url,
+					),
+					$citystate
+				);
+			}
+		}
+
+		if ( '' !== $citystate ) {
+			$citystate['status'] = 'success';
+		} else {
+			$citystate['status'] = 'error';
+		}
+
+		return $citystate;
+
+	}
 }

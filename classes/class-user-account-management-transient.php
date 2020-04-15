@@ -46,7 +46,7 @@ class User_Account_Management_Transient {
 	 * @return mixed value of transient. False of empty, otherwise array.
 	 */
 	public function set( $cachekey, $value ) {
-
+		$cachekey = md5( wp_json_encode( $cachekey ) );
 		$prefix   = $this->cache_prefix;
 		$cachekey = $prefix . $cachekey;
 
@@ -64,6 +64,7 @@ class User_Account_Management_Transient {
 	 * @return mixed value of transient. False of empty, otherwise array.
 	 */
 	public function get( $cachekey ) {
+		$cachekey = md5( wp_json_encode( $cachekey ) );
 		$prefix   = $this->cache_prefix;
 		$cachekey = $prefix . $cachekey;
 		return get_transient( $cachekey );

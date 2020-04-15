@@ -31,20 +31,20 @@ class User_Account_Management_Rest {
 		$this->option_prefix = user_account_management()->option_prefix;
 		$this->version       = user_account_management()->version;
 		$this->slug          = user_account_management()->slug;
+		$this->transient     = user_account_management()->transient;
 		$this->user_data     = user_account_management()->user_data;
 		$this->login         = user_account_management()->login;
 		$this->register      = user_account_management()->register;
 		$this->account       = user_account_management()->account;
+		$this->cache         = user_account_management()->cache;
 
-		//$this->cache = user_account_management()->
-		//$this->transient = user_account_management()->transient;
-
-		add_action( 'plugins_loaded', array( $this, 'add_actions' ) );
+		$this->add_actions();
 
 	}
 
 	public function add_actions() {
-
+		// api endpoints that can be called by other stuff
+		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
 	}
 
 	/**
@@ -134,7 +134,7 @@ class User_Account_Management_Rest {
 						),
 					),
 					'permission_callback' => function( $request ) {
-						return user_account_management()->check_user_permissions( '', 'update' );
+						return $this->user_data->check_user_permissions( '', 'update' );
 					},
 				),
 			)
@@ -168,9 +168,9 @@ class User_Account_Management_Rest {
 			'state'      => $state,
 			'country'    => $country,
 		);
-		$user_data = $this->setup_user_data( $posted );
+		$user_data = $this->user_data->setup_user_data( $posted );
 
-		$data = $this->register_or_update_user( $user_data, 'register', array() );
+		$data = $this->user_data->register_or_update_user( $user_data, 'register', array() );
 
 		$result = array();
 		if ( is_int( $data ) ) {
@@ -201,8 +201,8 @@ class User_Account_Management_Rest {
 		$posted  = $request->get_params();
 
 		$existing_user_data = get_userdata( $user_id );
-		$new_user_data      = $this->setup_user_data( $posted, $existing_user_data );
-		$data               = $this->register_or_update_user( $new_user_data, 'update' );
+		$new_user_data      = $this->user_data->setup_user_data( $posted, $existing_user_data );
+		$data               = $this->user_data->register_or_update_user( $new_user_data, 'update' );
 
 		$result = array();
 		if ( is_int( $data ) ) {
@@ -234,7 +234,7 @@ class User_Account_Management_Rest {
 		$params    = $request->get_params();
 		$zip_code  = $params['zip_code'];
 		$country   = $params['country'];
-		$citystate = $this->register->get_city_state( $zip_code, $country );
+		$citystate = $this->user_data->get_city_state( $zip_code, $country );
 		return $citystate;
 	}
 
