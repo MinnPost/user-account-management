@@ -6,8 +6,6 @@
 	<input type="hidden" name="user_account_management_redirect" value="<?php echo $attributes['redirect']; ?>"/>
 	<input type="hidden" name="user_account_management_password_nonce" value="<?php echo wp_create_nonce( 'uam-password-nonce' ); ?>"/>
 
-	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
-
 	<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
 		<div class="m-form-message m-form-message-error">
 			<?php if ( count( $attributes['errors'] ) > 1 ) : ?>

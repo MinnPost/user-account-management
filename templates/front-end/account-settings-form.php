@@ -10,8 +10,6 @@
 		<input type="hidden" name="state" value="<?php echo isset( $_POST['state'] ) ? sanitize_text_field( $_POST['state'] ) : ! empty( $attributes['user_meta']['_state'] ) ? $attributes['user_meta']['_state'][0] : ''; ?>">
 	<?php endif; ?>
 
-	<?php include_once( plugin_dir_path( __FILE__ ) . '../template-parts/honeypots.php' ); ?>
-
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>
 		<?php echo wp_kses_post( $attributes['instructions'] ); ?>
 	<?php endif; ?>

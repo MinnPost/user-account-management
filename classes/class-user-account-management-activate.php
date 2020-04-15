@@ -10,29 +10,29 @@ if ( ! class_exists( 'User_Account_Management' ) ) {
 }
 
 /**
- * What to do when the plugin is activated
+ * Create activate functionality
  */
 class User_Account_Management_Activate {
 
-	protected $option_prefix;
-	protected $version;
-	protected $slug;
+	public $option_prefix;
+	public $version;
+	public $slug;
 
 	/**
-	* Constructor which sets up activate hooks
-	*
-	* @param string $option_prefix
-	* @param string $version
-	* @param string $slug
-	*
+	* Constructor which sets up shortcodes
 	*/
-	public function __construct( $option_prefix, $version, $slug ) {
-		$this->option_prefix = $option_prefix;
-		$this->version       = $version;
-		$this->slug          = $slug;
+	public function __construct() {
 
-		register_activation_hook( dirname( __DIR__ ) . '/' . $slug . '.php', array( $this, 'plugin_activated' ) );
+		$this->option_prefix = user_account_management()->option_prefix;
+		$this->version       = user_account_management()->version;
+		$this->slug          = user_account_management()->slug;
 
+		$this->add_actions();
+
+	}
+
+	private function add_actions() {
+		register_activation_hook( dirname( __DIR__ ) . '/' . $this->slug . '.php', array( $this, 'plugin_activated' ) );
 	}
 
 	/**
@@ -54,23 +54,29 @@ class User_Account_Management_Activate {
 		// Information needed for creating the plugin's pages
 		$page_definitions = array(
 			'user'             => array(
-				'title'   => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Your %1$s account', 'user-account-management' ),
+				'title'   =>
+					sprintf(
+						// translators: placeholder refers to site name
+						esc_html__( 'Your %1$s account', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[account-info]',
 			),
 			'login'            => array(
-				'title'   => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Log in to %1$s', 'user-account-management' ),
+				'title'   =>
+					sprintf(
+						// translators: placeholder refers to site name
+						esc_html__( 'Log in to %1$s', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[custom-login-form]',
 				'parent'  => 'user',
 			),
 			'register'         => array(
-				'title'   => // translators: placeholder refers to site name
-					sprintf( esc_html__( 'Create your %1$s account', 'user-account-management' ),
+				'title'   =>
+					sprintf(
+						// translators: placeholder refers to site name
+						esc_html__( 'Create your %1$s account', 'user-account-management' ),
 						get_bloginfo( 'name' )
 					),
 				'content' => '[custom-register-form]',
@@ -98,16 +104,16 @@ class User_Account_Management_Activate {
 			),
 		);
 
-		foreach ( $page_definitions as $slug => $page ) {
+		foreach ( $page_definitions as $this->slug => $page ) {
 			if ( ! isset( $page['parent'] ) ) {
 				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $slug );
+				$query = new WP_Query( 'pagename=' . $this->slug );
 				if ( ! $query->have_posts() ) {
 					// Add the page using the data from the array above
 					wp_insert_post(
 						array(
 							'post_content'   => $page['content'],
-							'post_name'      => $slug,
+							'post_name'      => $this->slug,
 							'post_title'     => $page['title'],
 							'post_status'    => 'publish',
 							'post_type'      => 'page',
@@ -119,7 +125,7 @@ class User_Account_Management_Activate {
 			}
 		}
 
-		foreach ( $page_definitions as $slug => $page ) {
+		foreach ( $page_definitions as $this->slug => $page ) {
 			if ( isset( $page['parent'] ) ) {
 				$parent_result = get_page_by_path( $page['parent'] );
 				if ( null !== $parent_result ) {
@@ -129,13 +135,13 @@ class User_Account_Management_Activate {
 				}
 
 				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $slug );
+				$query = new WP_Query( 'pagename=' . $this->slug );
 				if ( ! $query->have_posts() ) {
 					// Add the page using the data from the array above
 					wp_insert_post(
 						array(
 							'post_content'   => $page['content'],
-							'post_name'      => $slug,
+							'post_name'      => $this->slug,
 							'post_title'     => $page['title'],
 							'post_status'    => 'publish',
 							'post_type'      => 'page',
@@ -147,7 +153,6 @@ class User_Account_Management_Activate {
 				}
 			}
 		}
-
 	}
 
 }
