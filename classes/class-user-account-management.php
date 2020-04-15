@@ -321,7 +321,6 @@ class User_Account_Management {
 			default:
 				break;
 		}
-		error_log( 'error code is ' . $error_code );
 		return __( 'An unknown error occurred. Please try again later.', 'user-account-management' );
 	}
 

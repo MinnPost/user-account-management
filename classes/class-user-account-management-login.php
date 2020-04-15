@@ -70,8 +70,6 @@ class User_Account_Management_Login {
 		add_filter( 'auth_cookie_expiration', array( $this, 'login_expiration' ) );
 		add_filter( 'authenticate', array( $this, 'maybe_redirect_at_authenticate' ), 101, 3 ); // login
 		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 3 ); // login
-		add_filter( 'wp_new_user_notification_email', array( $this, 'replace_new_user_email' ), 10, 3 ); // email new users receive
-		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'replace_new_user_email_admin' ), 10, 3 ); // email admins receive when a user registers (this is disabled by default)
 		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // used for register and login
 		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // used for register and login
 	}
