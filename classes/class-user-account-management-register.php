@@ -48,8 +48,8 @@ class User_Account_Management_Register {
 		add_action( 'login_form_register', array( $this, 'do_register_user' ) ); // register
 
 		// filters
-		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // register
-		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // register
+		add_filter( 'sanitize_user', array( $this->user_data, 'allow_email_as_username' ), 10, 3 ); // used for register and login
+		add_filter( 'pre_user_display_name', array( $this->user_data, 'set_default_display_name' ) ); // used for register and login
 	}
 
 	/**
@@ -119,9 +119,10 @@ class User_Account_Management_Register {
 		if ( '' !== $attributes['redirect'] ) {
 			$login_url = wp_login_url() . '?redirect_to=' . $attributes['redirect'];
 		}
-
-		// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
-		$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
+		
+		$attributes['instructions'] = sprintf(
+			// translators: instructions on top of the form. placeholders are 1) login link, 2) login link text, 3) help link, 4) help link text
+			'<p class="a-form-instructions">' . esc_html__( 'Already have an account?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>. ' . esc_html__( 'Do you need ', 'user-account-management' ) . '<a href="%3$s">%4$s</a>?</p>',
 			$login_url,
 			esc_html__( 'Log in now', 'user-account-management' ),
 			wp_lostpassword_url(),
@@ -273,7 +274,7 @@ class User_Account_Management_Register {
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
 		// add a filter to change all of the attributes
-		$attributes = apply_filters( 'user_account_management_new_user_email_attributes', $attributes );
+		$attributes = apply_filters( $this->object_prefix . 'new_user_email_attributes', $attributes );
 
 		// example to edit the new user email attributes
 		/*
@@ -308,7 +309,7 @@ class User_Account_Management_Register {
 	 */
 	public function replace_new_user_email_admin( $wp_new_user_notification_email, $user, $blogname ) {
 
-		$admin_notification_allowed = apply_filters( 'user_account_management_allow_new_user_notification_admin', false );
+		$admin_notification_allowed = apply_filters( $this->option_prefix . 'allow_new_user_notification_admin', false );
 
 		// if this keeps going unnecessarily, it can cause ISSUES with other plugins
 		if ( false === $admin_notification_allowed ) {
@@ -328,7 +329,7 @@ class User_Account_Management_Register {
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
 		// add a filter to change all of the attributes
-		$attributes = apply_filters( 'user_account_management_new_user_email_admin_attributes', $attributes );
+		$attributes = apply_filters( $this->option_prefix . 'new_user_email_admin_attributes', $attributes );
 
 		// example to edit the new user email attributes
 		/*
