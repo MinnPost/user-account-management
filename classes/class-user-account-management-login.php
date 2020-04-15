@@ -174,7 +174,8 @@ class User_Account_Management_Login {
 
 		// translators: instructions on top of the form. placeholders are 1) registration link; 2) registration link text
 		if ( '' === $attributes['instructions'] ) {
-			$attributes['instructions'] = sprintf( '<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
+			$attributes['instructions'] = sprintf(
+				'<p class="a-form-instructions">' . esc_html__( 'No account yet?', 'user-account-management' ) . ' <a href="%1$s">%2$s</a>.</p>',
 				$registration_url,
 				esc_html__( 'Register now', 'user-account-management' )
 			);
