@@ -322,7 +322,7 @@ class User_Account_Management {
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
 			case 'spam':
-				return __( 'Our system flagged your information as spam. You can try again.', 'user-account-management' );
+				return __( 'Our system flagged your account information as spam. You can try again.', 'user-account-management' );
 			case 'expiredkey':
 			case 'expiredkey':
 			case 'invalidkey':
