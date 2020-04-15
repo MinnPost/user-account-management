@@ -112,6 +112,7 @@ class User_Account_Management_Akismet {
 
 		$params = array(
 			'email'      => '',
+			'user_login' => '',
 			'first_name' => '',
 			'last_name'  => '',
 			'author_url' => '',
@@ -139,6 +140,10 @@ class User_Account_Management_Akismet {
 				$params[ $key ] = $value;
 			}
 			$params['content'] .= "\n\n" . $value;
+		}
+
+		if ( '' === $params['email'] && isset( $params['user_login'] ) ) {
+			$params['email'] = $params['user_login'];
 		}
 
 		$params['content'] = trim( $params['content'] );
