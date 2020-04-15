@@ -303,15 +303,22 @@ class User_Account_Management_Account {
 	public function do_password_lost() {
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 
-			$errors = retrieve_password();
-			if ( is_wp_error( $errors ) ) {
-				// Errors found
+			// check for spam here
+			$spam = apply_filters( $this->option_prefix . 'check_spam', false, $_POST );
+			if ( true === $spam ) {
 				$redirect_url = site_url( 'user/password-lost' );
-				$redirect_url = add_query_arg( 'errors', join( ',', $errors->get_error_codes() ), $redirect_url );
+				$redirect_url = add_query_arg( 'register-errors', 'spam', $redirect_url );
 			} else {
-				// Email sent
-				$redirect_url = site_url( 'user/login' );
-				$redirect_url = add_query_arg( 'checkemail', 'confirm', $redirect_url );
+				$errors = retrieve_password();
+				if ( is_wp_error( $errors ) ) {
+					// Errors found
+					$redirect_url = site_url( 'user/password-lost' );
+					$redirect_url = add_query_arg( 'errors', join( ',', $errors->get_error_codes() ), $redirect_url );
+				} else {
+					// Email sent
+					$redirect_url = site_url( 'user/login' );
+					$redirect_url = add_query_arg( 'checkemail', 'confirm', $redirect_url );
+				}
 			}
 
 			wp_redirect( $redirect_url );

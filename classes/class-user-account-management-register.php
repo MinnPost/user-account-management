@@ -191,11 +191,15 @@ class User_Account_Management_Register {
 	 */
 	public function do_register_user() {
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-
+			// check for spam here
+			$spam = apply_filters( $this->option_prefix . 'check_spam', false, $_POST );
 			if ( ! get_option( 'users_can_register' ) ) {
 				// Registration closed, display error
 				$redirect_url = site_url( 'user/register' );
 				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
+			} elseif ( true === $spam ) {
+				$redirect_url = site_url( 'user/register' );
+				$redirect_url = add_query_arg( 'register-errors', 'spam', $redirect_url );
 			} else {
 				$user_data = $this->user_data->setup_user_data( $_POST );
 				$result    = $this->user_data->register_or_update_user( $user_data, 'register' );

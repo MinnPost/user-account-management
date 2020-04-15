@@ -56,6 +56,12 @@ class User_Account_Management {
 
 	/**
 	* @var object
+	* Akismet
+	*/
+	public $akismet;
+
+	/**
+	* @var object
 	* Login
 	*/
 	public $login;
@@ -117,6 +123,9 @@ class User_Account_Management {
 
 		// User data setup
 		$this->user_data = new User_Account_Management_User_Data();
+
+		// Akismet setup
+		$this->akismet = new User_Account_Management_Akismet();
 
 		// Login
 		$this->login = new User_Account_Management_Login();
@@ -312,6 +321,9 @@ class User_Account_Management {
 				return __( 'An account already exists with this email address. Is it yours?', 'user-account-management' );
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
+			case 'spam':
+				return __( 'Our system flagged your information as spam. You can try again.', 'user-account-management' );
+			case 'expiredkey':
 			case 'expiredkey':
 			case 'invalidkey':
 				return __( 'The password reset link you used is not valid anymore.', 'user-account-management' );
