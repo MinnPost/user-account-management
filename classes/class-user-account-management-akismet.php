@@ -43,7 +43,14 @@ class User_Account_Management_Akismet {
 	** Akismet API: http://akismet.com/development/api/
 	**/
 	public function akismet( $spam, $params ) {
-		if ( $spam ) {
+
+		$check = filter_var( get_option( $this->option_prefix . 'check_akismet', false ), FILTER_VALIDATE_BOOLEAN );
+
+		if ( false === $akismet ) {
+			return false;
+		}
+
+		if ( true === $spam ) {
 			return $spam;
 		}
 
@@ -89,7 +96,7 @@ class User_Account_Management_Akismet {
 		return $this->akismet_comment_check( $c );
 	}
 
-	private function akismet_is_available() {
+	public function akismet_is_available() {
 		if ( is_callable( array( 'Akismet', 'get_api_key' ) ) ) { // Akismet v3.0+
 			return (bool) Akismet::get_api_key();
 		}

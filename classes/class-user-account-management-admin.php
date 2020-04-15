@@ -253,58 +253,20 @@ class User_Account_Management_Admin {
 					'default' => 1209600,
 				),
 			),
-			/*'server_path' => array(
-				'title' => __( 'Server Path', 'user-account-management' ),
-				'callback' => $callbacks['text'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'text',
-					'desc' => '',
-				),
-			),
-			'ad_tag_type' => array(
-				'title' => __( 'Ad tag type', 'user-account-management' ),
-				'callback' => $callbacks['select'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'type' => 'select',
-					'desc' => '',
-					'items' => array(
-						'jx' => array(
-							'text' => 'JX',
-							'value' => 'js',
-						),
-						'mjx' => array(
-							'text' => 'MJX',
-							'value' => 'mjx',
-						),
-						'nx' => array(
-							'text' => 'NX',
-							'value' => 'nx',
-						),
-						'sx' => array(
-							'text' => 'SX',
-							'value' => 'sx',
-						),
-						'dx' => array(
-							'text' => 'DX',
-							'value' => 'dx',
-						),
-					),
-				),
-			),
-			'tag_list' => array(
-				'title' => __( 'List tags', 'user-account-management' ),
-				'callback' => $callbacks['textarea'],
-				'page' => $page,
-				'section' => $section,
-				'args' => array(
-					'desc' => 'Comma separated list of tags',
-				),
-			),*/
 		);
+
+		if ( true === user_account_management()->akismet->akismet_is_available() ) {
+			$settings['check_akismet'] = array(
+				'title'    => __( 'Check for spam against Akismet API?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type' => 'checkbox',
+					'desc' => 'Whether to check the user submitted data against the Akismet API.',
+				),
+			);
+		}
 
 		foreach ( $settings as $key => $attributes ) {
 			$id       = $this->option_prefix . $key;
@@ -466,7 +428,6 @@ class User_Account_Management_Admin {
 	* @param array $args
 	*/
 	public function display_input_field( $args ) {
-		//error_log('args is ' . print_r($args, true));
 		$type    = $args['type'];
 		$id      = $args['label_for'];
 		$name    = $args['name'];
@@ -480,12 +441,13 @@ class User_Account_Management_Admin {
 		}
 
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
-			$value = esc_attr( get_option( $id, '' ) );
 			if ( 'checkbox' === $type ) {
-				if ( '1' === $value ) {
+				$value = filter_var( get_option( $id, false ), FILTER_VALIDATE_BOOLEAN );
+				if ( true === $value ) {
 					$checked = 'checked ';
 				}
-				$value = 1;
+			} else {
+				$value = esc_attr( get_option( $id, '' ) );
 			}
 			if ( '' === $value && isset( $args['default'] ) && '' !== $args['default'] ) {
 				$value = $args['default'];
@@ -520,7 +482,6 @@ class User_Account_Management_Admin {
 	* @param array $args
 	*/
 	public function display_textarea( $args ) {
-		//error_log('args is ' . print_r($args, true));
 		$id      = $args['label_for'];
 		$name    = $args['name'];
 		$desc    = $args['desc'];
