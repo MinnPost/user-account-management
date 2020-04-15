@@ -280,7 +280,7 @@ class User_Account_Management_Register {
 		// add_filter( 'wp_mail_content_type', function() { return 'text/html'; })
 
 		// add a filter to change all of the attributes
-		$attributes = apply_filters( $this->object_prefix . 'new_user_email_attributes', $attributes );
+		$attributes = apply_filters( $this->option_prefix . 'new_user_email_attributes', $attributes );
 
 		// example to edit the new user email attributes
 		/*
