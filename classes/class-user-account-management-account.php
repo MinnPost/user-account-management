@@ -308,7 +308,7 @@ class User_Account_Management_Account {
 			$spam = apply_filters( $this->option_prefix . 'check_spam', false, $_POST );
 			if ( true === $spam ) {
 				$redirect_url = site_url( 'user/password-lost' );
-				$redirect_url = add_query_arg( 'register-errors', 'spam', $redirect_url );
+				$redirect_url = add_query_arg( 'errors', 'spam', $redirect_url );
 			} else {
 				$errors = retrieve_password();
 				if ( is_wp_error( $errors ) ) {
