@@ -31,7 +31,7 @@ define( 'USER_ACCOUNT_MANAGEMENT_FILE', __FILE__ );
  * @since 0.0.13
  * @var string
  */
-define( 'USER_ACCOUNT_MANAGEMENT_VERSION', '0.0.13' );
+define( 'USER_ACCOUNT_MANAGEMENT_VERSION', '0.0.14' );
 
 // Load the autoloader.
 require_once( 'lib/autoloader.php' );
