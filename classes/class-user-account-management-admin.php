@@ -441,13 +441,13 @@ class User_Account_Management_Admin {
 		}
 
 		if ( ! isset( $args['constant'] ) || ! defined( $args['constant'] ) ) {
+			$value = esc_attr( get_option( $id, '' ) );
 			if ( 'checkbox' === $type ) {
 				$value = filter_var( get_option( $id, false ), FILTER_VALIDATE_BOOLEAN );
 				if ( true === $value ) {
-					$checked = 'checked ';
+					$checked = 'checked';
 				}
-			} else {
-				$value = esc_attr( get_option( $id, '' ) );
+				$value = 1;
 			}
 			if ( '' === $value && isset( $args['default'] ) && '' !== $args['default'] ) {
 				$value = $args['default'];
