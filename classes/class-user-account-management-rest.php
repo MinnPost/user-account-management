@@ -19,9 +19,6 @@ class User_Account_Management_Rest {
 	public $slug;
 	public $file;
 	public $user_data;
-	public $login;
-	public $register;
-	public $account;
 
 	/**
 	* Constructor which sets up REST API endpoints
@@ -33,9 +30,6 @@ class User_Account_Management_Rest {
 		$this->slug          = user_account_management()->slug;
 		$this->transient     = user_account_management()->transient;
 		$this->user_data     = user_account_management()->user_data;
-		$this->login         = user_account_management()->login;
-		$this->register      = user_account_management()->register;
-		$this->account       = user_account_management()->account;
 		$this->cache         = user_account_management()->cache;
 
 		$this->add_actions();
