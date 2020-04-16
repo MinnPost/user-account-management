@@ -155,6 +155,8 @@ class User_Account_Management {
 
 		// javascript/css
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_styles' ) );
+
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 	}
 
 	/**
