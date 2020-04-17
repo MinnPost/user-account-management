@@ -74,9 +74,9 @@ class User_Account_Management_Akismet {
 		$c['blog']         = get_option( 'home' );
 		$c['blog_lang']    = get_locale();
 		$c['blog_charset'] = get_option( 'blog_charset' );
-		$c['user_ip']      = $_SERVER['REMOTE_ADDR'];
-		$c['user_agent']   = $_SERVER['HTTP_USER_AGENT'];
-		$c['referrer']     = $_SERVER['HTTP_REFERER'];
+		$c['user_ip']      = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
+		$c['user_agent']   = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$c['referrer']     = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '';
 
 		// https://akismet.com/development/api/#comment-check
 		$c['comment_type'] = 'signup';

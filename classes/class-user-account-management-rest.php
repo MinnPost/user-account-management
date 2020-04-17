@@ -152,7 +152,7 @@ class User_Account_Management_Rest {
 		$state      = $request->get_param( 'state' );
 		$country    = $request->get_param( 'country' );
 
-		$posted    = array(
+		$posted = array(
 			'email'      => $email,
 			'password'   => $password,
 			'first_name' => $first_name,
@@ -162,23 +162,42 @@ class User_Account_Management_Rest {
 			'state'      => $state,
 			'country'    => $country,
 		);
-		$user_data = $this->user_data->setup_user_data( $posted );
-
-		$data = $this->user_data->register_or_update_user( $user_data, 'register', array() );
 
 		$result = array();
-		if ( is_int( $data ) ) {
+
+		// check for spam here
+		$spam = apply_filters( $this->option_prefix . 'check_spam', false, $posted );
+		if ( ! get_option( 'users_can_register' ) ) {
+			// Registration closed, display error
 			$result = array(
-				'status' => 'success',
-				'reason' => 'new user',
-				'uid'    => $data,
+				'status' => 'closed',
+				'reason' => 'registration not allowed',
+				'errors' => array(),
+			);
+		} elseif ( true === $spam ) {
+			// is spam
+			$result = array(
+				'status' => 'spam',
+				'reason' => 'submission flagged as spam',
+				'errors' => array(),
 			);
 		} else {
-			$result = array(
-				'status' => 'error',
-				'reason' => 'user not created',
-				'errors' => $data,
-			);
+			// create user
+			$user_data = $this->user_data->setup_user_data( $posted );
+			$data      = $this->user_data->register_or_update_user( $user_data, 'register', array() );
+			if ( is_int( $data ) ) {
+				$result = array(
+					'status' => 'success',
+					'reason' => 'new user',
+					'uid'    => $data,
+				);
+			} else {
+				$result = array(
+					'status' => 'error',
+					'reason' => 'user not created',
+					'errors' => $data,
+				);
+			}
 		}
 		return $result;
 	}
