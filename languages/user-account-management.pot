@@ -72,40 +72,104 @@ msgstr ""
 msgid "Cache data?"
 msgstr ""
 
+#: classes/class-user-account-management-admin.php:210
+msgid "Whether to cache data for this plugin (recommended)"
+msgstr ""
+
 #: classes/class-user-account-management-admin.php:215
 msgid "How long to cache data?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:221
+msgid "How many seconds before the cache expires"
 msgstr ""
 
 #: classes/class-user-account-management-admin.php:226
 msgid "Default redirect URL after login"
 msgstr ""
 
+#: classes/class-user-account-management-admin.php:232
+msgid "Where to send users after they log in or register. The plugin will use /user/ if no value is here."
+msgstr ""
+
 #: classes/class-user-account-management-admin.php:236
 msgid "Remember user logins?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:242
+msgid "Whether to remember users when they log in. If checked, users will stay logged in when they close their browsers."
 msgstr ""
 
 #: classes/class-user-account-management-admin.php:246
 msgid "Cookie expiration"
 msgstr ""
 
+#: classes/class-user-account-management-admin.php:252
+msgid "How long (in seconds) before the user authentication cookie expires. Maximum is one year."
+msgstr ""
+
 #: classes/class-user-account-management-admin.php:260
 msgid "Check for spam against Akismet API?"
 msgstr ""
 
+#: classes/class-user-account-management-admin.php:266
+msgid "Whether to check the user submitted data against the Akismet API."
+msgstr ""
+
 #: classes/class-user-account-management-admin.php:311
-msgid "Include country as user metadata?"
+msgid "Maximum length of first name"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:317
+msgid "A first name longer than this many characters will not be created"
 msgstr ""
 
 #: classes/class-user-account-management-admin.php:321
-msgid "Include city/state as user metadata?"
+msgid "Maximum length of last name"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:327
+msgid "A last name longer than this many characters will not be created"
 msgstr ""
 
 #: classes/class-user-account-management-admin.php:331
-msgid "Get city/state based on zip/country?"
+msgid "Block names that contain a URL?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:337
+msgid "Bots often put URLs into name fields. This will block values for first or last name that contain http(s)://"
 msgstr ""
 
 #: classes/class-user-account-management-admin.php:341
+msgid "Include country as user metadata?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:347
+msgid "Whether to save country for user."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:351
+msgid "Include city/state as user metadata?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:357
+msgid "Whether to save city/state for user."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:361
+msgid "Get city/state based on zip/country?"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:367
+msgid "Whether to load and save the city/state for the user, based on the zip/country."
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:371
 msgid "Geonames API username"
+msgstr ""
+
+#: classes/class-user-account-management-admin.php:377
+msgid "API username from geonames.org for geocoding the city/state from country/zip"
 msgstr ""
 
 #: classes/class-user-account-management-login.php:175
@@ -184,22 +248,34 @@ msgid "An account already exists with this email address. Is it yours?"
 msgstr ""
 
 #: classes/class-user-account-management.php:325
-msgid "Registering new users is currently not allowed."
+msgid "Your first name is too long for our system."
 msgstr ""
 
 #: classes/class-user-account-management.php:327
-msgid "Our system flagged your account information as spam. You can try again."
+msgid "Your last name is too long for our system."
+msgstr ""
+
+#: classes/class-user-account-management.php:329
+msgid "Your name contains characters our system does not allow."
 msgstr ""
 
 #: classes/class-user-account-management.php:331
+msgid "Registering new users is currently not allowed."
+msgstr ""
+
+#: classes/class-user-account-management.php:333
+msgid "Our system flagged your account information as spam. You can try again."
+msgstr ""
+
+#: classes/class-user-account-management.php:337
 msgid "The password reset link you used is not valid anymore."
 msgstr ""
 
-#: classes/class-user-account-management.php:334
+#: classes/class-user-account-management.php:340
 msgid "Sorry, we don't accept empty passwords."
 msgstr ""
 
-#: classes/class-user-account-management.php:338
+#: classes/class-user-account-management.php:344
 msgid "An unknown error occurred. Please try again later."
 msgstr ""
 
