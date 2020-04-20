@@ -2,7 +2,7 @@
   "name": "user-account-management",
   "title": "User Account Management",
   "description": "",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "Gulpfile.js",
   "repository": {
     "type": "git",
