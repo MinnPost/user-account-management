@@ -207,7 +207,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type'    => 'checkbox',
-					'desc'    => 'Whether to cache data for this plugin (recommended)',
+					'desc'    => __( 'Whether to cache data for this plugin (recommended)', 'user-account-management' ),
 					'default' => '1',
 				),
 			),
@@ -218,7 +218,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type'    => 'text',
-					'desc'    => 'How many seconds before the cache expires',
+					'desc'    => __( 'How many seconds before the cache expires', 'user-account-management' ),
 					'default' => '2592000',
 				),
 			),
@@ -229,7 +229,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'text',
-					'desc' => 'Where to send users after they log in or register. The plugin will use /user/ if no value is here.',
+					'desc' => __( 'Where to send users after they log in or register. The plugin will use /user/ if no value is here.', 'user-account-management' ),
 				),
 			),
 			'remember_user_login'    => array(
@@ -239,7 +239,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to remember users when they log in. If checked, users will stay logged in when they close their browsers.',
+					'desc' => __( 'Whether to remember users when they log in. If checked, users will stay logged in when they close their browsers.', 'user-account-management' ),
 				),
 			),
 			'auth_cookie_expiration' => array(
@@ -249,7 +249,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type'    => 'text',
-					'desc'    => 'How long (in seconds) before the user authentication cookie expires. Maximum is one year.',
+					'desc'    => __( 'How long (in seconds) before the user authentication cookie expires. Maximum is one year.', 'user-account-management' ),
 					'default' => 1209600,
 				),
 			),
@@ -263,7 +263,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to check the user submitted data against the Akismet API.',
+					'desc' => __( 'Whether to check the user submitted data against the Akismet API.', 'user-account-management' ),
 				),
 			);
 		}
@@ -314,7 +314,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to save country for user.',
+					'desc' => __( 'Whether to save country for user.', 'user-account-management' ),
 				),
 			),
 			'include_city_state'    => array(
@@ -324,7 +324,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to save city/state for user.',
+					'desc' => __( 'Whether to save city/state for user.', 'user-account-management' ),
 				),
 			),
 			'hidden_city_state'     => array(
@@ -334,7 +334,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'checkbox',
-					'desc' => 'Whether to load and save the city/state for the user, based on the zip/country.',
+					'desc' => __( 'Whether to load and save the city/state for the user, based on the zip/country.', 'user-account-management' ),
 				),
 			),
 			'geonames_api_username' => array(
@@ -344,7 +344,7 @@ class User_Account_Management_Admin {
 				'section'  => $section,
 				'args'     => array(
 					'type' => 'text',
-					'desc' => 'API username from geonames.org for geocoding the city/state from country/zip',
+					'desc' => __( 'API username from geonames.org for geocoding the city/state from country/zip', 'user-account-management' ),
 				),
 			),
 		);
