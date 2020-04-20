@@ -303,6 +303,12 @@ class User_Account_Management_User_Data {
 				return $errors;
 			}
 			$user_id = wp_insert_user( $user_data );
+
+			// WordPress can return a user_id of zero sometimes when it doesn't create a record. this is bad and we should at least attach an error it it.
+			if ( 0 === $user_id ) {
+				$errors->add( 'user_id', user_account_management()->get_error_message( 'user_id', $user_data ) );
+				return $errors;
+			}
 		} elseif ( 'update' === $action ) {
 			$user_id = $user_data['ID'];
 			$result  = wp_update_user( $user_data );
