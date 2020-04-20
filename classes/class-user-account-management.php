@@ -321,6 +321,12 @@ class User_Account_Management {
 				return __( 'The email address you entered is not valid.', 'user-account-management' );
 			case 'email_exists':
 				return __( 'An account already exists with this email address. Is it yours?', 'user-account-management' );
+			case 'first_name_too_long':
+				return __( 'Your first name is too long for our system.', 'user-account-management' );
+			case 'last_name_too_long':
+				return __( 'Your last name is too long for our system.', 'user-account-management' );
+			case 'invalid_name':
+				return __( 'Your name contains characters our system does not allow.', 'user-account-management' );
 			case 'closed':
 				return __( 'Registering new users is currently not allowed.', 'user-account-management' );
 			case 'spam':

@@ -307,6 +307,36 @@ class User_Account_Management_Admin {
 		add_settings_section( $page, $title, null, $page );
 
 		$settings = array(
+			'max_length_first_name' => array(
+				'title'    => __( 'Maximum length of first name', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type' => 'text',
+					'desc' => __( 'A first name longer than this many characters will not be created', 'user-account-management' ),
+				),
+			),
+			'max_length_last_name'  => array(
+				'title'    => __( 'Maximum length of last name', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type' => 'text',
+					'desc' => __( 'A last name longer than this many characters will not be created', 'user-account-management' ),
+				),
+			),
+			'block_names_with_urls' => array(
+				'title'    => __( 'Block names that contain a URL?', 'user-account-management' ),
+				'callback' => $callbacks['text'],
+				'page'     => $page,
+				'section'  => $section,
+				'args'     => array(
+					'type' => 'checkbox',
+					'desc' => __( 'Bots often put URLs into name fields. This will block values for first or last name that contain http(s)://', 'user-account-management' ),
+				),
+			),
 			'include_countries'     => array(
 				'title'    => __( 'Include country as user metadata?', 'user-account-management' ),
 				'callback' => $callbacks['text'],
