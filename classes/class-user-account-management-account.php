@@ -52,6 +52,7 @@ class User_Account_Management_Account {
 		add_action( 'login_form_resetpass', array( $this, 'do_password_reset' ) ); // reset password
 		add_action( 'init', array( $this, 'do_password_change' ) ); // logged in user change password
 		add_action( 'init', array( $this, 'do_account_settings' ) ); // logged in user account settings
+		add_action( 'template_redirect', array( $this, 'redirect_to_login' ) ); // redirect to login page for /user/ pages that are not public
 
 		// filters
 		add_filter( 'retrieve_password_message', array( $this, 'replace_retrieve_password_message' ), 10, 4 ); // lost password
@@ -399,6 +400,32 @@ class User_Account_Management_Account {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Redirect user to login page if they're on a /user/ page that is not public
+	 */
+	public function redirect_to_login() {
+
+		// if the user is already logged in, this method is not for them
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
+		$is_user_url  = '/user/';
+		$public_pages = array( '/user/login/', '/user/register/', '/user/password-lost/', '/user/password-reset/' );
+		$current_url  = str_replace( site_url(), '', user_account_management()->get_current_url() );
+
+		if ( false === strpos( $current_url, $is_user_url ) ) {
+			return;
+		}
+
+		if ( in_array( $current_url, $public_pages ) ) {
+			return;
+		}
+
+		// send user to login url if they're on a /user/ page that is not public
+		wp_redirect( site_url( 'user/login' ) );
 	}
 
 	/**
