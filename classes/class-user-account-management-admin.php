@@ -45,7 +45,7 @@ class User_Account_Management_Admin {
 		if ( is_admin() ) {
 			add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
 			add_action( 'admin_menu', array( $this, 'create_admin_menu' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
+			//add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_and_styles' ) );
 			add_action( 'admin_init', array( $this, 'admin_settings_form' ) );
 		}
 	}
