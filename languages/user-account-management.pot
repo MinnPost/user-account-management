@@ -13,19 +13,23 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: classes/class-user-account-management-account.php:123, classes/class-user-account-management-account.php:144, classes/class-user-account-management-login.php:214, classes/class-user-account-management-register.php:161
+#: classes/class-user-account-management-account.php:124, classes/class-user-account-management-account.php:145, classes/class-user-account-management-login.php:214, classes/class-user-account-management-register.php:161
 msgid "You are already signed in."
 msgstr ""
 
-#: classes/class-user-account-management-account.php:191
-msgid "reset your password"
+#: classes/class-user-account-management-account.php:164
+msgid "Invalid password reset link."
 msgstr ""
 
-#: classes/class-user-account-management-account.php:233
+#: classes/class-user-account-management-account.php:199, classes/class-user-account-management-account.php:234
 msgid "You do not have permission to access this page."
 msgstr ""
 
-#: classes/class-user-account-management-account.php:246
+#: classes/class-user-account-management-account.php:192
+msgid "reset your password"
+msgstr ""
+
+#: classes/class-user-account-management-account.php:247
 msgid "You are not signed in."
 msgstr ""
 
@@ -172,6 +176,10 @@ msgstr ""
 msgid "API username from geonames.org for geocoding the city/state from country/zip"
 msgstr ""
 
+#: classes/class-user-account-management-admin.php:504, classes/class-user-account-management-admin.php:544, classes/class-user-account-management-admin.php:702
+msgid "Defined in wp-config.php"
+msgstr ""
+
 #: classes/class-user-account-management-login.php:175
 msgid "No account yet?"
 msgstr ""
@@ -222,6 +230,10 @@ msgstr ""
 msgid "Terms of Use"
 msgstr ""
 
+#: classes/class-user-account-management-register.php:163, classes/class-user-account-management.php:331
+msgid "Registering new users is currently not allowed."
+msgstr ""
+
 #: classes/class-user-account-management.php:303
 msgid "You did not enter an email address."
 msgstr ""
@@ -257,10 +269,6 @@ msgstr ""
 
 #: classes/class-user-account-management.php:329
 msgid "Your name contains characters our system does not allow."
-msgstr ""
-
-#: classes/class-user-account-management.php:331
-msgid "Registering new users is currently not allowed."
 msgstr ""
 
 #: classes/class-user-account-management.php:333

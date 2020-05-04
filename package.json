@@ -2,7 +2,7 @@
   "name": "user-account-management",
   "title": "User Account Management",
   "description": "",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "Gulpfile.js",
   "repository": {
     "type": "git",
@@ -15,8 +15,8 @@
   },
   "homepage": "https://github.com/MinnPost/user-account-management#readme",
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "autoprefixer": "^9.7.6",
     "browser-sync": "^2.26.7",
     "css-mqpacker": "^7.0.0",
@@ -30,15 +30,15 @@
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^2.0.0",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^4.1.0",
     "gulp-sass-glob": "^1.1.0",
     "gulp-sort": "~2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-stylelint": "^13.0.0",
     "gulp-uglify": "^3.0.2",
-    "gulp-wp-pot": "^2.4.1",
+    "gulp-wp-pot": "^2.4.2",
     "npm-check-updates": "^4.1.2",
-    "stylelint": "^13.3.2",
+    "stylelint": "^13.3.3",
     "stylelint-config-wordpress": "^16.0.0"
   },
   "browserslist": [
