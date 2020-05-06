@@ -72,10 +72,46 @@ class User_Account_Management_Rest {
 			array(
 				array(
 					'methods'  => array( WP_REST_Server::READABLE ),
-					'callback' => array( $this, 'check_email' ),
+					'callback' => array( $this, 'check_account' ),
 					'args'     => array(
 						'email' => array(
 							'sanitize_callback' => 'sanitize_email',
+						),
+					),
+					//'permission_callback' => array( $this, 'permissions_check' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->slug . '/v1',
+			'/check-account',
+			array(
+				array(
+					'methods'  => array( WP_REST_Server::READABLE ),
+					'callback' => array( $this, 'check_account' ),
+					'args'     => array(
+						'email'      => array(
+							'sanitize_callback' => 'sanitize_email',
+						),
+						'first_name' => array(
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+						'last_name'  => array(
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+						'city'       => array(
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+						'state'      => array(
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+						'country'    => array(
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
 					//'permission_callback' => array( $this, 'permissions_check' ),
@@ -259,17 +295,46 @@ class User_Account_Management_Rest {
 	 * @return array   The REST response
 	 *
 	 */
-	public function check_email( WP_REST_Request $request ) {
-		$params = $request->get_params();
-		$email  = $params['email'];
+	public function check_account( WP_REST_Request $request ) {
+		$result     = array();
+		$params     = $request->get_params();
+		$email      = $request->get_param( 'email' );
+		$password   = $request->get_param( 'password' );
+		$first_name = $request->get_param( 'first_name' );
+		$last_name  = $request->get_param( 'last_name' );
+		$zip_code   = $request->get_param( 'zip_code' );
+		$city       = $request->get_param( 'city' );
+		$state      = $request->get_param( 'state' );
+		$country    = $request->get_param( 'country' );
+
+		$posted = array(
+			'email'      => $email,
+			'password'   => $password,
+			'first_name' => $first_name,
+			'last_name'  => $last_name,
+			'zip_code'   => $zip_code,
+			'city'       => $city,
+			'state'      => $state,
+			'country'    => $country,
+		);
 		if ( username_exists( $email ) || email_exists( $email ) ) {
-			$user = array(
+			$result = array(
 				'status' => 'success',
 				'reason' => 'user exists',
 				'uid'    => email_exists( $email ),
 			);
-			return $user;
+			return $result;
 		}
-		return false;
+		// check for spam here
+		$spam = apply_filters( $this->option_prefix . 'check_spam', false, $posted );
+		// is spam
+		if ( true === $spam ) {
+			$result = array(
+				'status' => 'spam',
+				'reason' => 'email flagged as spam',
+				'errors' => array(),
+			);
+		}
+		return $result;
 	}
 }
