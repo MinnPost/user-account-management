@@ -127,7 +127,7 @@ class User_Account_Management_Akismet {
 			}
 
 			if ( is_array( $value ) ) {
-				$val = implode( ', ', $value );
+				$value = implode( ', ', $value );
 			}
 
 			$value = trim( $value );
