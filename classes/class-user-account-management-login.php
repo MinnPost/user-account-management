@@ -342,7 +342,7 @@ class User_Account_Management_Login {
 			return $redirect_url;
 		}
 
-		if ( ! empty( $user->roles[0] ) && in_array( $user->roles[0], array( 'administrator' ) ) ) {
+		if ( ! empty( $user->roles[0] ) && in_array( $user->roles[0], array( 'administrator' ), true ) ) {
 			// Use the redirect_to parameter if one is set, otherwise redirect to admin dashboard.
 			if ( '' === $requested_redirect_to ) {
 				$redirect_url = admin_url();
@@ -368,7 +368,7 @@ class User_Account_Management_Login {
 	 */
 	private function redirect_logged_in_user( $redirect_to = null ) {
 		$user = wp_get_current_user();
-		if ( ! empty( $user->roles[0] ) && in_array( $user->roles[0], array( 'administrator' ) ) ) {
+		if ( ! empty( $user->roles[0] ) && in_array( $user->roles[0], array( 'administrator' ), true ) ) {
 			if ( $redirect_to ) {
 				wp_safe_redirect( $redirect_to );
 			} else {

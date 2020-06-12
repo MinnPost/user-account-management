@@ -289,7 +289,7 @@ class User_Account_Management_Account {
 	 * wp-login.php?action=lostpassword.
 	 */
 	public function redirect_to_custom_lostpassword() {
-		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_user_logged_in() ) {
 				user_account_management()->login->redirect_logged_in_user();
 				exit;
@@ -420,7 +420,7 @@ class User_Account_Management_Account {
 			return;
 		}
 
-		if ( in_array( $current_url, $public_pages ) ) {
+		if ( in_array( $current_url, $public_pages, true ) ) {
 			return;
 		}
 
@@ -433,7 +433,7 @@ class User_Account_Management_Account {
 	 * if there are errors.
 	 */
 	public function redirect_to_custom_password_reset() {
-		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
 			// Verify key / login combo
 			$user = check_password_reset_key( rawurldecode( $_REQUEST['key'] ), rawurldecode( $_REQUEST['login'] ) );
 

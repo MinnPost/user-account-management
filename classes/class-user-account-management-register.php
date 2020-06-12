@@ -171,7 +171,7 @@ class User_Account_Management_Register {
 	 * of wp-login.php?action=register.
 	 */
 	public function redirect_to_custom_register() {
-		if ( 'GET' == $_SERVER['REQUEST_METHOD'] ) {
+		if ( 'GET' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( is_user_logged_in() ) {
 				$this->redirect_logged_in_user();
 			} else {
