@@ -294,7 +294,7 @@ class User_Account_Management_User_Data {
 		$max_length_first_name = get_option( $this->option_prefix . 'max_length_first_name', '' );
 		if ( '' !== $max_length_first_name ) {
 			$max_length_first_name = (int) $max_length_first_name;
-			if ( $max_length_first_name < strlen( $user_data['first_name'] ) ) {
+			if ( isset( $user_data['first_name'] ) && $max_length_first_name < strlen( $user_data['first_name'] ) ) {
 				$errors->add( 'first_name_too_long', user_account_management()->get_error_message( 'first_name_too_long', $user_data ) );
 				return $errors;
 			}
@@ -302,7 +302,7 @@ class User_Account_Management_User_Data {
 		$max_length_last_name = get_option( $this->option_prefix . 'max_length_last_name', '' );
 		if ( '' !== $max_length_last_name ) {
 			$max_length_last_name = (int) $max_length_last_name;
-			if ( $max_length_last_name < strlen( $user_data['last_name'] ) ) {
+			if ( isset( $user_data['last_name'] ) && $max_length_last_name < strlen( $user_data['last_name'] ) ) {
 				$errors->add( 'last_name_too_long', user_account_management()->get_error_message( 'last_name_too_long', $user_data ) );
 				return $errors;
 			}
@@ -311,8 +311,14 @@ class User_Account_Management_User_Data {
 		// disallowed characters
 		$block_names_with_urls = filter_var( get_option( $this->option_prefix . 'block_names_with_urls', false ), FILTER_VALIDATE_BOOLEAN );
 		if ( true === $block_names_with_urls ) {
-			$first_name_has_link = false !== strpos( $user_data['first_name'], 'http' ) || false !== strpos( $user_data['first_name'], 'www.' );
-			$last_name_has_link  = false !== strpos( $user_data['last_name'], 'http' ) || false !== strpos( $user_data['last_name'], 'www.' );
+			$first_name_has_link = false;
+			$last_name_has_link  = false;
+			if ( isset( $user_data['first_name'] ) ) {
+				$first_name_has_link = false !== strpos( $user_data['first_name'], 'http' ) || false !== strpos( $user_data['first_name'], 'www.' );
+			}
+			if ( isset( $user_data['last_name'] ) ) {
+				$last_name_has_link = false !== strpos( $user_data['last_name'], 'http' ) || false !== strpos( $user_data['last_name'], 'www.' );
+			}
 			if ( true === $first_name_has_link || true === $last_name_has_link ) {
 				$errors->add( 'invalid_name', user_account_management()->get_error_message( 'invalid_name', $user_data ) );
 				return $errors;
