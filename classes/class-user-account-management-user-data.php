@@ -381,7 +381,7 @@ class User_Account_Management_User_Data {
 		}
 
 		// do post save action
-		do_action( $this->option_prefix . 'post_user_data_save', $user_data, $existing_user_data );
+		do_action( $this->option_prefix . 'post_user_data_save', $user_data, $existing_user_data, $user_id );
 
 		// add more data to $result in the event that the post user data save needs something
 		$result = apply_filters( $this->option_prefix . 'post_save_result', $result );
