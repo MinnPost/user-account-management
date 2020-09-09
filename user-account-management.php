@@ -2,7 +2,7 @@
 /**
  * Plugin Name: User Account Management
  * Description: Replaces the WordPress user account management flow
- * Version: 0.0.18
+ * Version: 0.0.19
  * Author: Jonathan Stegall / based on Jarkko Laine's work
  * License: GPL-2.0+
  * Text Domain: user-account-management
@@ -31,7 +31,7 @@ define( 'USER_ACCOUNT_MANAGEMENT_FILE', __FILE__ );
  * @since 0.0.13
  * @var string
  */
-define( 'USER_ACCOUNT_MANAGEMENT_VERSION', '0.0.18' );
+define( 'USER_ACCOUNT_MANAGEMENT_VERSION', '0.0.19' );
 
 // Load the autoloader.
 require_once( 'lib/autoloader.php' );
