@@ -40,12 +40,12 @@
 		</div>
 
 		<div class="m-form-item m-form-first-name m-form-register-first-name">
-			<label for="first_name"><?php _e( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="first-name"><?php _e( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="text" name="first_name" id="first-name" required<?php if ( isset( $attributes['form_data']['first_name'] ) ) { echo ' value="' . $attributes['form_data']['first_name'] . '"'; } ?>>
 		</div>
 
 		<div class="m-form-item m-form-last-name m-form-register-last-name">
-			<label for="last_name"><?php _e( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="last-name"><?php _e( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="text" name="last_name" id="last-name" required<?php if ( isset( $attributes['form_data']['last_name'] ) ) { echo ' value="' . $attributes['form_data']['last_name'] . '"'; } ?>>
 		</div>
 
@@ -61,7 +61,7 @@
 		<?php endif; ?>
 
 		<div class="m-form-item m-form-zip-code m-form-register-zip-code">
-			<label for="zip_code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
+			<label for="zip-code"><?php _e( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
 			<input type="tel" name="zip_code" id="zip-code" required<?php if ( isset( $attributes['form_data']['zip_code'] ) ) { echo ' value="' . $attributes['form_data']['zip_code'] . '"'; } ?>>
 		</div>
 
