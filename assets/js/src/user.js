@@ -24,18 +24,18 @@
 		});
 	}
 
-	function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submitButton, blacklistArray ) {
+	function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submitButton, disallowListArray ) {
 	    var password = $password.val();
 
 	    // Reset the form & meter
 	    //$submitButton.attr( 'disabled', 'disabled' );
 	    $strengthText.removeClass( 'short bad good strong' );
 
-	    // Extend our blacklist array with those from the inputs & site data
-	    blacklistArray = blacklistArray.concat( wp.passwordStrength.userInputBlacklist() )
+	    // Extend our disallowList array with those from the inputs & site data
+	    disallowListArray = disallowListArray.concat( wp.passwordStrength.userInputDisallowedList() )
 
 	    // Get the password strength
-	    var strength = wp.passwordStrength.meter( password, blacklistArray, password );
+	    var strength = wp.passwordStrength.meter( password, disallowListArray, password );
 
 	    // Add the strength meter results
 	    switch ( strength ) {
@@ -129,7 +129,7 @@
 		                $('#password-strength'),           // Strength meter
 		                $('#password-strength-text'),      // Strength text indicator
 		                $('input[type=submit]'),           // Submit button
-		                ['black', 'listed', 'word']        // Blacklisted words
+		                ['disallowed', 'listed', 'word']        // disallowed words
 		            );
 		        }
 		    );
