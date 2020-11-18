@@ -6,8 +6,8 @@
 	<input type="hidden" name="user_account_management_redirect" value="<?php echo esc_url( $attributes['redirect'] ); ?>"/>
 	<input type="hidden" name="user_account_management_account_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'uam-account-settings-nonce' ) ); ?>"/>
 	<?php if ( '1' === $attributes['include_city_state'] && '1' === $attributes['hidden_city_state'] ) : ?>
-		<input type="hidden" name="city" value="<?php echo isset( $_POST['city'] ) ? sanitize_text_field( $_POST['city'] ) : ! empty( $attributes['user_meta']['_city'] ) ? $attributes['user_meta']['_city'][0] : ''; ?>">
-		<input type="hidden" name="state" value="<?php echo isset( $_POST['state'] ) ? sanitize_text_field( $_POST['state'] ) : ! empty( $attributes['user_meta']['_state'] ) ? $attributes['user_meta']['_state'][0] : ''; ?>">
+		<input type="hidden" name="city" value="<?php echo $attributes['city_value']; ?>">
+		<input type="hidden" name="state" value="<?php echo $attributes['state_value']; ?>">
 	<?php endif; ?>
 
 	<?php if ( ! empty( $attributes['instructions'] ) ) : ?>

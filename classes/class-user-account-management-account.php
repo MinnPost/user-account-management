@@ -280,6 +280,24 @@ class User_Account_Management_Account {
 				$attributes['countries'] = user_account_management()->get_countries();
 			}
 
+			$city                     = '';
+			$attributes['city_value'] = '';
+			if ( isset( $_POST['city'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$city = sanitize_text_field( $_POST['city'] );
+			} elseif ( ! empty( $attributes['user_meta']['_city'] ) ) {
+				$city = $attributes['user_meta']['_city'][0];
+			}
+			$attributes['city_value'] = $city;
+
+			$state                     = '';
+			$attributes['state_value'] = '';
+			if ( isset( $_POST['state'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$state = sanitize_text_field( $_POST['state'] );
+			} elseif ( ! empty( $attributes['user_meta']['_state'] ) ) {
+				$state = $attributes['user_meta']['_state'][0];
+			}
+			$attributes['state_value'] = $state;
+
 			return user_account_management()->get_template_html( 'account-settings-form', 'front-end', $attributes );
 		}
 	}

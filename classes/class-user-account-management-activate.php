@@ -104,16 +104,17 @@ class User_Account_Management_Activate {
 			),
 		);
 
-		foreach ( $page_definitions as $this->slug => $page ) {
+		$slug = user_account_management()->slug; // for PHP 7.4 compatibility
+		foreach ( $page_definitions as $slug => $page ) {
 			if ( ! isset( $page['parent'] ) ) {
 				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $this->slug );
+				$query = new WP_Query( 'pagename=' . $slug );
 				if ( ! $query->have_posts() ) {
 					// Add the page using the data from the array above
 					wp_insert_post(
 						array(
 							'post_content'   => $page['content'],
-							'post_name'      => $this->slug,
+							'post_name'      => $slug,
 							'post_title'     => $page['title'],
 							'post_status'    => 'publish',
 							'post_type'      => 'page',
@@ -125,7 +126,7 @@ class User_Account_Management_Activate {
 			}
 		}
 
-		foreach ( $page_definitions as $this->slug => $page ) {
+		foreach ( $page_definitions as $slug => $page ) {
 			if ( isset( $page['parent'] ) ) {
 				$parent_result = get_page_by_path( $page['parent'] );
 				if ( null !== $parent_result ) {
@@ -135,13 +136,13 @@ class User_Account_Management_Activate {
 				}
 
 				// Check that the page doesn't exist already
-				$query = new WP_Query( 'pagename=' . $this->slug );
+				$query = new WP_Query( 'pagename=' . $slug );
 				if ( ! $query->have_posts() ) {
 					// Add the page using the data from the array above
 					wp_insert_post(
 						array(
 							'post_content'   => $page['content'],
-							'post_name'      => $this->slug,
+							'post_name'      => $slug,
 							'post_title'     => $page['title'],
 							'post_status'    => 'publish',
 							'post_type'      => 'page',
