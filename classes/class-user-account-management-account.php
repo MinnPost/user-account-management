@@ -298,6 +298,42 @@ class User_Account_Management_Account {
 			}
 			$attributes['state_value'] = $state;
 
+			$email                     = '';
+			$attributes['email_value'] = '';
+			if ( isset( $_POST['email'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$email = sanitize_email( $_POST['email'] );
+			} elseif ( isset( $attributes['user']->user_email ) ) {
+				$email = $attributes['user']->user_email;
+			}
+			$attributes['email_value'] = $email;
+
+			$first_name                     = '';
+			$attributes['first_name_value'] = '';
+			if ( isset( $_POST['first_name'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$first_name = sanitize_text_field( $_POST['first_name'] );
+			} elseif ( isset( $attributes['user']->first_name ) ) {
+				$first_name = $attributes['user']->first_name;
+			}
+			$attributes['first_name_value'] = $first_name;
+
+			$last_name                     = '';
+			$attributes['last_name_value'] = '';
+			if ( isset( $_POST['last_name'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$last_name = sanitize_text_field( $_POST['last_name'] );
+			} elseif ( isset( $attributes['user']->last_name ) ) {
+				$last_name = $attributes['user']->last_name;
+			}
+			$attributes['last_name_value'] = $last_name;
+
+			$zip_code                     = '';
+			$attributes['zip_code_value'] = '';
+			if ( isset( $_POST['zip_code'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_create_nonce'] ), 'uam-account-settings-nonce' ) ) {
+				$zip_code = sanitize_text_field( $_POST['zip_code'] );
+			} elseif ( ! empty( $attributes['user_meta']['_zip_code'] ) ) {
+				$zip_code = $attributes['user_meta']['_zip_code'][0];
+			}
+			$attributes['zip_code_value'] = $zip_code;
+
 			return user_account_management()->get_template_html( 'account-settings-form', 'front-end', $attributes );
 		}
 	}

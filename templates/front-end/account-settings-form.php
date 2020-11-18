@@ -39,33 +39,33 @@
 	<fieldset>
 		<div class="m-form-item m-form-email m-form-change-email">
 			<label for="email"><?php echo esc_html__( 'Email Address:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="email" name="email" id="email" value="<?php echo isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : isset( $attributes['user']->user_email ) ? $attributes['user']->user_email : ''; ?>" required>
+			<input type="email" name="email" id="email" value="<?php echo $attributes['email_value']; ?>" required>
 		</div>
 
 		<div class="m-form-item m-form-first-name m-form-change-first-name">
 			<label for="first-name"><?php echo esc_html__( 'First Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="text" name="first_name" id="first-name" value="<?php echo isset( $_POST['first_name'] ) ? sanitize_text_field( $_POST['first_name'] ) : isset( $attributes['user']->first_name ) ? $attributes['user']->first_name : ''; ?>" required>
+			<input type="text" name="first_name" id="first-name" value="<?php echo $attributes['first_name_value']; ?>" required>
 		</div>
 
 		<div class="m-form-item m-form-last-name m-form-change-last-name">
 			<label for="last-name"><?php echo esc_html__( 'Last Name:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="text" name="last_name" id="last-name" value="<?php echo isset( $_POST['last_name'] ) ? sanitize_text_field( $_POST['last_name'] ) : isset( $attributes['user']->last_name ) ? $attributes['user']->last_name : ''; ?>" required>
+			<input type="text" name="last_name" id="last-name" value="<?php echo $attributes['last_name_value']; ?>" required>
 		</div>
 
 		<?php if ( '1' === $attributes['include_city_state'] && '1' !== $attributes['hidden_city_state'] ) : ?>
 			<div class="m-form-item m-form-city m-form-change-city">
 				<label for="city"><?php echo esc_html__( 'City:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-				<input type="text" name="city" id="city" value="<?php echo isset( $_POST['city'] ) ? sanitize_text_field( $_POST['city'] ) : ! empty( $attributes['user_meta']['_city'] ) ? $attributes['user_meta']['_city'][0] : ''; ?>"  required>
+				<input type="text" name="city" id="city" value="<?php echo $attributes['city_value']; ?>"  required>
 			</div>
 			<div class="m-form-item m-form-state m-form-change-state">
 				<label for="state"><?php echo esc_html__( 'State:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-				<input type="text" name="state" id="state" value="<?php echo isset( $_POST['state'] ) ? sanitize_text_field( $_POST['state'] ) : ! empty( $attributes['user_meta']['_state'] ) ? $attributes['user_meta']['_state'][0] : ''; ?>" required>
+				<input type="text" name="state" id="state" value="<?php echo $attributes['state_value']; ?>" required>
 			</div>
 		<?php endif; ?>
 
 		<div class="m-form-item m-form-zip-code m-form-change-zip-code">
 			<label for="zip-code"><?php echo esc_html__( 'Zip Code:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php echo esc_html__( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="tel" name="zip_code" id="zip-code" value="<?php echo isset( $_POST['zip_code'] ) ? sanitize_text_field( $_POST['zip_code'] ) : ! empty( $attributes['user_meta']['_zip_code'] ) ? $attributes['user_meta']['_zip_code'][0] : ''; ?>" required>
+			<input type="tel" name="zip_code" id="zip-code" value="<?php echo $attributes['zip_code_value']; ?>" required>
 		</div>
 
 		<?php if ( isset( $attributes['countries'] ) ) : ?>
