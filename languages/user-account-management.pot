@@ -1,4 +1,4 @@
-# Copyright (C) 2020 user-account-management
+# Copyright (C) 2021 user-account-management
 # This file is distributed under the same license as the user-account-management package.
 msgid ""
 msgstr ""
