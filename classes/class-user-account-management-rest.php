@@ -51,9 +51,10 @@ class User_Account_Management_Rest {
 			'/check-zip',
 			array(
 				array(
-					'methods'  => array( WP_REST_Server::READABLE ),
-					'callback' => array( $this, 'check_zip' ),
-					'args'     => array(
+					'methods'             => array( WP_REST_Server::READABLE ),
+					'callback'            => array( $this, 'check_zip' ),
+					'permission_callback' => array( $this, 'can_process' ),
+					'args'                => array(
 						'zip_code' => array(
 							'sanitize_callback' => 'esc_attr',
 						),
@@ -62,7 +63,6 @@ class User_Account_Management_Rest {
 							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
-					//'permission_callback' => array( $this, 'permissions_check' ),
 				),
 			)
 		);
@@ -71,14 +71,14 @@ class User_Account_Management_Rest {
 			'/check-account-exists',
 			array(
 				array(
-					'methods'  => array( WP_REST_Server::READABLE ),
-					'callback' => array( $this, 'check_account' ),
-					'args'     => array(
+					'methods'             => array( WP_REST_Server::READABLE ),
+					'callback'            => array( $this, 'check_account' ),
+					'permission_callback' => array( $this, 'can_process' ),
+					'args'                => array(
 						'email' => array(
 							'sanitize_callback' => 'sanitize_email',
 						),
 					),
-					//'permission_callback' => array( $this, 'permissions_check' ),
 				),
 			)
 		);
@@ -87,9 +87,10 @@ class User_Account_Management_Rest {
 			'/check-account',
 			array(
 				array(
-					'methods'  => array( WP_REST_Server::READABLE ),
-					'callback' => array( $this, 'check_account' ),
-					'args'     => array(
+					'methods'             => array( WP_REST_Server::READABLE ),
+					'callback'            => array( $this, 'check_account' ),
+					'permission_callback' => array( $this, 'can_process' ),
+					'args'                => array(
 						'email'      => array(
 							'sanitize_callback' => 'sanitize_email',
 						),
@@ -114,7 +115,6 @@ class User_Account_Management_Rest {
 							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
-					//'permission_callback' => array( $this, 'permissions_check' ),
 				),
 			)
 		);
@@ -123,9 +123,10 @@ class User_Account_Management_Rest {
 			'/create-user',
 			array(
 				array(
-					'methods'  => WP_REST_Server::CREATABLE,
-					'callback' => array( $this, 'api_register_user' ),
-					'args'     => array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'api_register_user' ),
+					'permission_callback' => array( $this, 'can_process' ),
+					'args'                => array(
 						'email'    => array(
 							'required'          => true,
 							'sanitize_callback' => 'sanitize_email',
@@ -134,7 +135,6 @@ class User_Account_Management_Rest {
 							'required' => true,
 						),
 					),
-					//'permission_callback' => array( $this, 'permissions_check' ),
 				),
 			)
 		);
@@ -336,5 +336,16 @@ class User_Account_Management_Rest {
 			);
 		}
 		return $result;
+	}
+
+	/**
+	 * Check to see if the user has permission to do this
+	 *
+	 * @param WP_REST_Request $request the request object sent to the API.
+	 */
+	public function can_process( WP_REST_Request $request ) {
+		// unless we specify otherwise, the method should return true.
+		$http_method = $request->get_method();
+		return true;
 	}
 }
