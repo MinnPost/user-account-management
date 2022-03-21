@@ -110,7 +110,7 @@ class User_Account_Management_Account {
 		*/
 
 		// translators: instructions on top of the form. so far no placeholders are necessary
-		$attributes['instructions'] = '<p class="a-form-instructions">' . esc_html__( 'Enter your email address and we\'ll send you a link you can use to pick a new password.' ) . '</p>';
+		$attributes['instructions'] = '<p class="a-form-instructions">' . esc_html__( 'Enter your email address and we\'ll send you a link you can use to pick a new password. If you don\'t see the email, be sure check your spam folder.' ) . '</p>';
 		$attributes['instructions'] = apply_filters( $this->option_prefix . 'lost_password_form_instructions', $attributes['instructions'] );
 		// example to change the lost password form instructions
 		/*
