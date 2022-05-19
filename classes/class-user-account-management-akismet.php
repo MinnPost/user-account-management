@@ -168,14 +168,15 @@ class User_Account_Management_Akismet {
 			);
 		}
 
-		if ( 'true' === $response[1] ) {
+		if ( isset( $response[1] ) && 'true' === $response[1] ) {
 			$spam = true;
 		}
-
-		$submission->akismet = array(
-			'comment' => $comment,
-			'spam'    => $spam,
-		);
+		if ( isset( $submission->akismet ) ) {
+			$submission->akismet = array(
+				'comment' => $comment,
+				'spam'    => $spam,
+			);
+		}
 
 		return $spam;
 	}
