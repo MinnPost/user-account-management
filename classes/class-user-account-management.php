@@ -362,7 +362,7 @@ class User_Account_Management {
 	 */
 	public function get_countries() {
 
-		$countries_url = 'https://restcountries.com/v3.1/all?fields=name;alpha2Code;';
+		$countries_url = 'https://restcountries.com/v2/all?fields=name,alpha2Code';
 
 		if ( true === $this->cache ) {
 			// check the cache for country data
