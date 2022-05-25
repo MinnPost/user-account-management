@@ -205,10 +205,10 @@ class User_Account_Management {
 			*/
 
 			if ( '' !== $stylesheet_path ) {
-				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.css', $this->file ), array(), filemtime( plugin_dir_path( $this->file ) . 'assets/css/' . $this->slug . '.css' ), 'all' );
+				wp_enqueue_style( $this->slug, plugins_url( 'assets/css/' . $this->slug . '.css', $this->file ), array(), $this->version, 'all' );
 			}
 			wp_enqueue_script( 'password-strength-meter' );
-			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', $this->file ), array( 'jquery', 'password-strength-meter' ), filemtime( plugin_dir_path( $this->file ) . 'assets/js/' . $this->slug . '.js' ), true );
+			wp_enqueue_script( $this->slug, plugins_url( 'assets/js/' . $this->slug . '.min.js', $this->file ), array( 'password-strength-meter' ), $this->version, true );
 			// in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 			wp_localize_script(
 				$this->slug,

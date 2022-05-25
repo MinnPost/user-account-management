@@ -114,22 +114,22 @@ function setupPasswordStrength() {
 
 function setupCountryField(clickedNotUS) {
 	const countryField = document.querySelector('.m-form-country #country');
-	const zipParent = document.querySelector('.m-form-zip-code');
-	if ('undefined' === typeof clickedNotUS) {
-		clickedNotUS = false;
-	}
-
-	const countrySelector = countryField.querySelectorAll('select', 'input');
-	if (0 < countrySelector.length) {
-		countrySelector.forEach(function (countrySelectorField) {
-			if (!countrySelectorField.classList.contains('not-in-us')) {
-				clickedNotUS = true;
-			}
-		});
-	}
-
-	if (countryField && zipParent) {
-		toggleZipCountrySelector(countryField, zipParent, clickedNotUS);
+	if (countryField) {
+		if ('undefined' === typeof clickedNotUS) {
+			clickedNotUS = false;
+		}
+		const countrySelector = countryField.querySelectorAll('select', 'input');
+		if (0 < countrySelector.length) {
+			countrySelector.forEach(function (countrySelectorField) {
+				if (!countrySelectorField.classList.contains('not-in-us')) {
+					clickedNotUS = true;
+				}
+			});
+		}
+		const zipParent = document.querySelector('.m-form-zip-code');
+		if (zipParent) {
+			toggleZipCountrySelector(countryField, zipParent, clickedNotUS);
+		}
 	}
 }
 
