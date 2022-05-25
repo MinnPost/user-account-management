@@ -1,24 +1,23 @@
-// Require our dependencies
-const autoprefixer = require('autoprefixer');
-const babel = require('gulp-babel');
-const browserSync = require('browser-sync').create();
-const concat = require('gulp-concat');
-const cssnano = require('cssnano');
-const eslint = require('gulp-eslint');
-const fs = require('fs');
-const gulp = require('gulp');
-const packagejson = JSON.parse(fs.readFileSync('./package.json'));
-const mqpacker = require( 'css-mqpacker' );
-const plumber = require('gulp-plumber');
-const postcss = require('gulp-postcss');
-const rename = require('gulp-rename');
+// Dependencies
+const autoprefixer = require("autoprefixer");
+const babel = require("gulp-babel");
+const browserSync = require("browser-sync").create();
+const concat = require("gulp-concat");
+const cssnano = require("cssnano");
+const eslint = require("gulp-eslint");
+const fs = require("fs");
+const gulp = require("gulp");
+const gulpStylelint = require("@ronilaukkarinen/gulp-stylelint");
+const iife = require('gulp-iife');
+const packagejson = JSON.parse(fs.readFileSync("./package.json"));
+const mqpacker = require("css-mqpacker");
+const postcss = require("gulp-postcss");
+const rename = require("gulp-rename");
 const sass = require('gulp-sass')(require('sass'));
-const sassGlob = require('gulp-sass-glob');
-const sort = require( 'gulp-sort' );
-const gulpStylelint = require('gulp-stylelint');
-const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
-const wpPot = require('gulp-wp-pot');
+const sassGlob = require("gulp-sass-glob");
+const sourcemaps = require("gulp-sourcemaps");
+const uglify = require("gulp-uglify");
+const wpPot = require("gulp-wp-pot");
 
 // Some config data for our tasks
 const config = {
@@ -27,19 +26,28 @@ const config = {
     lint_dest: 'assets/sass/',
     dest: 'assets/css'
   },
-  scripts: {
-    src: './assets/js/src/*.js',
-    uglify: [ 'assets/js/*.js', '!assets/js/*.min.js' ],
-    dest: './assets/js'
-  },
-  languages: {
-    src: [ './**/*.php', '!.git/*', '!.svn/*', '!bin/**/*', '!node_modules/*', '!release/**/*', '!vendor/**/*' ],
-    dest: './languages/' + packagejson.name + '.pot'
-  },
-  browserSync: {
-    active: false,
-    localURL: 'mylocalsite.local'
-  }
+	scripts: {
+		front_end: "./assets/js/src/**/*.js",
+		front_end_lint: "./assets/js/src/",
+		uglify: ["assets/js/*.js", "!assets/js/*.min.js"],
+		dest: "./assets/js"
+	},
+	languages: {
+		src: [
+			"./**/*.php",
+			"!.git/*",
+			"!.svn/*",
+			"!bin/**/*",
+			"!node_modules/*",
+			"!release/**/*",
+			"!vendor/**/*"
+		],
+		dest: "./languages/" + packagejson.name + ".pot"
+	},
+	browserSync: {
+		active: false,
+		localURL: "mylocalsite.local"
+	}
 };
 
 function frontendstyles() {
@@ -49,59 +57,89 @@ function frontendstyles() {
     .pipe(sass()) // Compile
     .on('error', sass.logError) // Error reporting
     .pipe(postcss([
-      mqpacker( {
-        'sort': true
-      } ),
-      cssnano( {
-        'safe': true // Use safe optimizations.
-      } ) // Minify
+      autoprefixer(), // Autoprefix resulting CSS
+      cssnano() // Minify
     ]))
     .pipe(sourcemaps.write()) // Write the sourcemap files
     .pipe(gulp.dest(config.styles.dest)) // Drop the resulting CSS file in the specified dir
     .pipe(browserSync.stream());
 }
 
-function sasslint() {
+function frontendsasslint() {
   return gulp.src(config.styles.src)
     .pipe(gulpStylelint({
-      fix: true
+      fix: true,
+	  reporters: [
+        {formatter: 'string', console: true}
+      ]
     }))
     .pipe(gulp.dest(config.styles.lint_dest));
 }
 
 function frontendscripts() {
-  return gulp.src(config.scripts.src)
-    .pipe(sourcemaps.init())
-    .pipe(babel({
-      presets: ['@babel/preset-env']
-    }))
-    .pipe(concat(packagejson.name + '.js')) // Concatenate
-    .pipe(sourcemaps.write())
-    .pipe(eslint())
-    .pipe(gulp.dest(config.scripts.dest))
-    .pipe(browserSync.stream());
+	return gulp
+		.src(config.scripts.front_end)
+		.pipe(sourcemaps.init())
+		.pipe(
+			babel({
+				presets: ["@babel/preset-env"]
+			})
+		)
+    	.pipe(iife())
+		.pipe(concat(packagejson.name + ".js")) // Concatenate
+		.pipe(sourcemaps.write())
+		.pipe(eslint( {
+			parserOptions: {
+				requireConfigFile: false
+			}}
+		))
+		.pipe(gulp.dest(config.scripts.dest))
+		.pipe(browserSync.stream());
 }
 
+function frontendscriptlint() {
+	return gulp
+		.src(config.scripts.front_end)
+		.pipe(eslint( {
+				fix:true,
+				parserOptions: {
+					requireConfigFile: false
+				}
+			}
+		))
+		.pipe(eslint.format())
+		.pipe(gulp.dest(config.scripts.front_end_lint))
+		// Brick on failure to be super strict
+		//.pipe(eslint.failOnError());
+};
+
 function uglifyscripts() {
-  return gulp.src(config.scripts.uglify)
-    .pipe(uglify()) // Minify + compress
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    //.pipe(sourcemaps.write())
-    .pipe(gulp.dest(config.scripts.dest))
-    .pipe(browserSync.stream());
+	return (
+		gulp
+			.src(config.scripts.uglify)
+			.pipe(uglify()) // Minify + compress
+			.pipe(
+				rename({
+					suffix: ".min"
+				})
+			)
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest(config.scripts.dest))
+			.pipe(browserSync.stream())
+	);
 }
 
 // Generates translation file.
 function translate() {
-    return gulp
-      .src( config.languages.src )
-      .pipe( wpPot( {
+  return gulp
+    .src(config.languages.src)
+    .pipe(
+      wpPot({
         domain: packagejson.name,
         package: packagejson.name
-      } ) )
-      .pipe( gulp.dest( config.languages.dest ) );
+      })
+    )
+    .pipe(gulp.dest(config.languages.dest));
 }
 
 // Injects changes into browser
@@ -121,8 +159,8 @@ function browserSyncReload(done) {
 
 // Watch directories, and run specific tasks on file changes
 function watch() {
-  gulp.watch(config.styles.src, styles);
-  gulp.watch(config.scripts.src, scripts);
+  gulp.watch(config.styles.srcDir, styles);
+  gulp.watch(config.scripts.admin, adminscripts);
   
   // Reload browsersync when PHP files change, if active
   if (config.browserSync.active) {
@@ -131,14 +169,17 @@ function watch() {
 }
 
 // define complex tasks
-const styles  = gulp.series(sasslint, frontendstyles);
+const lint    = gulp.series(frontendsasslint, frontendscriptlint);
+const styles  = gulp.series(frontendstyles);
 const scripts = gulp.series(frontendscripts, uglifyscripts);
-const build   = gulp.series(gulp.parallel(styles, scripts, translate));
+const build   = gulp.series(lint, gulp.parallel(styles, scripts, translate));
 
 // export tasks
-exports.styles     = styles;
-exports.scripts    = scripts;
-exports.translate  = translate;
-exports.watch      = watch;
-exports.build      = build;
-exports.default    = build;
+exports.styles    = styles;
+exports.scripts   = scripts;
+exports.lint      = lint;
+exports.translate = translate;
+//exports.changelog = changelog;
+exports.watch     = watch;
+exports.build     = build;
+exports.default   = build;
