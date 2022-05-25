@@ -1,8 +1,8 @@
 <form id="register-form" action="<?php echo $attributes['action']; ?>" method="post" class="m-form m-form-standalone m-form-user m-form-register">
-
-	<?php if ( 1 === filter_var( $attributes['include_city_state'], FILTER_VALIDATE_BOOLEAN ) && 1 === filter_var( $attributes['hidden_city_state'], FILTER_VALIDATE_BOOLEAN ) ) : ?>
+	<?php if ( true === filter_var( $attributes['include_city_state'], FILTER_VALIDATE_BOOLEAN ) && true === filter_var( $attributes['hidden_city_state'], FILTER_VALIDATE_BOOLEAN ) ) : ?>
 		<input type="hidden" name="city" value="">
 		<input type="hidden" name="state" value="">
+	<?php else : ?>
 	<?php endif; ?>
 
 	<?php if ( isset( $attributes['redirect'] ) && ! empty( $attributes['redirect'] ) ) : ?>
