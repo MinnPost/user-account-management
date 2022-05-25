@@ -1,176 +1,258 @@
-(function($){
-
-	function showPassword() {
-		// Cache our jquery elements
-		var $submit = $('.btn-submit');
-		var $field = $('.password-show');
-		var show_pass = '<div class="a-form-show-password a-form-caption"><label><input type="checkbox" name="show_password" id="show-password-checkbox" value="1"> Show password</label></div>';
-		// Inject the toggle button into the page
-		$field.after( show_pass );
-		// Cache the toggle button
-		var $toggle = $('#show-password-checkbox');
-		// Toggle the field type
-		$toggle.on('click', function(e) {
-			var checkbox = $(this);
-			if (checkbox.is(':checked')) {
-				$field.attr('type', 'text');
-			} else {
-				$field.attr('type', 'password');
-			}
-		});
-		// Set the form field back to a regular password element
-		$submit.on( 'click', function(e) {
-			$field.attr('type', 'password');
-		});
-	}
-
-	function checkPasswordStrength( $password, $strengthMeter, $strengthText, $submitButton, disallowListArray ) {
-	    var password = $password.val();
-
-	    // Reset the form & meter
-	    //$submitButton.attr( 'disabled', 'disabled' );
-	    $strengthText.removeClass( 'short bad good strong' );
-
-	    // Extend our disallowList array with those from the inputs & site data
-	    disallowListArray = disallowListArray.concat( wp.passwordStrength.userInputDisallowedList() )
-
-	    // Get the password strength
-	    var strength = wp.passwordStrength.meter( password, disallowListArray, password );
-
-	    // Add the strength meter results
-	    switch ( strength ) {
-	        case 2:
-	            $strengthText.addClass( 'bad' ).html( 'Strength: <strong>' + pwsL10n.bad + '</strong>' );
-	            break;
-	        case 3:
-	            $strengthText.addClass( 'good' ).html( 'Strength: <strong>' + pwsL10n.good + '</strong>' );
-	            break;
-	        case 4:
-	            $strengthText.addClass( 'strong' ).html( 'Strength: <strong>' + pwsL10n.strong + '</strong>' );
-	            break;
-	        case 5:
-	            $strengthText.addClass( 'short' ).html( 'Strength: <strong>' + pwsL10n.mismatch + '</strong>' );
-	            break;
-	        default:
-	            $strengthText.addClass( 'short' ).html( 'Strength: <strong>' + pwsL10n.short + '</strong>' );
-	    }
-	    $strengthMeter.val(strength);
-
-	    // Only enable the submit button if the password is strong
-	    /*
-	    if ( 4 === strength ) {
-	        $submitButton.removeAttr( 'disabled' );
-	    }*/
-
-	    return strength;
-	}
-
-	function checkZipCountry(city_field, state_field, zip_field, country_field) {
-
-		var country = country_field.val();
-		if (country == '') {
-			country = 'US';
-			country_field.val(country);
-		}
-		var zip = zip_field.val();
-
-		if (zip !== '') {
-
-			var location = {
-				zip_code: zip,
-				country: country
-			}
-
-			jQuery.ajax({
-		        type: 'GET',
-		        url: user_account_management_rest.site_url + user_account_management_rest.rest_namespace + '/check-zip',
-		        data: location,
-		        dataType: 'json',
-		        success: function(response) {
-		        	if (response.status === 'success') {
-						var location = '';
-						location += response.city;
-						$(city_field).val(response.city);
-						if (response.city !== response.state) {
-							location += ', ' + response.state;
-							$(state_field).val(response.state);
-						}
-						if (country !== 'US') {
-							location += ', ' + country;
-						}
-						$('.location small').text(location);
-					} else {
-						$('.location small').text('');
-					}
-		        }
-		    });
-		}
-	}
-
-	$(document).ready(function() {
-
-		// start
-		if ($('#rh-name').length > 0 ) {
-			$( '#rh-name' ).val( '' );
-		}
-
-		// show password if user clicks
-		if ($('.password-show').length > 0 ) {
-			showPassword();
-		}
-		// checkPasswordStrength
-		if ($('.password-strength-check').length > 0 ) {
-			var $before = $('.a-form-show-password');
-			$before.after( $('<meter max="4" id="password-strength"><div></div></meter><p id="password-strength-text"></p>'));
-		    $( 'body' ).on( 'keyup', 'input[name=password], input[name=new_password]',
-		        function( event ) {
-		            checkPasswordStrength(
-		                $('input[name=password], input[name=new_password]'), // Password field
-		                $('#password-strength'),           // Strength meter
-		                $('#password-strength-text'),      // Strength text indicator
-		                $('input[type=submit]'),           // Submit button
-		                ['disallowed', 'listed', 'word']        // disallowed words
-		            );
-		        }
-		    );
-		}
-
-		// zip/country thing
-		var country = $('.m-form-country #country').val();
-		if ($('.m-form-zip-code #zip-code').length) {
-			if (country == '' || country == 'US') {
-				$('.m-form-country').hide();
-				$('.m-form-zip-code #zip-code').prop('type', 'tel');
-				$('.m-form-zip-code').append('<div class="a-form-caption location"><small></small></div><div class="a-form-caption show-country"><a href="#" id="registration_show_country"><small>Not in the US?</small></a></div>');
-			} else if ($('.m-form-country #country').length > 0) {
-				$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
-				$('.m-form-zip-code #zip-code').prop('type', 'text');
-			}
-			if ($('.m-form-country #country').length > 0) {
-				if ($('select, input', '.m-form-country').hasClass('not-in-us')) {
-					$('.show-country', '.m-form-zip-code').remove();
-					$('.m-form-country').show();
-					$('.m-form-zip-code #zip-code').prop('type', 'text');
-					$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
+function showPasswordField() {
+	const theField = document.querySelector('.password-show');
+	if (theField) {
+		const toggleField = document.createElement('div');
+		toggleField.innerHTML =
+			'<div class="a-form-show-password a-form-caption"><label><input type="checkbox" name="show_password" id="show-password-checkbox" value="1"> Show password</label></div>';
+		theField.after(toggleField);
+		const checkboxField = document.querySelector('#show-password-checkbox');
+		if (checkboxField) {
+			checkboxField.addEventListener('click', function () {
+				if (event.currentTarget.checked === true) {
+					theField.setAttribute('type', 'text');
+				} else {
+					theField.setAttribute('type', 'password');
 				}
-				if ($('.m-form-city #city').length == 0 && $('.m-form-state #state').length == 0) {
-					$('.m-form-country #country, .m-form-zip-code #zip-code').blur(function() {
-						checkZipCountry($('input[name="city"]'), $('input[name="state"]'), $('.m-form-zip-code #zip-code'), $('.m-form-country #country'));
-					});
-					$('.m-form-country #country').change(function() {
-						checkZipCountry($('input[name="city"]'), $('input[name="state"]'), $('.m-form-zip-code #zip-code'), $('.m-form-country #country'));
-					});
-				}
-				$('#registration_show_country').click(function() {
-					$('.m-form-zip-code label').html('Postal Code: <span title="This field is required." class="a-form-item-required">*</span>');
-					$('.m-form-country').slideDown();
-					$('.m-form-zip-code #zip-code').prop('type', 'text');
-					$(this).hide();
-					return false;
+			});
+		}
+	}
+}
+
+function passwordStrengthChecker(
+	password,
+	strengthMeter,
+	strengthText,
+	submitButton,
+	disallowListArray
+) {
+	strengthText.classList.remove('short', 'bad', 'good', 'strong');
+
+	// Extend our disallowList array with those from the inputs & site data
+	disallowListArray = disallowListArray.concat(
+		wp.passwordStrength.userInputDisallowedList()
+	);
+
+	// Get the password strength
+	const strength = wp.passwordStrength.meter(
+		password,
+		disallowListArray,
+		password
+	);
+
+	switch (strength) {
+		case 2:
+			strengthText.classList.add('bad');
+			strengthText.innerHTML =
+				'Strength: <strong>' + pwsL10n.bad + '</strong>';
+			break;
+		case 3:
+			strengthText.classList.add('good');
+			strengthText.innerHTML =
+				'Strength: <strong>' + pwsL10n.good + '</strong>';
+			break;
+		case 4:
+			strengthText.classList.add('strong');
+			strengthText.innerHTML =
+				'Strength: <strong>' + pwsL10n.strong + '</strong>';
+			break;
+		case 5:
+			strengthText.classList.add('short');
+			strengthText.innerHTML =
+				'Strength: <strong>' + pwsL10n.mismatch + '</strong>';
+			break;
+		default:
+			strengthText.classList.add('short');
+			strengthText.innerHTML =
+				'Strength: <strong>' + pwsL10n.short + '</strong>';
+	}
+	strengthMeter.setAttribute('value', strength);
+	// Only enable the submit button if the password is strong
+	/*
+	if ( 4 === strength ) {
+		submitButton.removeAttr( 'disabled' );
+	}*/
+	return strength;
+}
+
+function setupPasswordStrength() {
+	const checkPasswordStrength = document.querySelector(
+		'.password-strength-check'
+	);
+	if (checkPasswordStrength) {
+		const beforePasswordChecker = document.querySelector(
+			'.a-form-show-password'
+		);
+		const passwordMeter = document.createElement('meter');
+		const passwordMeterDiv = document.createElement('div');
+		const passwordMeterText = document.createElement('p');
+		const registerButton = document.querySelector('.register-button');
+		passwordMeter.setAttribute('max', '4');
+		passwordMeter.setAttribute('id', 'password-strength');
+		passwordMeterText.setAttribute('id', 'password-strength-text');
+		passwordMeter.appendChild(passwordMeterDiv);
+		beforePasswordChecker.after(passwordMeter);
+		beforePasswordChecker.after(passwordMeterText);
+
+		const passwordFields = document.querySelectorAll(
+			'input[name=password], input[name=new_password]'
+		);
+		if (0 < passwordFields.length && registerButton) {
+			passwordFields.forEach(function (passwordField) {
+				passwordField.addEventListener('keyup', function (event) {
+					passwordStrengthChecker(
+						event.target.value, // Password field
+						passwordMeter, // Strength meter
+						passwordMeterText, // Strength text indicator
+						registerButton, // Submit button
+						['disallowed', 'listed', 'word'] // disallowed words
+					);
 				});
-			}
+			});
 		}
+	}
+}
 
-	});
+function setupCountryField(clickedNotUS) {
+	const countryField = document.querySelector('.m-form-country #country');
+	const zipParent = document.querySelector('.m-form-zip-code');
+	if ('undefined' === typeof clickedNotUS) {
+		clickedNotUS = false;
+	}
 
-})(jQuery);
+	const countrySelector = countryField.querySelectorAll('select', 'input');
+	if (0 < countrySelector.length) {
+		countrySelector.forEach(function (countrySelectorField) {
+			if (!countrySelectorField.classList.contains('not-in-us')) {
+				clickedNotUS = true;
+			}
+		});
+	}
+
+	if (countryField && zipParent) {
+		toggleZipCountrySelector(countryField, zipParent, clickedNotUS);
+	}
+}
+
+function toggleZipCountrySelector(countryField, zipParent, clickedNotUS) {
+	const zipField = zipParent.querySelector('#zip-code');
+	const zipLabel = zipParent.querySelector('label');
+	const showCountryMessage = document.createElement('div');
+	const countryMessageText = document.createElement('small');
+	const notInUs = document.createElement('div');
+	const countryValue = countryField.value;
+	showCountryMessage.setAttribute('class', 'a-form-caption location');
+	showCountryMessage.innerHTML = '<small></small>';
+	zipParent.append(showCountryMessage);
+	notInUs.setAttribute('class', 'a-form-caption show-country');
+	setZipSettings(countryValue, zipField, zipLabel);
+	if (
+		false === clickedNotUS &&
+		(countryValue === '' || countryValue === 'US')
+	) {
+		countryField.parentNode.style.display = 'none';
+		zipField.innerHTML = countryMessageText;
+		notInUs.innerHTML =
+			'<a href="#" id="registration_show_country"><small>Not in the US?</small></a>';
+		zipParent.append(notInUs);
+	} else {
+		countryField.parentNode.style.display = 'block';
+		// could also do a slidedown thing, maybe.
+	}
+}
+
+function setZipSettings(countryValue, zipField, zipLabel) {
+	if ('' === countryValue || 'US' === countryValue) {
+		zipField.setAttribute('type', 'tel');
+		zipLabel.innerHTML =
+			'Zip Code: <span title="This field is required." class="a-form-item-required">*</span>';
+	} else {
+		zipField.setAttribute('type', 'text');
+		zipLabel.innerHTML =
+			'Postal Code: <span title="This field is required." class="a-form-item-required">*</span>';
+	}
+}
+
+function showOutsideUsFields() {
+	const showCountry = document.querySelector('#registration_show_country');
+	if (showCountry) {
+		showCountry.addEventListener('click', function (event) {
+			event.preventDefault();
+			event.target.style.display = 'none';
+			setupCountryField(true);
+		});
+	}
+}
+
+function getCityStateFromZip() {
+	const cityField = document.querySelector('input[name="city"]');
+	const stateField = document.querySelector('input[name="state"]');
+	const zipField = document.querySelector('#zip-code');
+	const countryField = document.querySelector('.m-form-country #country');
+	if (zipField) {
+		zipField.addEventListener('blur', () => {
+			checkZipCountry(cityField, stateField, zipField, countryField);
+		});
+	}
+	if (countryField) {
+		countryField.addEventListener('change', () => {
+			checkZipCountry(cityField, stateField, zipField, countryField);
+		});
+	}
+}
+
+function checkZipCountry(cityField, stateField, zipField, countryField) {
+	let countryValue = countryField.value;
+	if ('' === countryValue) {
+		countryValue = 'US';
+		countryField.value = countryValue;
+	}
+	const zipValue = zipField.value;
+	if ('' !== zipValue) {
+		const location = {
+			zip_code: zipValue,
+			country: countryValue,
+		};
+		const locationElement = document.querySelector('.location small');
+		if (locationElement) {
+			let url =
+				user_account_management_rest.site_url +
+				user_account_management_rest.rest_namespace +
+				'/check-zip';
+			url += '?' + new URLSearchParams(location).toString();
+			fetch(url)
+				.then((response) => response.json())
+				.then((data) => {
+					if ('success' === data.status) {
+						let locationString = '';
+						locationString += data.city;
+						if (cityField) {
+							cityField.value = data.city;
+						}
+						if (data.city !== data.state) {
+							locationString += ', ' + data.state;
+							if (stateField) {
+								stateField.value = data.state;
+							}
+						}
+						if ('US' !== countryValue) {
+							locationString += ', ' + countryValue;
+						}
+						locationElement.innerHTML = locationString;
+					} else {
+						locationElement.innerHTML = '';
+					}
+				})
+				.catch(() => {
+					locationElement.innerHTML = '';
+				});
+		}
+	}
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+	showPasswordField();
+	setupPasswordStrength();
+	setupCountryField();
+	showOutsideUsFields();
+	getCityStateFromZip();
+});
