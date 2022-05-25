@@ -118,7 +118,10 @@ function setupCountryField(clickedNotUS) {
 		if ('undefined' === typeof clickedNotUS) {
 			clickedNotUS = false;
 		}
-		const countrySelector = countryField.querySelectorAll('select', 'input');
+		const countrySelector = countryField.querySelectorAll(
+			'select',
+			'input'
+		);
 		if (0 < countrySelector.length) {
 			countrySelector.forEach(function (countrySelectorField) {
 				if (!countrySelectorField.classList.contains('not-in-us')) {
