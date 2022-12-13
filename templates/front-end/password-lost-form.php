@@ -21,7 +21,7 @@
 	<fieldset>
 		<div class="m-form-item m-form-email m-form-login-email">
 			<label for="user_login"><?php _e( 'Email Address:', 'user-account-management' ); ?> <span class="a-form-item-required" title="<?php _e( 'This field is required.', 'user-account-management' ); ?>">*</span></label>
-			<input type="email" name="user_login" id="user_login" required>
+			<input type="email" name="user_login" id="user_login" required<?php if ( isset( $attributes['form_data']['user_email'] ) ) { echo ' value="' . sanitize_email( $attributes['form_data']['user_email'] ) . '"'; } ?>>
 		</div>
 		<div class="m-form-actions">
 			<input type="submit" name="submit" value="<?php _e( 'Reset Password', 'user-account-management' ); ?>" class="btn btn-submit btn-submit-lostpassword">

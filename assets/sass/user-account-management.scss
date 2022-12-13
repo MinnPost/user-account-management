@@ -14,6 +14,11 @@ $width_two: 50%;
 $width_three: 75%;
 $width_four: 100%;
 $color-gray: #ddd;
+$color-success: #24613b;
+
+.a-account-exists {
+	color: $color-success;
+}
 
 #password-strength {
 	appearance: none;

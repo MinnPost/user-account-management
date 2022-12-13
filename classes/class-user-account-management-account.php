@@ -84,6 +84,10 @@ class User_Account_Management_Account {
 		// check if the form data is stored in a transient
 		$key       = isset( $_REQUEST['form_key'] ) ? esc_attr( $_REQUEST['form_key'] ) : '';
 		$form_data = array();
+
+		// check if there is an email address specified on the URL.
+		$form_data['user_email'] = isset( $_GET['email'] ) ? esc_attr( $_GET['email'] ) : '';
+
 		if ( '' !== $key ) {
 			$form_data = get_transient( 'uam_reset_' . $key );
 		}

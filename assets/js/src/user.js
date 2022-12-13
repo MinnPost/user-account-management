@@ -1,3 +1,49 @@
+function checkIfAccountExists() {
+	let timer; // Timer identifier
+	const waitTime = 500; // Wait time in milliseconds
+	const restRoot =
+		user_account_management_rest.site_url +
+		user_account_management_rest.rest_namespace;
+	// Listen for `keyup` event
+	const emailField = document.querySelector('#email');
+	const registerButton = document.querySelector('.register-button');
+	if (emailField && registerButton) {
+		emailField.addEventListener('keyup', (e) => {
+			const text = e.currentTarget.value;
+
+			// Clear timer
+			clearTimeout(timer);
+
+			// Wait for X ms and then process the request
+			timer = setTimeout(() => {
+				search(text);
+			}, waitTime);
+		});
+	}
+	// Search function
+	const search = (text) => {
+		fetch(restRoot + '/check-account/?email=' + text, {
+			method: 'GET',
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (
+					'success' === data.status &&
+					'user exists' === data.reason
+				) {
+					const emailExists = document.createElement('div');
+					emailExists.innerHTML =
+						'<p class="a-form-caption a-account-exists a-account-exists-success">This email address already has a MinnPost.com account. You can <a href="' +
+						user_account_management_rest.site_url +
+						'/user/login/?email=' + text + '">log in</a> or <a href="' +
+						user_account_management_rest.site_url +
+						'/user/password-lost/?email=' + text + '">reset your password</a>.</p>';
+					emailField.after(emailExists);
+				}
+			});
+	};
+}
+
 function showPasswordField() {
 	const theField = document.querySelector('.password-show');
 	if (theField) {
@@ -253,6 +299,7 @@ function checkZipCountry(cityField, stateField, zipField, countryField) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+	checkIfAccountExists();
 	showPasswordField();
 	setupPasswordStrength();
 	setupCountryField();
