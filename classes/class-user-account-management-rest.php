@@ -21,8 +21,8 @@ class User_Account_Management_Rest {
 	public $user_data;
 
 	/**
-	* Constructor which sets up REST API endpoints
-	*/
+	 * Constructor which sets up REST API endpoints
+	 */
 	public function __construct() {
 
 		$this->option_prefix = user_account_management()->option_prefix;
@@ -36,14 +36,15 @@ class User_Account_Management_Rest {
 
 	}
 
+	/**
+	 * API endpoints that can be called by other stuff.
+	 */
 	public function add_actions() {
-		// api endpoints that can be called by other stuff
 		add_action( 'rest_api_init', array( $this, 'register_api_endpoints' ) );
 	}
 
 	/**
 	 * Register API endpoints for dealing with user accounts
-	 *
 	 */
 	public function register_api_endpoints() {
 		register_rest_route(
@@ -172,12 +173,11 @@ class User_Account_Management_Rest {
 	}
 
 	/**
-	* Process the REST API request to create a user
-	*
-	* @param $request
-	*
-	* @return $result
-	*/
+	 * Process the REST API request to create a user
+	 *
+	 * @param WP_REST_Request $request the WP_REST_Request object.
+	 * @return array $result
+	 */
 	public function api_register_user( WP_REST_Request $request ) {
 		$email      = $request->get_param( 'email' );
 		$password   = $request->get_param( 'password' );
@@ -201,24 +201,24 @@ class User_Account_Management_Rest {
 
 		$result = array();
 
-		// check for spam here
+		// check for spam here.
 		$spam = apply_filters( $this->option_prefix . 'check_spam', false, $posted );
 		if ( ! get_option( 'users_can_register' ) ) {
-			// Registration closed, display error
+			// Registration closed, display error.
 			$result = array(
 				'status' => 'closed',
 				'reason' => 'registration not allowed',
 				'errors' => array(),
 			);
 		} elseif ( true === $spam ) {
-			// is spam
+			// is spam.
 			$result = array(
 				'status' => 'spam',
 				'reason' => 'submission flagged as spam',
 				'errors' => array(),
 			);
 		} else {
-			// create user
+			// create user.
 			$user_data = $this->user_data->setup_user_data( $posted );
 			$data      = $this->user_data->register_or_update_user( $user_data, 'register', array() );
 			if ( is_int( $data ) ) {
@@ -239,12 +239,11 @@ class User_Account_Management_Rest {
 	}
 
 	/**
-	* Process the REST API request to update a user
-	*
-	* @param $request
-	*
-	* @return $result
-	*/
+	 * Process the REST API request to update a user
+	 *
+	 * @param WP_REST_Request $request the REST API request.
+	 * @return $result
+	 */
 	public function api_update_user( WP_REST_Request $request ) {
 		$user_id = $request->get_param( 'user_id' );
 		$posted  = $request->get_params();
@@ -274,10 +273,8 @@ class User_Account_Management_Rest {
 	/**
 	 * API endpoint for checking zip/country for city/state
 	 *
-	 * @param object  $request    The REST request
-	 *
+	 * @param WP_REST_Request $request    The REST request.
 	 * @return array   The REST response
-	 *
 	 */
 	public function check_zip( WP_REST_Request $request ) {
 		$params    = $request->get_params();
@@ -290,10 +287,8 @@ class User_Account_Management_Rest {
 	/**
 	 * API endpoint for checking email address for a pre-existing account
 	 *
-	 * @param object  $request    The REST request
-	 *
+	 * @param WP_REST_Request $request    The REST request.
 	 * @return array   The REST response
-	 *
 	 */
 	public function check_account( WP_REST_Request $request ) {
 		$result     = array();
@@ -325,9 +320,9 @@ class User_Account_Management_Rest {
 			);
 			return $result;
 		}
-		// check for spam here
+		// check for spam here.
 		$spam = apply_filters( $this->option_prefix . 'check_spam', false, $posted );
-		// is spam
+		// is spam.
 		if ( true === $spam ) {
 			$result = array(
 				'status' => 'spam',

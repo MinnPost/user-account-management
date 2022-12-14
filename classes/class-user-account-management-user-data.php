@@ -463,17 +463,16 @@ class User_Account_Management_User_Data {
 	/**
 	 * Use the Geonames API to get the city/state from a postal code/country combination
 	 *
-	 * @param string  $zip_code    Zip/postal code
-	 * @param string  $country     Country
-	 * @param bool  $reset         Allows the cache to be skipped
+	 * @param string $zip_code    Zip/postal code.
+	 * @param string $country     Country.
+	 * @param bool   $reset         Allows the cache to be skipped.
 	 *
 	 * @return array               The city/state pair, as well as the status success/error
-	 *
 	 */
 	public function get_city_state( $zip_code, $country, $reset = false ) {
 		$citystate = array();
 
-		// countries where the space breaks the api
+		// countries where the space breaks the api.
 		if ( 'GB' === $country ) {
 			$zip_code = explode( ' ', $zip_code );
 			$zip_code = $zip_code[0];
@@ -493,7 +492,7 @@ class User_Account_Management_User_Data {
 		);
 
 		if ( isset( $cached ) && is_array( $cached ) && false === $reset ) {
-			// load data from cache if it is available
+			// load data from cache if it is available.
 			$citystate = $cached;
 		} else {
 			$request  = wp_remote_get( $url );
@@ -510,7 +509,7 @@ class User_Account_Management_User_Data {
 			);
 
 			if ( true === $this->cache ) {
-				// cache the json response
+				// cache the json response.
 				$cached = $this->transient->set(
 					array(
 						'url' => $url,
