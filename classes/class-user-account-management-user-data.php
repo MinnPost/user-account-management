@@ -471,7 +471,7 @@ class User_Account_Management_User_Data {
 	 *
 	 */
 	public function get_city_state( $zip_code, $country, $reset = false ) {
-		$citystate = '';
+		$citystate = array();
 
 		// countries where the space breaks the api
 		if ( 'GB' === $country ) {
